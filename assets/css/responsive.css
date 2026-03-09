@@ -1,0 +1,404 @@
+/* Variables for consistent styling (to be defined in :root if not already) */
+:root {
+  --max-width-desktop: 1300px;
+  --max-width-tablet: 1000px;
+  --card-width-desktop: 400px;
+  --card-width-tablet: 250px;
+  --card-width-mobile: 100%;
+  --spacing-base: 1rem;
+  --spacing-large: 3rem;
+  --radius-base: 12px;
+}
+
+/* Desktop (1200px and above) - Base styles assumed to handle larger screens */
+
+/* Tablet (900px to 1199px) */
+@media (max-width: 1199px) {
+  /* Adjust container widths for tablet screens */
+  .container,
+  .hero-container,
+  .feature-container,
+  .why-us-container,
+  .reliable-container,
+  .pricing-container,
+  .for-who-container,
+  .stock-container,
+  .cta-container,
+  .disclosure-container,
+  .footer-container,
+  .footer-bottom,
+  .use-cases-container,
+  .implement-container,
+  .legal-doc-container,
+  .support-form-container,
+  .reach-out-container,
+  .clients-container {
+    max-width: var(--max-width-tablet);
+  }
+
+  /* Reduce card sizes */
+  .pricing-card,
+  .for-who-card,
+  .use-cases-card,
+  .review-card {
+    width: var(--card-width-tablet);
+  }
+
+  /* Adjust image and content widths for two-column layouts */
+  .feature-image,
+  .why-us-image,
+  .reliable-content,
+  .reliable-list,
+  .implement-content,
+  .legal-doc-content {
+    max-width: 45%;
+  }
+  .why-us-image{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Stack why-choose-us and legal-doc layouts */
+  .why-choose-us-main,
+  .legal-doc-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .why-choose-us-button,
+  .support-form {
+    width: 100%;
+    max-width: 300px;
+    margin-top: var(--spacing-large);
+  }
+
+  /* Adjust hero and implement images */
+  .hero-image.full-width-image .solutions-image,
+  .implement-image.full-width-image .solutions-image,
+  .implement-image.full-width-image .certificate-image {
+    width: 80%;
+  }
+}
+
+/* Mobile (601px to 899px) */
+@media (max-width: 899px) {
+  /* Hide navbar list and show toggle button with proper spacing */
+  .navbar-list {
+    display: none;
+  }
+
+  .get-started{
+    display: none;
+  }
+  .nav-toggle-btn {
+    display: block;
+    margin-left: var(--spacing-menu);
+    /* margin-right: var(--spacing-menu); */
+  }
+
+  /* Adjust hero and implement content and buttons */
+  .hero-content,
+  .implement-content {
+    max-width: 80%;
+  }
+
+  .hero-buttons,
+  .implement-buttons {
+    flex-direction: column;
+    gap: var(--spacing-base);
+  }
+
+  /* Stack feature, why-us, reliable, legal-doc, and support-form sections */
+  .feature-container,
+  .why-us-container,
+  .reliable-container,
+  .implement-container,
+  .legal-doc-container,
+  .support-form-section,
+  .reach-out-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .feature-content,
+  .feature-image,
+  .why-us-content,
+  .why-us-image,
+  .reliable-content,
+  .reliable-list,
+  .implement-content,
+  .legal-doc-content,
+  .support-form-container {
+    max-width: 100%;
+  }
+
+  /* Center card layouts */
+  .pricing-cards,
+  .for-who-cards,
+  .use-cases-cards,
+  .review-cards {
+    justify-content: center;
+  }
+
+  /* Stack stock container */
+  .stock-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .stock-content,
+  .stock-chart {
+    width: 100%;
+  }
+
+  /* Adjust CTA height */
+  .cta-container {
+    min-height: 30vh;
+  }
+
+  /* Simplify footer layout */
+  .footer-container {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .footer-newsletter {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer-input {
+    width: 100%;
+  }
+
+  .footer-list {
+    grid-template-columns: 1fr;
+  }
+
+  /* Adjust auth container */
+  .auth-container {
+    min-width: 250px;
+    padding: 1.5rem;
+  }
+
+  .form-box {
+    max-width: 100%;
+  }
+
+  .input-container input {
+    font-size: 1.4rem;
+  }
+
+  .form-button {
+    font-size: 1.4rem;
+  }
+
+  /* Adjust implement and hero images */
+  .implement-image.full-width-image .certificate-image {
+    width: 70%;
+  }
+
+  .hero-image.full-width-image .phone-image {
+    width: 120%;
+  }
+
+  .why-choose-us-points {
+    width: 100%;
+  }
+
+  .why-choose-us-point {
+    align-items: center;
+    text-align: center;
+  }
+
+  .why-choose-us-icon {
+    margin-right: 0;
+    margin-bottom: var(--spacing-base);
+  }
+
+  .hero-image.full-width-image .solutions-image {
+    width: 90%;
+  }
+  .translate-left {
+    left: 10px;
+    bottom: 10px;
+  }
+
+  .google-translate-element .goog-te-combo {
+    width: 120px;
+    font-size: 1.2rem;
+  }
+}
+
+/* Small Mobile (0px to 600px) */
+@media (max-width: 600px) {
+  /* Adjust hero and implement typography */
+  .hero-content h1,
+  .implement-content h1 {
+    font-size: 3.5rem;
+  }
+
+  .get-started{
+    display: none;
+  }
+  .hero-content p,
+  .implement-content p {
+    font-size: 1.6rem;
+  }
+
+  /* Reduce header sizes */
+  .pricing-header,
+  .stock-header,
+  .cta-header,
+  .use-cases-title,
+  .implement-title,
+  .legal-doc-title,
+  .support-form-container .section-title,
+  .reach-out-content h1,
+  .clients-title,
+  .why-choose-us-title {
+    font-size: 2.5rem;
+  }
+
+  /* Adjust card widths */
+  .pricing-card,
+  .for-who-card,
+  .use-cases-card,
+  .review-card {
+    width: var(--card-width-mobile);
+    max-width: 300px;
+  }
+
+  /* Adjust card typography */
+  .use-cases-card-title,
+  .why-choose-us-point-title,
+  .for-who-card-title,
+  .review-card-title {
+    font-size: 1.8rem;
+  }
+
+  .use-cases-card-description,
+  .why-choose-us-point-description,
+  .for-who-card-description,
+  .review-card-description,
+  .legal-doc-description,
+  .support-form-container .section-subtitle,
+  .reach-out-content p {
+    font-size: 1.4rem;
+  }
+
+  /* Adjust button sizes */
+  .btn,
+  .btn-secondary,
+  .btn-learn-more,
+  .pricing-button,
+  .cta-button,
+  .footer-button,
+  .why-choose-us-button,
+  .form-button {
+    font-size: 1.4rem;
+    padding: 8px 16px;
+  }
+
+  .why-choose-us-button,
+  .footer-button {
+    padding: 0.8rem 1.5rem;
+  }
+
+  /* Adjust footer and disclosure typography */
+  .footer-title {
+    font-size: 2rem;
+  }
+
+  .disclosure-text {
+    font-size: 1.3rem;
+  }
+
+  /* Adjust auth container and inputs */
+  .auth-container {
+    min-width: 200px;
+    padding: 1rem;
+  }
+
+  .input-container input {
+    font-size: 1.2rem;
+    padding: 8px 36px 8px 8px;
+  }
+
+  .input-container .material-symbols-outlined {
+    font-size: 18px;
+  }
+
+  /* Adjust hero, implement, and legal-doc images */
+  .hero-image.full-width-image,
+  .implement-image.full-width-image {
+    padding: 15px;
+  }
+
+  .hero-image.full-width-image .solutions-image,
+  .implement-image.full-width-image .solutions-image {
+    width: 100%;
+  }
+
+  .hero-image.full-width-image .phone-image {
+    width: 130%;
+  }
+
+  .implement-image.full-width-image .certificate-image {
+    width: 60%;
+  }
+
+  .why-us-image img {
+    width: 70%;
+  }
+
+  /* Adjust floating widget */
+  .translate-left {
+    left: 5px;
+    bottom: 5px;
+  }
+
+  .google-translate-element .goog-te-combo {
+    width: 100px;
+    font-size: 1rem;
+  }
+}
+
+/* Extra Mobile Adjustments (0px to 575px) */
+@media (max-width: 575px) {
+  .hero-image.full-width-image,
+  .implement-image.full-width-image {
+    padding: 10px;
+  }
+
+  .hero-image.full-width-image .phone-image {
+    width: 110%;
+  }
+
+  .implement-image.full-width-image .certificate-image {
+    width: 50%;
+  }
+  .get-started{
+    display: none;
+  }
+}
+
+/* Mobile (601px to 899px) */
+@media (max-width: 899px) {
+  /* Hide desktop navbar list and show toggle button */
+  .navbar-list {
+    display: none;
+  }
+
+  .nav-toggle-btn {
+    display: block;
+    margin-left: var(--spacing-menu);
+    margin-right: var(--spacing-menu);
+  }
+  .get-started{
+    display: none;
+  }
+
+  /* ... (other mobile rules remain unchanged) */
+}

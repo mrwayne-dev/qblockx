@@ -1,0 +1,21 @@
+{
+    "name": "arqoracapital/arqoracapital",
+    "description": "arqoracapital - PHP Web Application",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Wayne"
+        }
+    ],
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}

@@ -1,0 +1,10 @@
+/vendor/
+/node_modules/
+.env
+.vscode/
+.idea/
+*.log
+/uploads/*
+!uploads/.gitkeep
+.DS_Store
+Thumbs.db

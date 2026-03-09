@@ -1,0 +1,25 @@
+# arqoracapital - Apache Config
+Options -Indexes
+RewriteEngine On
+RewriteBase /
+
+# Remove .php extension
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php [L]
+
+# Route unknown URLs to index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [L,QSA]
+
+# Block direct access to sensitive files
+<FilesMatch "^\.(env|gitignore|htaccess)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Prevent access to vendor directory
+<IfModule mod_rewrite.c>
+    RewriteRule ^vendor/ - [F,L]
+</IfModule>
