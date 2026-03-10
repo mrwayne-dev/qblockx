@@ -34,3 +34,129 @@ CREATE TABLE IF NOT EXISTS `sessions` (
   `expires_at`     TIMESTAMP NOT NULL,
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================
+-- WALLET & BALANCE
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS `wallets` (
+  `id`          INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id`     INT NOT NULL UNIQUE,
+  `balance`     DECIMAL(18,8) NOT NULL DEFAULT 0.00000000,
+  `currency`    VARCHAR(10) NOT NULL DEFAULT 'USD',
+  `created_at`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `crypto_addresses` (
+  `id`          INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id`     INT NOT NULL,
+  `currency`    VARCHAR(10) NOT NULL,
+  `address`     VARCHAR(255) NOT NULL,
+  `created_at`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY `uq_user_currency` (`user_id`, `currency`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================
+-- TRANSACTIONS (deposits, withdrawals, earnings, referral bonuses)
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS `transactions` (
+  `id`          INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id`     INT NOT NULL,
+  `type`        ENUM('deposit','withdrawal','earning','referral_bonus') NOT NULL,
+  `amount`      DECIMAL(18,8) NOT NULL,
+  `currency`    VARCHAR(10) NOT NULL DEFAULT 'USD',
+  `status`      ENUM('pending','completed','failed','cancelled') NOT NULL DEFAULT 'pending',
+  `payment_id`  VARCHAR(255) DEFAULT NULL,
+  `notes`       TEXT DEFAULT NULL,
+  `created_at`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================
+-- INVESTMENTS & EARNINGS
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS `investments` (
+  `id`             INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id`        INT NOT NULL,
+  `plan_name`      ENUM('starter','bronze','silver','platinum') NOT NULL,
+  `amount`         DECIMAL(18,8) NOT NULL,
+  `daily_rate`     DECIMAL(5,4) NOT NULL,
+  `duration_days`  INT NOT NULL DEFAULT 5,
+  `total_earned`   DECIMAL(18,8) NOT NULL DEFAULT 0.00000000,
+  `status`         ENUM('active','completed','cancelled') NOT NULL DEFAULT 'active',
+  `starts_at`      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ends_at`        TIMESTAMP NOT NULL,
+  `created_at`     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `earnings` (
+  `id`             INT AUTO_INCREMENT PRIMARY KEY,
+  `investment_id`  INT NOT NULL,
+  `user_id`        INT NOT NULL,
+  `amount`         DECIMAL(18,8) NOT NULL,
+  `payout_date`    DATE NOT NULL,
+  `created_at`     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY `uq_investment_payout_date` (`investment_id`, `payout_date`),
+  FOREIGN KEY (`investment_id`) REFERENCES `investments`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================
+-- REFERRALS
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS `referral_codes` (
+  `id`          INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id`     INT NOT NULL UNIQUE,
+  `code`        VARCHAR(20) NOT NULL UNIQUE,
+  `uses`        INT NOT NULL DEFAULT 0,
+  `created_at`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `referrals` (
+  `id`               INT AUTO_INCREMENT PRIMARY KEY,
+  `referrer_id`      INT NOT NULL,
+  `referred_id`      INT NOT NULL UNIQUE,
+  `commission_rate`  DECIMAL(5,4) NOT NULL DEFAULT 0.0500,
+  `total_earned`     DECIMAL(18,8) NOT NULL DEFAULT 0.00000000,
+  `created_at`       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`referrer_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`referred_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================
+-- WITHDRAWAL REQUESTS
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS `withdrawal_requests` (
+  `id`             INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id`        INT NOT NULL,
+  `amount`         DECIMAL(18,8) NOT NULL,
+  `currency`       VARCHAR(10) NOT NULL DEFAULT 'USD',
+  `wallet_address` VARCHAR(255) NOT NULL,
+  `status`         ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  `admin_notes`    TEXT DEFAULT NULL,
+  `created_at`     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updated_at`     TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================
+-- CRON JOB AUDIT LOG
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS `cron_logs` (
+  `id`        INT AUTO_INCREMENT PRIMARY KEY,
+  `job_name`  VARCHAR(100) NOT NULL,
+  `status`    ENUM('success','failed') NOT NULL,
+  `message`   TEXT DEFAULT NULL,
+  `ran_at`    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

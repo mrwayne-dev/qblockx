@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la /c/mrwayne/web_dev/arqoracapital/*.json)",
+      "Bash(for file in api/auth/*.php)",
+      "Bash(do echo \"=== $file ===\")",
+      "Read(//c/mrwayne/web_dev/arqoracapital/**)",
+      "Bash(done)",
+      "Bash(wc -l /c/mrwayne/web_dev/arqoracapital/includes/*.php)"
+    ]
+  }
+}

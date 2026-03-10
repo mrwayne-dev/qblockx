@@ -15,24 +15,24 @@ try {
 
     $page   = max(1, (int) ($_GET['page']   ?? 1));
     $limit  = max(1, min(100, (int) ($_GET['limit']  ?? 20)));
-    $status = $_GET['status'] ?? null;
+    $status = $_GET['status'] ?? 'pending';
     $offset = ($page - 1) * $limit;
 
-    $where  = $status ? "WHERE i.status = :status" : "";
-    $params = $status ? ['status' => $status] : [];
+    $where  = $status !== 'all' ? "WHERE wr.status = :status" : "";
+    $params = $status !== 'all' ? ['status' => $status] : [];
 
-    $total = $db->prepare("SELECT COUNT(*) FROM investments i $where");
-    $total->execute($params);
-    $total = $total->fetchColumn();
+    $countStmt = $db->prepare("SELECT COUNT(*) FROM withdrawal_requests wr $where");
+    $countStmt->execute($params);
+    $total = $countStmt->fetchColumn();
 
     $stmt = $db->prepare(
-        "SELECT i.id, i.plan_name, i.amount, i.daily_rate, i.duration_days,
-                i.total_earned, i.status, i.starts_at, i.ends_at, i.created_at,
-                u.email AS user_email, u.full_name AS user_name
-         FROM investments i
-         JOIN users u ON u.id = i.user_id
+        "SELECT wr.id, wr.amount, wr.currency, wr.wallet_address,
+                wr.status, wr.admin_notes, wr.created_at, wr.updated_at,
+                u.id AS user_id, u.email AS user_email, u.full_name AS user_name
+         FROM withdrawal_requests wr
+         JOIN users u ON u.id = wr.user_id
          $where
-         ORDER BY i.created_at DESC
+         ORDER BY wr.created_at DESC
          LIMIT :limit OFFSET :offset"
     );
     foreach ($params as $k => $v) {
@@ -41,16 +41,16 @@ try {
     $stmt->bindValue(':limit',  $limit,  PDO::PARAM_INT);
     $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
     $stmt->execute();
-    $trades = $stmt->fetchAll();
+    $requests = $stmt->fetchAll();
 
     echo json_encode([
         'success' => true,
         'data'    => [
-            'trades' => $trades,
-            'total'  => (int) $total,
-            'page'   => $page,
-            'limit'  => $limit,
-            'pages'  => (int) ceil($total / $limit),
+            'requests' => $requests,
+            'total'    => (int) $total,
+            'page'     => $page,
+            'limit'    => $limit,
+            'pages'    => (int) ceil($total / $limit),
         ]
     ]);
 } catch (PDOException $e) {
