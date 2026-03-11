@@ -150,6 +150,34 @@ CREATE TABLE IF NOT EXISTS `withdrawal_requests` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================================
+-- EMAIL VERIFICATION
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS `email_verifications` (
+  `id`          INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id`     INT NOT NULL,
+  `token`       VARCHAR(255) NOT NULL UNIQUE,
+  `created_at`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `expires_at`  TIMESTAMP NOT NULL,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================
+-- CONTACT MESSAGES
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS `contact_messages` (
+  `id`          INT AUTO_INCREMENT PRIMARY KEY,
+  `name`        VARCHAR(255) NOT NULL,
+  `email`       VARCHAR(255) NOT NULL,
+  `subject`     VARCHAR(255) NOT NULL,
+  `message`     TEXT NOT NULL,
+  `ip_address`  VARCHAR(45) DEFAULT NULL,
+  `is_read`     BOOLEAN NOT NULL DEFAULT FALSE,
+  `created_at`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================
 -- CRON JOB AUDIT LOG
 -- ============================================================
 
@@ -160,3 +188,26 @@ CREATE TABLE IF NOT EXISTS `cron_logs` (
   `message`   TEXT DEFAULT NULL,
   `ran_at`    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================
+-- INVESTMENT PLANS (admin-configurable plan tiers)
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS `investment_plans` (
+  `id`            INT AUTO_INCREMENT PRIMARY KEY,
+  `name`          VARCHAR(50)    NOT NULL,
+  `min_amount`    DECIMAL(18,2)  NOT NULL,
+  `max_amount`    DECIMAL(18,2)  DEFAULT NULL,
+  `daily_rate`    DECIMAL(5,4)   NOT NULL,
+  `duration_days` INT            NOT NULL DEFAULT 5,
+  `is_active`     BOOLEAN        DEFAULT TRUE,
+  `created_at`    TIMESTAMP      DEFAULT CURRENT_TIMESTAMP,
+  `updated_at`    TIMESTAMP      DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Seed the 4 default plans (use INSERT IGNORE to avoid duplicates on re-run)
+INSERT IGNORE INTO `investment_plans` (`id`, `name`, `min_amount`, `max_amount`, `daily_rate`, `duration_days`) VALUES
+  (1, 'Starter',  100.00,   499.00,  0.0200, 5),
+  (2, 'Bronze',   500.00,  2999.00,  0.0400, 5),
+  (3, 'Silver',  3000.00,  4999.00,  0.0600, 5),
+  (4, 'Platinum',5000.00,  NULL,     0.0800, 5);

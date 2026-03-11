@@ -45,7 +45,7 @@ try {
     $total_commission = (float) $totalStmt->fetchColumn();
 
     $app_url   = getenv('APP_URL') ?: '';
-    $ref_link  = $app_url . '/pages/public/login.php?ref=' . $codeRow['code'];
+    $ref_link  = $app_url . '/pages/public/register.php?ref=' . $codeRow['code'];
 
     echo json_encode([
         'success' => true,
@@ -58,6 +58,7 @@ try {
         ]
     ]);
 } catch (PDOException $e) {
+    error_log('Referral API error: ' . $e->getMessage());
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Server error']);
 }

@@ -1,39 +1,87 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password - arqoracapital</title>
-    <link rel="stylesheet" href="../../assets/css/main.css">
-</head>
-<body>
-    <div class="container">
-        <h1>Reset Password</h1>
-        <form id="resetForm">
-            <input type="password" name="password" placeholder="New password" minlength="8" required><br><br>
-            <input type="password" name="confirm" placeholder="Confirm password" required><br><br>
-            <button type="submit" class="btn btn-primary">Reset Password</button>
-        </form>
-        <p id="msg"></p>
+<?php
+/**
+ * Project: arqoracapital
+ * Page: Reset Password
+ */
+$pageTitle = 'Reset Password';
+require_once '../../includes/head.php';
+?>
+
+<div class="auth-page">
+  <div class="auth-split">
+
+    <!-- ── Left brand panel ── -->
+    <div class="auth-panel">
+      <a href="/pages/public/index.php" class="auth-panel-logo" aria-label="ArqoraCapital home">
+        <span class="nav-logo-mark" aria-hidden="true">
+          <img src="/assets/images/logo/2.png" alt="">
+        </span>
+        ArqoraCapital
+      </a>
+
+      <div class="auth-panel-body">
+        <h2 class="auth-panel-heading">Almost there.<br>You're secure.</h2>
+        <p class="auth-panel-sub">
+          Choose a strong password to protect your investment account. We recommend using a mix of letters, numbers, and symbols.
+        </p>
+      </div>
     </div>
-    <script>
-    const token = new URLSearchParams(window.location.search).get('token');
-    document.getElementById('resetForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const fd = new FormData(e.target);
-        if (fd.get('password') !== fd.get('confirm')) {
-            document.getElementById('msg').textContent = 'Passwords do not match';
-            return;
-        }
-        const res = await fetch('/api/auth/reset-password.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token, password: fd.get('password') })
-        });
-        const result = await res.json();
-        document.getElementById('msg').textContent = result.message;
-        if (result.success) setTimeout(() => window.location.href = '/pages/public/login.php', 2000);
-    });
-    </script>
+
+    <!-- ── Right form panel ── -->
+    <div class="auth-form-panel">
+
+      <div class="auth-icon-wrap" aria-hidden="true">
+        <i class="ph ph-shield-check auth-page-icon"></i>
+      </div>
+
+      <h1 class="auth-heading">Set a new password</h1>
+      <p class="auth-subtext">Choose a strong password of at least 8 characters.</p>
+
+      <div id="authMsg" class="auth-msg" role="alert" aria-live="polite" style="display:none;"></div>
+
+      <form id="resetForm" novalidate>
+
+        <div class="form-group">
+          <label for="password">New password</label>
+          <div class="input-icon-wrap">
+            <i class="ph ph-lock-simple input-icon" aria-hidden="true"></i>
+            <input type="password" id="password" name="password" required
+                   minlength="8" placeholder="Min. 8 characters" autocomplete="new-password">
+            <button type="button" class="input-toggle-pw" aria-label="Toggle password visibility" tabindex="-1">
+              <i class="ph ph-eye" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirm">Confirm password</label>
+          <div class="input-icon-wrap">
+            <i class="ph ph-lock-simple input-icon" aria-hidden="true"></i>
+            <input type="password" id="confirm" name="confirm" required
+                   placeholder="Repeat your password" autocomplete="new-password">
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary full-width auth-submit" id="resetBtn">
+          <span class="btn-text">Reset Password</span>
+          <span class="btn-spinner" style="display:none;">
+            <i class="ph ph-circle-notch ph-spin" aria-hidden="true"></i>
+          </span>
+        </button>
+
+      </form>
+
+      <p class="auth-footer-text">
+        <a href="/pages/public/login.php" class="auth-link">
+          <i class="ph ph-arrow-left" aria-hidden="true"></i>
+          Back to Sign In
+        </a>
+      </p>
+
+    </div>
+  </div>
+</div>
+
+
 </body>
 </html>

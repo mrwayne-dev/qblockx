@@ -1,15 +1,15 @@
 <?php
 /**
  * Project: arqoracapital
- * Created by: Wayne
- * Generated: 2026-03-09
- * 
+ * API: Reset password using a valid token
  */
+ob_start();
 
 require_once '../../config/database.php';
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    ob_end_clean();
     http_response_code(405);
     echo json_encode(['success' => false, 'message' => 'Method not allowed']);
     exit;
@@ -20,11 +20,13 @@ $token    = trim($input['token'] ?? '');
 $password = $input['password'] ?? '';
 
 if (empty($token) || empty($password)) {
+    ob_end_clean();
     echo json_encode(['success' => false, 'message' => 'Token and new password are required']);
     exit;
 }
 
 if (strlen($password) < 8) {
+    ob_end_clean();
     echo json_encode(['success' => false, 'message' => 'Password must be at least 8 characters']);
     exit;
 }
@@ -38,6 +40,7 @@ try {
     $reset = $stmt->fetch();
 
     if (!$reset) {
+        ob_end_clean();
         echo json_encode(['success' => false, 'message' => 'Invalid or expired reset token']);
         exit;
     }
@@ -49,8 +52,11 @@ try {
     $db->prepare("DELETE FROM password_resets WHERE email = :email")
        ->execute(['email' => $reset['email']]);
 
+    ob_end_clean();
     echo json_encode(['success' => true, 'message' => 'Password reset successfully']);
-} catch (PDOException $e) {
+
+} catch (\Throwable $e) {
+    ob_end_clean();
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Server error']);
 }

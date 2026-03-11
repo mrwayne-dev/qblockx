@@ -114,7 +114,7 @@ try {
         // Record transaction
         $db->prepare(
             "INSERT INTO transactions (user_id, type, amount, currency, status, notes)
-             VALUES (:uid, 'withdrawal', :amount, 'USD', 'completed', :note)"
+             VALUES (:uid, 'investment', :amount, 'USD', 'completed', :note)"
         )->execute([
             'uid'    => $user['id'],
             'amount' => $amount,

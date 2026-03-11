@@ -1,0 +1,76 @@
+<?php
+/**
+ * Project: arqoracapital
+ * Admin: Resolve Deposit — manually complete or fail a pending deposit
+ */
+
+require_once '../../config/database.php';
+require_once '../../api/utilities/auth-check.php';
+header('Content-Type: application/json');
+
+requireAdmin();
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['success' => false, 'message' => 'Method not allowed']);
+    exit;
+}
+
+$input  = json_decode(file_get_contents('php://input'), true);
+$id     = (int) ($input['id']     ?? 0);
+$action = trim($input['action']   ?? '');
+
+if (!$id || !in_array($action, ['complete', 'fail'], true)) {
+    echo json_encode(['success' => false, 'message' => 'Invalid request']);
+    exit;
+}
+
+try {
+    $db = Database::getInstance()->getConnection();
+
+    $stmt = $db->prepare(
+        "SELECT * FROM transactions WHERE id = :id AND type = 'deposit' AND status = 'pending' LIMIT 1"
+    );
+    $stmt->execute(['id' => $id]);
+    $tx = $stmt->fetch();
+
+    if (!$tx) {
+        echo json_encode(['success' => false, 'message' => 'Pending deposit not found']);
+        exit;
+    }
+
+    $db->beginTransaction();
+
+    if ($action === 'complete') {
+        // Mark transaction completed
+        $db->prepare("UPDATE transactions SET status = 'completed', updated_at = NOW() WHERE id = :id")
+           ->execute(['id' => $id]);
+
+        // Credit wallet
+        $db->prepare(
+            "INSERT INTO wallets (user_id, balance) VALUES (:uid, :amt)
+             ON DUPLICATE KEY UPDATE balance = balance + :amt2, updated_at = NOW()"
+        )->execute([
+            'uid'  => $tx['user_id'],
+            'amt'  => $tx['amount'],
+            'amt2' => $tx['amount'],
+        ]);
+
+        $msg = 'Deposit completed and wallet credited';
+
+    } else {
+        // Mark failed
+        $db->prepare("UPDATE transactions SET status = 'failed', updated_at = NOW() WHERE id = :id")
+           ->execute(['id' => $id]);
+        $msg = 'Deposit marked as failed';
+    }
+
+    $db->commit();
+    echo json_encode(['success' => true, 'message' => $msg]);
+
+} catch (PDOException $e) {
+    if (isset($db) && $db->inTransaction()) $db->rollBack();
+    error_log('resolve-deposit error: ' . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Server error']);
+}

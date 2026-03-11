@@ -31,6 +31,11 @@ try {
     $countStmt->execute($params);
     $total = $countStmt->fetchColumn();
 
+    // Summary metrics (computed on every call — cheap queries)
+    $totalVolume     = $db->query("SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE status = 'completed'")->fetchColumn();
+    $totalDeposits   = $db->query("SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE type = 'deposit'   AND status = 'completed'")->fetchColumn();
+    $totalWithdrawals= $db->query("SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE type = 'withdrawal' AND status = 'completed'")->fetchColumn();
+
     $stmt = $db->prepare(
         "SELECT t.id, t.type, t.amount, t.currency, t.status, t.payment_id, t.notes, t.created_at,
                 u.email AS user_email, u.full_name AS user_name
@@ -56,6 +61,11 @@ try {
             'page'         => $page,
             'limit'        => $limit,
             'pages'        => (int) ceil($total / $limit),
+            'summary'      => [
+                'total_volume'      => number_format((float) $totalVolume,      2, '.', ''),
+                'total_deposits'    => number_format((float) $totalDeposits,    2, '.', ''),
+                'total_withdrawals' => number_format((float) $totalWithdrawals, 2, '.', ''),
+            ],
         ]
     ]);
 } catch (PDOException $e) {

@@ -17,7 +17,9 @@ try {
     $limit  = max(1, min(100, (int) ($_GET['limit'] ?? 20)));
     $offset = ($page - 1) * $limit;
 
-    $total = $db->query("SELECT COUNT(*) FROM referrals")->fetchColumn();
+    $total         = $db->query("SELECT COUNT(*) FROM referrals")->fetchColumn();
+    $totalComm     = $db->query("SELECT COALESCE(SUM(total_earned), 0) FROM referrals")->fetchColumn();
+    $activeRef     = $db->query("SELECT COUNT(DISTINCT referrer_id) FROM referrals")->fetchColumn();
 
     $stmt = $db->prepare(
         "SELECT r.id, r.commission_rate, r.total_earned, r.created_at,
@@ -37,11 +39,16 @@ try {
     echo json_encode([
         'success' => true,
         'data'    => [
-            'referrals' => $referrals,
-            'total'     => (int) $total,
-            'page'      => $page,
-            'limit'     => $limit,
-            'pages'     => (int) ceil($total / $limit),
+            'referrals'       => $referrals,
+            'total'           => (int) $total,
+            'page'            => $page,
+            'limit'           => $limit,
+            'pages'           => (int) ceil($total / $limit),
+            'summary'         => [
+                'total_referrals'      => (int) $total,
+                'total_commission_paid'=> number_format((float) $totalComm, 2, '.', ''),
+                'active_referrers'     => (int) $activeRef,
+            ],
         ]
     ]);
 } catch (PDOException $e) {

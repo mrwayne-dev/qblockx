@@ -20,7 +20,7 @@ try {
     $total = $db->query("SELECT COUNT(*) FROM users WHERE role = 'user'")->fetchColumn();
 
     $stmt = $db->prepare(
-        "SELECT u.id, u.email, u.full_name, u.is_verified, u.created_at,
+        "SELECT u.id, u.email, u.full_name, u.role, u.is_verified, u.created_at,
                 COALESCE(w.balance, 0) AS balance
          FROM users u
          LEFT JOIN wallets w ON w.user_id = u.id

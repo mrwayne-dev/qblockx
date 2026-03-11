@@ -34,6 +34,13 @@ try {
         $_SESSION['email']   = $user['email'];
         $_SESSION['role']    = $user['role'];
         echo json_encode(['success' => true, 'message' => 'Login successful']);
+
+        // Send admin sign-in security alert (non-blocking)
+        if (function_exists('fastcgi_finish_request')) fastcgi_finish_request();
+        require_once '../../api/utilities/email_templates.php';
+        $loginTime = date('D, d M Y \a\t H:i T');
+        $firstName = explode(' ', trim($user['full_name'] ?? ''))[0] ?: 'Admin';
+        Mailer::sendAdminSignIn($user['email'], $firstName, $loginTime);
     } else {
         echo json_encode(['success' => false, 'message' => 'Invalid credentials']);
     }

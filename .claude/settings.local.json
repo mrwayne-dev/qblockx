@@ -6,7 +6,15 @@
       "Bash(do echo \"=== $file ===\")",
       "Read(//c/mrwayne/web_dev/arqoracapital/**)",
       "Bash(done)",
-      "Bash(wc -l /c/mrwayne/web_dev/arqoracapital/includes/*.php)"
+      "Bash(wc -l /c/mrwayne/web_dev/arqoracapital/includes/*.php)",
+      "Bash(del membership-enrolled.html membership-expired.html transfer-sent.html transfer-received.html email_template.html welcome.html password-changed.html)",
+      "Read(//mnt/c/mrwayne/web_dev/arqoracapital/assets/**)",
+      "Bash(rm membership-enrolled.html membership-expired.html transfer-sent.html transfer-received.html email_template.html welcome.html password-changed.html)",
+      "Bash(ls *.html)",
+      "Bash(powershell.exe -Command \"Set-Location ''C:\\\\mrwayne\\\\web_dev\\\\arqoracapital\\\\assets\\\\email-templates''; Remove-Item membership-enrolled.html, membership-expired.html, transfer-sent.html, transfer-received.html, email_template.html, welcome.html, password-changed.html; Get-ChildItem *.html | Select-Object -ExpandProperty Name\")",
+      "Bash(ls -la \"C:\\\\mrwayne\\\\web_dev\\\\arqoracapital\\\\pages\\\\admin\"\" 2>/dev/null || echo \"Admin pages directory not found \")",
+      "Bash(\"C:\\\\mrwayne\\\\web_dev\\\\arqoracapital\\\\.env\")",
+      "Bash(\"C:\\\\mrwayne\\\\web_dev\\\\arqoracapital\\\\pages\\\\admin\\\\register.php\")"
     ]
   }
 }

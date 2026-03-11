@@ -1,33 +1,77 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forgot Password - arqoracapital</title>
-    <link rel="stylesheet" href="../../assets/css/main.css">
-</head>
-<body>
-    <div class="container">
-        <h1>Forgot Password</h1>
-        <form id="forgotForm">
-            <input type="email" name="email" placeholder="Your email" required><br><br>
-            <button type="submit" class="btn btn-primary">Send Reset Link</button>
-        </form>
-        <p><a href="login.php">Back to login</a></p>
-        <p id="msg"></p>
+<?php
+/**
+ * Project: arqoracapital
+ * Page: Forgot Password
+ */
+$pageTitle = 'Forgot Password';
+require_once '../../includes/head.php';
+?>
+
+<div class="auth-page">
+  <div class="auth-split">
+
+    <!-- ── Left brand panel ── -->
+    <div class="auth-panel">
+      <a href="/pages/public/index.php" class="auth-panel-logo" aria-label="ArqoraCapital home">
+        <span class="nav-logo-mark" aria-hidden="true">
+          <img src="/assets/images/logo/2.png" alt="">
+        </span>
+        ArqoraCapital
+      </a>
+
+      <div class="auth-panel-body">
+        <h2 class="auth-panel-heading">We'll get you<br>back in.</h2>
+        <p class="auth-panel-sub">
+          Enter your registered email address and we'll send you a secure link to reset your password within minutes.
+        </p>
+      </div>
     </div>
-    <script>
-    document.getElementById('forgotForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const data = Object.fromEntries(new FormData(e.target));
-        const res  = await fetch('/api/auth/forgot-password.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        });
-        const result = await res.json();
-        document.getElementById('msg').textContent = result.message;
-    });
-    </script>
+
+    <!-- ── Right form panel ── -->
+    <div class="auth-form-panel">
+
+      <div class="auth-icon-wrap" aria-hidden="true">
+        <i class="ph ph-lock-key-open auth-page-icon"></i>
+      </div>
+
+      <h1 class="auth-heading">Forgot your password?</h1>
+      <p class="auth-subtext">
+        Enter your email and we'll send you a secure link to reset your password.
+      </p>
+
+      <div id="authMsg" class="auth-msg" role="alert" aria-live="polite" style="display:none;"></div>
+
+      <form id="forgotForm" novalidate>
+
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <div class="input-icon-wrap">
+            <i class="ph ph-envelope input-icon" aria-hidden="true"></i>
+            <input type="email" id="email" name="email" required
+                   placeholder="you@example.com" autocomplete="email">
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary full-width auth-submit" id="forgotBtn">
+          <span class="btn-text">Send Reset Link</span>
+          <span class="btn-spinner" style="display:none;">
+            <i class="ph ph-circle-notch ph-spin" aria-hidden="true"></i>
+          </span>
+        </button>
+
+      </form>
+
+      <p class="auth-footer-text">
+        <a href="/pages/public/login.php" class="auth-link">
+          <i class="ph ph-arrow-left" aria-hidden="true"></i>
+          Back to Sign In
+        </a>
+      </p>
+
+    </div>
+  </div>
+</div>
+
+
 </body>
 </html>
