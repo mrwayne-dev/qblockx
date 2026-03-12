@@ -1,14 +1,15 @@
+# Environment Configuration - arqoracapital
+
 # Database
 DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=uvammbciwx_arqoracapital
-DB_USER=uvammbciwx_michael
-DB_PASS=Michael@01
+DB_NAME=arqoracapital
+DB_USER=root
+DB_PASS=
 
 # Application
 APP_NAME="arqoracapital"
-APP_URL=http://arqoracapital.com
-APP_ENV=production
+APP_URL=http://arqoracapital.test/
+APP_ENV=development
 
 # Security
 SESSION_LIFETIME=3600
