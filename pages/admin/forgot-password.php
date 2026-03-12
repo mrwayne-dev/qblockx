@@ -18,7 +18,7 @@
                     <button type="submit" class="form-button">Send Reset Link</button>
                     <p id="msg" style="display:none; margin-top:1rem;"></p>
                 </form>
-                <p><a href="login.php" class="forgot-password">Back to admin login</a></p>
+                <p><a href="/admin/login" class="forgot-password">Back to admin login</a></p>
             </div>
         </div>
     </div>

@@ -1,0 +1,98 @@
+/* ============================================================
+   User Dashboard — Supplemental Responsive Styles
+   Fills gaps not covered by dashboard.css
+   ============================================================ */
+
+/* ── Modal mobile enhancements ──────────────────────────────── */
+@media (max-width: 767px) {
+
+  /* Bottom-sheet style modal on mobile */
+  .modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .modal {
+    border-radius: 20px 20px 0 0;
+    max-height: 90vh;
+    width: 100%;
+    max-width: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Form inputs — full width, comfortable tap size */
+  .modal .form-group input,
+  .modal .form-group select,
+  .modal .form-group textarea {
+    width: 100%;
+    min-height: 48px;
+    font-size: 16px; /* prevents iOS zoom on focus */
+  }
+
+  /* Buttons — full width on mobile */
+  .modal .btn-primary,
+  .modal .btn-secondary,
+  .modal .btn-danger {
+    width: 100%;
+    min-height: 48px;
+    justify-content: center;
+  }
+
+  /* Modal header */
+  .modal-header {
+    padding: 1.25rem 1.25rem 0;
+  }
+
+  .modal-body {
+    padding: 1.25rem;
+  }
+
+  .modal-footer {
+    padding: 0 1.25rem 1.25rem;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+/* ── General input tap-target sizing ────────────────────────── */
+@media (max-width: 899px) {
+
+  /* Ensure all interactive elements meet 44px tap target */
+  body.dashboard-body button,
+  body.dashboard-body .btn-primary,
+  body.dashboard-body .btn-secondary,
+  body.dashboard-body .dock-item {
+    min-height: 44px;
+  }
+
+  /* Table horizontal scroll */
+  body.dashboard-body .data-table-wrap,
+  body.dashboard-body .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body.dashboard-body .data-table {
+    min-width: 480px;
+  }
+
+  /* Prevent horizontal overflow */
+  body.dashboard-body .dashboard-wrapper,
+  body.dashboard-body .dashboard-main {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+}
+
+/* ── Dashboard header mobile ────────────────────────────────── */
+@media (max-width: 599px) {
+
+  body.dashboard-body .dashboard-header {
+    padding: 1rem 1.25rem;
+  }
+
+  body.dashboard-body .header-username {
+    display: none; /* show only avatar on very small screens */
+  }
+}

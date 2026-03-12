@@ -20,6 +20,25 @@
     return new Date(dt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   }
 
+  // Works on HTTP (no secure context) and HTTPS
+  function copyText(text, cb) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { cb(true); }).catch(function () { cb(false); });
+    } else {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        var ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        cb(ok);
+      } catch (e) { cb(false); }
+    }
+  }
+
   function badge(status) {
     var map = {
       completed: 'badge-success',
@@ -193,29 +212,32 @@
     if (!grid) return;
 
     var coins = [
-      { id: 'bitcoin',     symbol: 'BTC' },
-      { id: 'ethereum',    symbol: 'ETH' },
-      { id: 'tether',      symbol: 'USDT' },
-      { id: 'binancecoin', symbol: 'BNB' }
+      { capId: 'bitcoin',     symbol: 'BTC' },
+      { capId: 'ethereum',    symbol: 'ETH' },
+      { capId: 'tether',      symbol: 'USDT' },
+      { capId: 'binance-coin', symbol: 'BNB' }
     ];
 
     try {
-      var ids = coins.map(function (c) { return c.id; }).join(',');
+      var capIds = coins.map(function (c) { return c.capId; }).join(',');
       var r = await fetch(
-        'https://api.coingecko.com/api/v3/simple/price?ids=' + ids + '&vs_currencies=usd&include_24hr_change=true',
+        'https://api.coincap.io/v2/assets?ids=' + capIds,
         { headers: { 'Accept': 'application/json' } }
       );
-      var data = await r.json();
+      var json = await r.json();
+
+      var assetMap = {};
+      (json.data || []).forEach(function (a) { assetMap[a.id] = a; });
 
       grid.innerHTML = coins.map(function (coin) {
-        var info  = data[coin.id] || {};
-        var price = info.usd
-          ? '$' + parseFloat(info.usd).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+        var asset  = assetMap[coin.capId] || {};
+        var price  = asset.priceUsd
+          ? '$' + parseFloat(asset.priceUsd).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
           : '—';
-        var chg    = info.usd_24h_change;
+        var chg    = asset.changePercent24Hr != null ? parseFloat(asset.changePercent24Hr) : null;
         var chgCls = chg > 0 ? 'stock-change--up' : chg < 0 ? 'stock-change--down' : '';
         var chgTxt = chg != null
-          ? (chg > 0 ? '+' : '') + parseFloat(chg).toFixed(2) + '% (24h)'
+          ? (chg > 0 ? '+' : '') + chg.toFixed(2) + '% (24h)'
           : '—';
 
         return '<div class="stock-card">'
@@ -517,7 +539,7 @@
       if (r.success) {
         showToast('Account deleted. Redirecting…', 'info');
         setTimeout(function () {
-          window.location.href = '/pages/public/login.php';
+          window.location.href = '/login';
         }, 1500);
       } else {
         if (msgEl) showMsg(msgEl, r.message || 'Deletion failed. Please contact support.', true);
@@ -551,13 +573,10 @@
       var linkBtn = qs('[data-copy="referral-link"]');
       if (linkBtn) {
         linkBtn.onclick = function () {
-          navigator.clipboard.writeText(d.referral_link).then(function () {
+          copyText(d.referral_link, function (ok) {
+            if (!ok) return;
             linkBtn.textContent = 'Copied!';
             setTimeout(function () { linkBtn.textContent = 'Copy Link'; }, 2000);
-          }).catch(function () {
-            // Fallback for browsers without clipboard API
-            var input = qs('[data-referral="link"]');
-            if (input) { input.select(); document.execCommand('copy'); }
           });
         };
       }
@@ -676,12 +695,11 @@
     document.addEventListener('click', function (e) {
       var btn = e.target.closest('[data-copy-text]');
       if (!btn || !btn.dataset.copyText) return;
-      navigator.clipboard.writeText(btn.dataset.copyText).then(function () {
+      copyText(btn.dataset.copyText, function (ok) {
+        if (!ok) return;
         var orig = btn.textContent;
         btn.textContent = 'Copied!';
         setTimeout(function () { btn.textContent = orig; }, 2000);
-      }).catch(function () {
-        // no-op if clipboard denied
       });
     });
 

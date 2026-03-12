@@ -31,7 +31,7 @@ require_once '../../includes/head.php';
         resources support our commitment to transparency.
       </p>
       <div class="hero-actions">
-        <a href="/pages/public/contact.php" class="btn-hero-outline">
+        <a href="/contact" class="btn-hero-outline">
           Contact Us <i class="ph ph-arrow-right" aria-hidden="true"></i>
         </a>
       </div>
@@ -122,7 +122,7 @@ require_once '../../includes/head.php';
       <h2 id="company-cta-title" class="cta-header">Need assistance? We're here to help.</h2>
       <p class="cta-subtext">Get quick, reliable support from our team.</p>
       <div class="cta-actions">
-        <a href="/pages/public/contact.php" class="btn-cta">
+        <a href="/contact" class="btn-cta">
           Contact Support <i class="ph ph-arrow-right" aria-hidden="true"></i>
         </a>
       </div>

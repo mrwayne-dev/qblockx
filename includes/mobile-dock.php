@@ -21,7 +21,7 @@ $currentSection = $currentSection ?? 'overview';
     <span>Wallet</span>
   </a>
 
-  <a href="#" class="dock-item dock-item--center <?= $currentSection === 'trade' ? 'active' : '' ?>"
+  <a href="#" class="dock-item <?= $currentSection === 'trade' ? 'active' : '' ?>"
      data-nav="trade" aria-label="Invest">
     <i class="ph ph-chart-bar" aria-hidden="true"></i>
     <span>Invest</span>

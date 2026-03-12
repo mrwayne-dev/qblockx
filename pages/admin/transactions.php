@@ -1,1 +1,1 @@
-<?php header('Location: /pages/admin/dashboard.php#withdrawals'); exit;
+<?php header('Location: /admin/dashboard#withdrawals'); exit;

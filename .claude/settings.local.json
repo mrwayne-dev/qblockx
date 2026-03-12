@@ -14,7 +14,13 @@
       "Bash(powershell.exe -Command \"Set-Location ''C:\\\\mrwayne\\\\web_dev\\\\arqoracapital\\\\assets\\\\email-templates''; Remove-Item membership-enrolled.html, membership-expired.html, transfer-sent.html, transfer-received.html, email_template.html, welcome.html, password-changed.html; Get-ChildItem *.html | Select-Object -ExpandProperty Name\")",
       "Bash(ls -la \"C:\\\\mrwayne\\\\web_dev\\\\arqoracapital\\\\pages\\\\admin\"\" 2>/dev/null || echo \"Admin pages directory not found \")",
       "Bash(\"C:\\\\mrwayne\\\\web_dev\\\\arqoracapital\\\\.env\")",
-      "Bash(\"C:\\\\mrwayne\\\\web_dev\\\\arqoracapital\\\\pages\\\\admin\\\\register.php\")"
+      "Bash(\"C:\\\\mrwayne\\\\web_dev\\\\arqoracapital\\\\pages\\\\admin\\\\register.php\")",
+      "Bash(grep -E \"\\\\.php$\")",
+      "Bash(find /c/mrwayne/web_dev/arqoracapital -maxdepth 3 -not -path */vendor/* -not -path */.git/* -type d)",
+      "Bash(xargs grep:*)",
+      "Bash(grep -rn href=[''].*.php /c/mrwayne/web_dev/arqoracapital/pages/ /c/mrwayne/web_dev/arqoracapital/includes/)",
+      "Bash(xargs sed:*)",
+      "Bash(/dev/null __NEW_LINE_dc62fba4bab9cd16__ echo '=== 4. Error handling in env.php ===' grep -c display_errors /c/mrwayne/web_dev/arqoracapital/config/env.php __NEW_LINE_dc62fba4bab9cd16__ echo '=== 5. admin-responsive.css size ===' wc -l /c/mrwayne/web_dev/arqoracapital/assets/css/admin/admin-responsive.css __NEW_LINE_dc62fba4bab9cd16__ echo '=== 6. HTTPS rule in .htaccess ===' grep -c HTTPS /c/mrwayne/web_dev/arqoracapital/.htaccess)"
     ]
   }
 }

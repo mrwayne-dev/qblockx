@@ -12,7 +12,7 @@ require_once '../../includes/head.php';
 
     <!-- ── Left brand panel ── -->
     <div class="auth-panel">
-      <a href="/pages/public/index.php" class="auth-panel-logo" aria-label="ArqoraCapital home">
+      <a href="/" class="auth-panel-logo" aria-label="ArqoraCapital home">
         <span class="nav-logo-mark" aria-hidden="true">
           <img src="/assets/images/logo/2.png" alt="">
         </span>
@@ -74,7 +74,7 @@ require_once '../../includes/head.php';
         </div>
 
         <div class="auth-row">
-          <a href="/pages/public/forgot-password.php" class="auth-link">Forgot password?</a>
+          <a href="/forgot-password" class="auth-link">Forgot password?</a>
         </div>
 
         <button type="submit" class="btn-primary full-width auth-submit" id="loginBtn">
@@ -88,7 +88,7 @@ require_once '../../includes/head.php';
 
       <p class="auth-footer-text">
         Don't have an account?
-        <a href="/pages/public/register.php" class="auth-link">Create one</a>
+        <a href="/register" class="auth-link">Create one</a>
       </p>
 
     </div>

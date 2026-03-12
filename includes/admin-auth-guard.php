@@ -9,6 +9,6 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header('Location: /pages/admin/login.php');
+    header('Location: /admin/login');
     exit;
 }

@@ -18,7 +18,7 @@ $token = trim($_GET['token'] ?? '');
 
     <!-- ── Left brand panel ── -->
     <div class="auth-panel">
-      <a href="/pages/public/index.php" class="auth-panel-logo" aria-label="ArqoraCapital home">
+      <a href="/" class="auth-panel-logo" aria-label="ArqoraCapital home">
         <span class="nav-logo-mark" aria-hidden="true">
           <img src="/assets/images/logo/2.png" alt="">
         </span>
@@ -76,7 +76,7 @@ $token = trim($_GET['token'] ?? '');
       </div>
 
       <p class="auth-footer-text" style="margin-top: var(--space-8);">
-        Already verified? <a href="/pages/public/login.php" class="auth-link">Sign in</a>
+        Already verified? <a href="/login" class="auth-link">Sign in</a>
       </p>
       <p class="auth-disclaimer">
         Didn't receive the email? Check your spam folder or
@@ -93,7 +93,7 @@ $token = trim($_GET['token'] ?? '');
       <p class="auth-subtext" id="verifySubtext">Please wait while we confirm your email address.</p>
       <div id="verifyMsg" class="auth-msg" role="alert" aria-live="polite" style="display:none;"></div>
       <div id="verifyActions" style="display:none; margin-top: var(--space-6);">
-        <a href="/pages/public/login.php" class="btn-primary full-width" style="justify-content:center;">Sign In to Your Account</a>
+        <a href="/login" class="btn-primary full-width" style="justify-content:center;">Sign In to Your Account</a>
       </div>
       <?php endif; ?>
 

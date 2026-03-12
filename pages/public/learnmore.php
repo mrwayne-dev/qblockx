@@ -31,10 +31,10 @@ require_once '../../includes/head.php';
         to maximise your potential.
       </p>
       <div class="hero-actions">
-        <a href="/pages/public/login.php" class="btn-hero-outline">
+        <a href="/login" class="btn-hero-outline">
           Get Started <i class="ph ph-arrow-right" aria-hidden="true"></i>
         </a>
-        <a href="/pages/public/contact.php" class="btn-hero-ghost">
+        <a href="/contact" class="btn-hero-ghost">
           Contact Us <i class="ph ph-arrow-right" aria-hidden="true"></i>
         </a>
       </div>
@@ -54,7 +54,7 @@ require_once '../../includes/head.php';
           offering tools, automated contracts, and personalised solutions tailored
           to your financial goals.
         </p>
-        <a href="/pages/public/login.php" class="btn-learn-more">
+        <a href="/login" class="btn-learn-more">
           Start Investing <i class="ph ph-arrow-right" aria-hidden="true"></i>
         </a>
       </div>
@@ -128,10 +128,10 @@ require_once '../../includes/head.php';
       <h2 id="learnmore-cta-title" class="cta-header">Ready to start your journey?</h2>
       <p class="cta-subtext">Join ArqoraCapital today and unlock your financial potential.</p>
       <div class="cta-actions">
-        <a href="/pages/public/login.php" class="btn-shiny">
+        <a href="/login" class="btn-shiny">
           Get Started <i class="ph ph-arrow-right" aria-hidden="true"></i>
         </a>
-        <a href="/pages/public/solutions.php" class="btn-outline">View Plans</a>
+        <a href="/solutions" class="btn-outline">View Plans</a>
       </div>
     </div>
   </section>

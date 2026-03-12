@@ -15,7 +15,7 @@ $refCode = htmlspecialchars(trim($_GET['ref'] ?? ''));
 
     <!-- ── Left brand panel ── -->
     <div class="auth-panel">
-      <a href="/pages/public/index.php" class="auth-panel-logo" aria-label="ArqoraCapital home">
+      <a href="/" class="auth-panel-logo" aria-label="ArqoraCapital home">
         <span class="nav-logo-mark" aria-hidden="true">
           <img src="/assets/images/logo/2.png" alt="">
         </span>
@@ -125,13 +125,13 @@ $refCode = htmlspecialchars(trim($_GET['ref'] ?? ''));
 
       <p class="auth-footer-text">
         Already have an account?
-        <a href="/pages/public/login.php" class="auth-link">Sign in</a>
+        <a href="/login" class="auth-link">Sign in</a>
       </p>
 
       <p class="auth-disclaimer">
         By creating an account you agree to our
-        <a href="/pages/public/terms.php" class="auth-link">Terms of Service</a> and
-        <a href="/pages/public/privacy.php" class="auth-link">Privacy Policy</a>.
+        <a href="/terms" class="auth-link">Terms of Service</a> and
+        <a href="/privacy" class="auth-link">Privacy Policy</a>.
       </p>
 
     </div>

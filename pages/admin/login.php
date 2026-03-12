@@ -26,7 +26,7 @@
 
     <!-- ── Left brand panel ── -->
     <div class="auth-panel">
-      <a href="/pages/public/index.php" class="auth-panel-logo" aria-label="ArqoraCapital home">
+      <a href="/" class="auth-panel-logo" aria-label="ArqoraCapital home">
         <span class="nav-logo-mark" aria-hidden="true">
           <img src="/assets/images/logo/2.png" alt="">
         </span>
@@ -97,7 +97,7 @@
 
       <p class="auth-footer-text">
         Need an admin account?
-        <a href="/pages/admin/register.php" class="auth-link">Register with invite code</a>
+        <a href="/admin/register" class="auth-link">Register with invite code</a>
       </p>
 
     </div>

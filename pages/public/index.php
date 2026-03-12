@@ -19,13 +19,13 @@ require_once '../../includes/head.php';
     <!-- ── Background slides ── -->
     <div class="hero-slides" aria-hidden="true">
       <div class="hero-slide active">
-        <img src="/assets/images/background/arqorabgimage.png" alt="" draggable="false">
+        <img loading="lazy" src="/assets/images/background/arqorabgimage.png" alt="" draggable="false">
       </div>
       <div class="hero-slide">
-        <img src="/assets/images/background/arqorabgimage2.png" alt="" draggable="false">
+        <img loading="lazy" src="/assets/images/background/arqorabgimage2.png" alt="" draggable="false">
       </div>
       <div class="hero-slide">
-        <img src="/assets/images/background/arqorabgimage3.png" alt="" draggable="false">
+        <img loading="lazy" src="/assets/images/background/arqorabgimage3.png" alt="" draggable="false">
       </div>
     </div>
 
@@ -44,10 +44,10 @@ require_once '../../includes/head.php';
           with daily payouts.
         </p>
         <div class="hero-actions">
-          <a href="/pages/public/login.php" class="btn-hero-outline">
+          <a href="/login" class="btn-hero-outline">
             Get Started <i class="ph ph-arrow-right" aria-hidden="true"></i>
           </a>
-          <a href="/pages/public/learnmore.php" class="btn-hero-ghost">
+          <a href="/learnmore" class="btn-hero-ghost">
             Learn More <i class="ph ph-arrow-right" aria-hidden="true"></i>
           </a>
         </div>
@@ -67,7 +67,7 @@ require_once '../../includes/head.php';
           <a href="#pricing" class="btn-hero-outline">
             View Plans <i class="ph ph-arrow-right" aria-hidden="true"></i>
           </a>
-          <a href="/pages/public/learnmore.php" class="btn-hero-ghost">
+          <a href="/learnmore" class="btn-hero-ghost">
             How It Works <i class="ph ph-arrow-right" aria-hidden="true"></i>
           </a>
         </div>
@@ -84,10 +84,10 @@ require_once '../../includes/head.php';
           ArqoraCapital for secure, transparent, automated daily crypto returns.
         </p>
         <div class="hero-actions">
-          <a href="/pages/public/login.php" class="btn-hero-outline">
+          <a href="/login" class="btn-hero-outline">
             Join Now <i class="ph ph-arrow-right" aria-hidden="true"></i>
           </a>
-          <a href="/pages/public/contact.php" class="btn-hero-ghost">
+          <a href="/contact" class="btn-hero-ghost">
             Contact Us <i class="ph ph-arrow-right" aria-hidden="true"></i>
           </a>
         </div>
@@ -214,12 +214,12 @@ require_once '../../includes/head.php';
           their returns by automatically optimising capital deployment across Bitcoin,
           Ethereum, and other leading cryptocurrencies.
         </p>
-        <a href="/pages/public/solutions.php" class="btn-learn-more" aria-label="Learn more about solutions">
+        <a href="/solutions" class="btn-learn-more" aria-label="Learn more about solutions">
           Learn More <i class="ph ph-arrow-right" aria-hidden="true"></i>
         </a>
       </div>
       <div class="feature-image">
-        <div class="feature-image-placeholder glass"><img src="/assets/images/background/automate-wealth.svg" alt="Automated wealth optimization"></div>
+        <div class="feature-image-placeholder glass"><img loading="lazy" src="/assets/images/background/automate-wealth.svg" alt="Automated wealth optimization"></div>
       </div>
     </div>
   </section>
@@ -234,13 +234,13 @@ require_once '../../includes/head.php';
           run for 5 days with daily profit payouts and full principal return on
           completion. From Starter to Platinum — there is a plan for every investor.
         </p>
-        <a href="/pages/public/solutions.php" class="btn-learn-more" aria-label="Learn more about investment contracts">
+        <a href="/solutions" class="btn-learn-more" aria-label="Learn more about investment contracts">
           Learn More <i class="ph ph-arrow-right" aria-hidden="true"></i>
         </a>
       </div>
       <div class="feature-image">
         <div class="feature-image-placeholder glass">
-        <img src="/assets/images/background/flexinvest.svg" alt="Flexible investment contracts"></div>
+        <img loading="lazy" src="/assets/images/background/flexinvest.svg" alt="Flexible investment contracts"></div>
       </div>
     </div>
   </section>
@@ -255,12 +255,12 @@ require_once '../../includes/head.php';
           institutional-grade security standards — ensuring your capital and earnings
           are protected at every step.
         </p>
-        <a href="/pages/public/solutions.php" class="btn-learn-more" aria-label="Learn more about security">
+        <a href="/solutions" class="btn-learn-more" aria-label="Learn more about security">
           Learn More <i class="ph ph-arrow-right" aria-hidden="true"></i>
         </a>
       </div>
       <div class="feature-image">
-        <div class="feature-image-placeholder glass"><img src="/assets/images/background/secure.svg" alt="Secure infrastructure"></div>
+        <div class="feature-image-placeholder glass"><img loading="lazy" src="/assets/images/background/secure.svg" alt="Secure infrastructure"></div>
       </div>
     </div>
   </section>
@@ -277,7 +277,7 @@ require_once '../../includes/head.php';
         </p>
       </div>
       <div class="why-us-image">
-        <div class="feature-image-placeholder glass"><img src="/assets/images/background/heavy-lifting.svg" alt="Why choose ArqoraCapital"></div>
+        <div class="feature-image-placeholder glass"><img loading="lazy" src="/assets/images/background/heavy-lifting.svg" alt="Why choose ArqoraCapital"></div>
       </div>
     </div>
   </section>
@@ -464,7 +464,7 @@ require_once '../../includes/head.php';
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Return of Capital: Yes</li>
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Daily Payouts</li>
           </ul>
-          <a href="/pages/public/login.php" class="btn-primary pricing-button" aria-label="Get started with Starter Plan">
+          <a href="/login" class="btn-primary pricing-button" aria-label="Get started with Starter Plan">
             Get Started
           </a>
         </div>
@@ -480,7 +480,7 @@ require_once '../../includes/head.php';
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Return of Capital: Yes</li>
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Priority Support</li>
           </ul>
-          <a href="/pages/public/login.php" class="btn-primary pricing-button" aria-label="Get started with Bronze Plan">
+          <a href="/login" class="btn-primary pricing-button" aria-label="Get started with Bronze Plan">
             Get Started
           </a>
         </div>
@@ -496,7 +496,7 @@ require_once '../../includes/head.php';
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Return of Capital: Yes</li>
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Premium Support</li>
           </ul>
-          <a href="/pages/public/login.php" class="btn-primary pricing-button" aria-label="Get started with Silver Plan">
+          <a href="/login" class="btn-primary pricing-button" aria-label="Get started with Silver Plan">
             Get Started
           </a>
         </div>
@@ -512,7 +512,7 @@ require_once '../../includes/head.php';
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Return of Capital: Yes</li>
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Dedicated Manager</li>
           </ul>
-          <a href="/pages/public/login.php" class="btn-primary pricing-button" aria-label="Get started with Platinum Plan">
+          <a href="/login" class="btn-primary pricing-button" aria-label="Get started with Platinum Plan">
             Get Started
           </a>
         </div>
@@ -528,11 +528,11 @@ require_once '../../includes/head.php';
       <h2 id="cta-title" class="cta-header">Ready to grow your wealth?</h2>
       <p class="cta-subtext">Join thousands of investors earning daily returns on ArqoraCapital.</p>
       <div class="cta-actions">
-        <a href="/pages/public/login.php" class="btn-primary" aria-label="Open your account">
+        <a href="/login" class="btn-primary" aria-label="Open your account">
           Open Your Account
           <i class="ph ph-arrow-right" aria-hidden="true"></i>
         </a>
-        <a href="/pages/public/learnmore.php" class="btn-outline-white" aria-label="Learn how it works">
+        <a href="/learnmore" class="btn-outline-white" aria-label="Learn how it works">
           How It Works
         </a>
       </div>

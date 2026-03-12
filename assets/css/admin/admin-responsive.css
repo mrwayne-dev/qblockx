@@ -1,0 +1,215 @@
+/* ============================================================
+   Admin Panel — Responsive Styles
+   Mobile-first breakpoints for body.admin-body
+   ============================================================ */
+
+/* ── Tablet (≤1199px) ──────────────────────────────────────── */
+@media (max-width: 1199px) {
+
+  body.admin-body .admin-sidebar {
+    width: 220px;
+  }
+
+  body.admin-body .admin-main {
+    margin-left: 220px;
+  }
+
+  body.admin-body .admin-sections {
+    padding: 2rem 2rem;
+  }
+
+  body.admin-body .plan-configs-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  body.admin-body .metric-cards-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ── Small Tablet / Large Mobile (≤899px) ──────────────────── */
+@media (max-width: 899px) {
+
+  /* Hide desktop sidebar — show mobile dock instead */
+  body.admin-body .admin-sidebar {
+    display: none;
+  }
+
+  /* Remove sidebar margin — full width */
+  body.admin-body .admin-main {
+    margin-left: 0;
+  }
+
+  /* Hide desktop sticky header — show mobile topbar */
+  body.admin-body .admin-header {
+    display: none;
+  }
+
+  body.admin-body .admin-topbar {
+    display: flex;
+  }
+
+  /* Show mobile bottom dock */
+  body.admin-body .mobile-dock.admin-mobile-dock {
+    display: flex;
+    min-height: 56px;
+  }
+
+  body.admin-body .mobile-dock.admin-mobile-dock .dock-item {
+    min-height: 44px;
+  }
+
+  /* Add bottom padding so content isn't hidden under dock */
+  body.admin-body .admin-sections {
+    padding: 1.5rem 1.25rem;
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Stat grid: 2 columns */
+  body.admin-body .stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  /* Quick actions: 1 column */
+  body.admin-body .quick-actions-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  /* Metric cards: 1 column */
+  body.admin-body .metric-cards-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  /* Plan config grid: 2 columns */
+  body.admin-body .plan-configs-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  /* Tables — horizontal scroll */
+  body.admin-body .data-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body.admin-body .data-table {
+    min-width: 560px;
+  }
+
+  /* Modals — full-width on mobile */
+  body.admin-body .admin-modal {
+    max-width: 100%;
+    border-radius: 16px;
+    margin: 0;
+  }
+
+  body.admin-body .admin-modal--wide {
+    max-width: 100%;
+  }
+
+  /* Modal overlay padding */
+  body.admin-body .admin-modal-overlay {
+    padding: 0.5rem;
+    align-items: flex-end;
+  }
+
+  /* Section headers */
+  body.admin-body .section-header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  body.admin-body .section-title {
+    font-size: 1.25rem;
+  }
+
+  /* Buttons wrap */
+  body.admin-body .btn-actions {
+    flex-wrap: wrap;
+  }
+
+  /* Table toolbar: stack on small screens */
+  body.admin-body .table-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  body.admin-body .table-filters {
+    flex-wrap: wrap;
+  }
+
+  /* Pagination */
+  body.admin-body .pagination {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  /* Quick action card: tighter layout */
+  body.admin-body .quick-action-card {
+    padding: 1rem 1.25rem;
+  }
+}
+
+/* ── Mobile (≤599px) ────────────────────────────────────────── */
+@media (max-width: 599px) {
+
+  body.admin-body .admin-sections {
+    padding: 1.25rem 1rem;
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Stat grid: 1 column */
+  body.admin-body .stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Plan configs: 1 column */
+  body.admin-body .plan-configs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Stat card values */
+  body.admin-body .stat-value {
+    font-size: 1.5rem;
+  }
+
+  /* Admin modal — full-screen feel */
+  body.admin-body .admin-modal {
+    max-height: 85vh;
+  }
+
+  /* Topbar logo text — hide on very small screens */
+  body.admin-body .topbar-logo span:not(.topbar-badge) {
+    display: none;
+  }
+
+  /* Table action buttons */
+  body.admin-body .btn-action {
+    min-height: 36px;
+    min-width: 44px;
+  }
+
+  /* Dock items — ensure 44px tap target */
+  body.admin-body .mobile-dock.admin-mobile-dock .dock-item {
+    min-height: 44px;
+    padding: 0.5rem 0.1rem;
+  }
+}
+
+/* ── No horizontal overflow on any screen ──────────────────── */
+body.admin-body,
+body.admin-body .admin-layout,
+body.admin-body .admin-main,
+body.admin-body .admin-sections {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body.admin-body .admin-section {
+  overflow: visible;
+}

@@ -101,27 +101,36 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* ── Crypto Price Updates ──────────────────────────────────── */
   async function updateCryptoPrices() {
-    var coinIds = [
-      'bitcoin', 'ethereum', 'binancecoin', 'usd-coin',
-      'solana', 'ripple', 'tether'
-    ];
-    var url = 'https://api.coingecko.com/api/v3/simple/price?ids='
-              + coinIds.join('%2C')
-              + '&vs_currencies=usd&include_24hr_change=true';
+    // Map from data-coin attr value to CoinCap asset ID
+    var coinMap = {
+      'bitcoin':     'bitcoin',
+      'ethereum':    'ethereum',
+      'binancecoin': 'binance-coin',
+      'usd-coin':    'usd-coin',
+      'solana':      'solana',
+      'ripple':      'xrp',
+      'tether':      'tether'
+    };
+    var capIds = Object.values(coinMap).filter(function (v, i, a) { return a.indexOf(v) === i; });
+    var url = 'https://api.coincap.io/v2/assets?ids=' + capIds.join(',');
 
     try {
       var res = await fetch(url);
       if (!res.ok) throw new Error('API error');
-      var prices = await res.json();
+      var json = await res.json();
+
+      var priceByCapId = {};
+      (json.data || []).forEach(function (asset) { priceByCapId[asset.id] = asset; });
 
       // Update [data-coin] elements (both stock list and ticker)
       document.querySelectorAll('[data-coin]').forEach(function (el) {
-        var coin  = el.dataset.coin;
-        var data  = prices[coin];
-        if (!data) return;
+        var attrCoin = el.dataset.coin;
+        var capId    = coinMap[attrCoin];
+        var asset    = capId && priceByCapId[capId];
+        if (!asset) return;
 
-        var price  = data.usd;
-        var change = data.usd_24h_change;
+        var price  = parseFloat(asset.priceUsd);
+        var change = parseFloat(asset.changePercent24Hr);
         var formatted = '$' + price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
         // If it's inside a ticker, show price + change
@@ -160,14 +169,14 @@ document.addEventListener('DOMContentLoaded', function () {
     var openAcctBtn = document.getElementById('openacct-btn');
     if (openAcctBtn) {
       openAcctBtn.addEventListener('click', function () {
-        window.location.href = '/pages/public/login.php';
+        window.location.href = '/login';
       });
     }
 
     var supportBtn = document.getElementById('support-btn');
     if (supportBtn) {
       supportBtn.addEventListener('click', function () {
-        window.location.href = '/pages/public/contact.php';
+        window.location.href = '/contact';
       });
     }
   }
@@ -358,12 +367,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (result.success) {
           showAuthMsg('authMsg', 'Login successful! Redirecting…', false);
-          window.location.href = '/pages/user/dashboard.php';
+          window.location.href = '/dashboard';
         } else {
           if (result.unverified) {
             try { sessionStorage.setItem('pendingVerifyEmail', data.email); } catch (ignore) {}
             var msg = (result.message || 'Please verify your email.') +
-              ' <a href="/pages/public/verify-email.php" style="color:inherit;font-weight:600;text-decoration:underline;">Go to verification page →</a>';
+              ' <a href="/verify-email" style="color:inherit;font-weight:600;text-decoration:underline;">Go to verification page →</a>';
             showAuthMsg('authMsg', msg, true, true);
           } else {
             showAuthMsg('authMsg', result.message || 'Invalid credentials. Please try again.', true);
@@ -427,7 +436,7 @@ document.addEventListener('DOMContentLoaded', function () {
           showAuthMsg('authMsg', 'Account created! Check your email for a verification link…', false);
           try { sessionStorage.setItem('pendingVerifyEmail', data.email); } catch (ignore) {}
           setTimeout(function () {
-            window.location.href = '/pages/public/verify-email.php';
+            window.location.href = '/verify-email';
           }, 1500);
         } else {
           showAuthMsg('authMsg', result.message || 'Registration failed. Please try again.', true);
@@ -525,7 +534,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (result.success) {
           setTimeout(function () {
-            window.location.href = '/pages/public/login.php';
+            window.location.href = '/login';
           }, 2000);
         } else {
           btn.disabled          = false;
@@ -578,7 +587,7 @@ document.addEventListener('DOMContentLoaded', function () {
           showResult(result.success, result.message);
           if (result.success) {
             setTimeout(function () {
-              window.location.href = '/pages/public/login.php';
+              window.location.href = '/login';
             }, 3000);
           }
         } catch (err) {

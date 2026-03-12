@@ -9,6 +9,6 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 if (!isset($_SESSION['user_id'])) {
-    header('Location: /pages/public/login.php');
+    header('Location: /login');
     exit;
 }

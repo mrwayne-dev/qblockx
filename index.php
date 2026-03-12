@@ -6,5 +6,5 @@
  * 
  */
 
-header('Location: /pages/public/index.php');
-exit;
+chdir(__DIR__ . '/pages/public');
+require_once __DIR__ . '/pages/public/index.php';

@@ -16,7 +16,7 @@ require_once '../../includes/auth-guard.php';
 
 $pageTitle        = 'Dashboard';
 $bodyClass        = 'dashboard-body';
-$extraHeadLinks   = ['/assets/css/dashboard.css'];
+$extraHeadLinks   = ['/assets/css/dashboard.css', '/assets/css/user/user-responsive.css'];
 $extraHeadScripts = ['https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js'];
 require_once '../../includes/head.php';
 ?>
@@ -257,7 +257,7 @@ require_once '../../includes/head.php';
           </button>
         </div>
 
-        <div class="plan-card plan-card--featured">
+        <div class="plan-card">
           <div class="plan-card-header">
             <h3 class="plan-name">Silver</h3>
             <span class="plan-rate-badge">6% / day</span>

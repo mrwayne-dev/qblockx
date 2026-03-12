@@ -1,1 +1,1 @@
-<?php header('Location: /pages/admin/dashboard.php#trades'); exit;
+<?php header('Location: /admin/dashboard#trades'); exit;

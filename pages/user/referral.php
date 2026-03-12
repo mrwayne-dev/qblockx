@@ -1,1 +1,1 @@
-<?php header('Location: /pages/user/dashboard.php#referral'); exit; ?>
+<?php header('Location: /dashboard#referral'); exit; ?>

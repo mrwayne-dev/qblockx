@@ -1306,3 +1306,9 @@ body.admin-body .table-filters-bar {
     font-size: 1.25rem;
   }
 }
+
+
+/* ── Admin auth panel heading — smaller than marketing site ─ */
+body.admin-body .auth-panel-heading {
+  font-size: clamp(1.6rem, 2.5vw, 2.4rem);
+}

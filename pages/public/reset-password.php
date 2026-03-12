@@ -12,7 +12,7 @@ require_once '../../includes/head.php';
 
     <!-- ── Left brand panel ── -->
     <div class="auth-panel">
-      <a href="/pages/public/index.php" class="auth-panel-logo" aria-label="ArqoraCapital home">
+      <a href="/" class="auth-panel-logo" aria-label="ArqoraCapital home">
         <span class="nav-logo-mark" aria-hidden="true">
           <img src="/assets/images/logo/2.png" alt="">
         </span>
@@ -72,7 +72,7 @@ require_once '../../includes/head.php';
       </form>
 
       <p class="auth-footer-text">
-        <a href="/pages/public/login.php" class="auth-link">
+        <a href="/login" class="auth-link">
           <i class="ph ph-arrow-left" aria-hidden="true"></i>
           Back to Sign In
         </a>

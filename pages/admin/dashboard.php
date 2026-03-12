@@ -23,6 +23,7 @@ $admin = getAuthUser();
   <!-- Styles -->
   <link rel="stylesheet" href="/assets/css/main.css">
   <link rel="stylesheet" href="/assets/css/admin/admin.css">
+  <link rel="stylesheet" href="/assets/css/admin/admin-responsive.css">
   <link rel="stylesheet" href="/assets/icons/style.css">
 
   <!-- Favicon -->
@@ -35,7 +36,7 @@ $admin = getAuthUser();
   <!-- ── Desktop Sidebar ─────────────────────────────────────────── -->
   <aside class="admin-sidebar">
 
-    <a href="/pages/admin/dashboard.php" class="sidebar-logo">
+    <a href="/admin/dashboard" class="sidebar-logo">
       <img src="/assets/images/logo/5.png" alt="ArqoraCapital" onerror="this.style.display='none'">
       ArqoraCapital
       <span class="sidebar-logo-badge">Admin</span>
@@ -92,7 +93,7 @@ $admin = getAuthUser();
 
     <!-- Mobile topbar -->
     <header class="admin-topbar">
-      <a href="/pages/admin/dashboard.php" class="topbar-logo">
+      <a href="/admin/dashboard" class="topbar-logo">
         <img src="/assets/images/logo/2.png" alt="" onerror="this.style.display='none'">
         ArqoraCapital
         <span class="topbar-badge">Admin</span>

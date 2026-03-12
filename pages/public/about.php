@@ -32,10 +32,10 @@ require_once '../../includes/head.php';
         daily returns through transparent, automated contracts.
       </p>
       <div class="hero-actions">
-        <a href="/pages/public/login.php" class="btn-hero-outline">
+        <a href="/login" class="btn-hero-outline">
           Get Started <i class="ph ph-arrow-right" aria-hidden="true"></i>
         </a>
-        <a href="/pages/public/learnmore.php" class="btn-hero-ghost">
+        <a href="/learnmore" class="btn-hero-ghost">
           Learn More <i class="ph ph-arrow-right" aria-hidden="true"></i>
         </a>
       </div>
@@ -161,8 +161,7 @@ require_once '../../includes/head.php';
            industry-recognised certifications to safeguard our investors.</p>
       </div>
       <div class="implement-image">
-        <!-- <img src="/assets/images/certificate.jpg" alt="ArqoraCapital Certificate" class="certificate-image"> -->
-        <div class="feature-image-placeholder glass" style="min-height:220px;"></div>
+        <div class="feature-image-placeholder glass"><img loading="lazy" src="/assets/images/background/2f2d8620-41b2-4f09-816d-9e565f3c7b40.png" alt="ArqoraCapital Certificate" class="certificate-image"></div>
       </div>
     </div>
   </section>
@@ -173,10 +172,10 @@ require_once '../../includes/head.php';
       <h2 id="about-cta-title" class="cta-header">Ready to join ArqoraCapital?</h2>
       <p class="cta-subtext">Open an account today and start earning daily returns.</p>
       <div class="cta-actions">
-        <a href="/pages/public/login.php" class="btn-cta">
+        <a href="/login" class="btn-cta">
           Get Started <i class="ph ph-arrow-right" aria-hidden="true"></i>
         </a>
-        <a href="/pages/public/contact.php" class="btn-cta-ghost">
+        <a href="/contact" class="btn-cta-ghost">
           Contact Us <i class="ph ph-arrow-right" aria-hidden="true"></i>
         </a>
       </div>

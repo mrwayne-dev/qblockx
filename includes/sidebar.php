@@ -10,7 +10,7 @@ $currentSection = $currentSection ?? 'overview';
 <aside class="dashboard-sidebar glass" id="dashboardSidebar" aria-label="Dashboard navigation">
 
   <!-- Sidebar brand -->
-  <a href="/pages/public/index.php" class="sidebar-logo">
+  <a href="/" class="sidebar-logo">
     <span class="nav-logo-mark" aria-hidden="true">
       <img src="/assets/images/logo/5.png" alt="">
     </span>

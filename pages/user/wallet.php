@@ -1,1 +1,1 @@
-<?php header('Location: /pages/user/dashboard.php#wallet'); exit; ?>
+<?php header('Location: /dashboard#wallet'); exit; ?>

@@ -45,7 +45,7 @@ try {
     $total_commission = (float) $totalStmt->fetchColumn();
 
     $app_url   = getenv('APP_URL') ?: '';
-    $ref_link  = $app_url . '/pages/public/register.php?ref=' . $codeRow['code'];
+    $ref_link  = $app_url . '/register?ref=' . $codeRow['code'];
 
     echo json_encode([
         'success' => true,

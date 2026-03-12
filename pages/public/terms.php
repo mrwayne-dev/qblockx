@@ -42,7 +42,7 @@ require_once '../../includes/head.php';
         <p>
           By accessing or using the ArqoraCapital platform ("Platform"), creating an account, or making
           any investment, you agree to be bound by these Terms of Service ("Terms") and our
-          <a href="/pages/public/privacy.php">Privacy Policy</a>. If you do not agree to these Terms,
+          <a href="/privacy">Privacy Policy</a>. If you do not agree to these Terms,
           you must not use our Platform.
         </p>
         <p>
@@ -94,7 +94,7 @@ require_once '../../includes/head.php';
         <p>
           <strong>Investment returns are not guaranteed.</strong> Past performance is not indicative of
           future results. All investing involves risk of loss. See our
-          <a href="/pages/public/risk.php">Risk Disclosure</a> for full details.
+          <a href="/risk">Risk Disclosure</a> for full details.
         </p>
 
         <h2>5. Deposits and Withdrawals</h2>

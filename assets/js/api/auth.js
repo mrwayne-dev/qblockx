@@ -24,7 +24,7 @@ const AuthAPI = (() => {
 
     async function logout() {
         await fetch('/api/auth/user-logout.php', { method: 'POST' });
-        window.location.href = '/pages/public/login.php';
+        window.location.href = '/login';
     }
 
     async function forgotPassword(email) {
@@ -59,7 +59,7 @@ const AuthAPI = (() => {
                 const result = await login(data.email, data.password);
                 btn.disabled = false;
                 if (result.success) {
-                    window.location.href = '/pages/user/dashboard.php';
+                    window.location.href = '/dashboard';
                 } else if (msg) {
                     msg.textContent   = result.message;
                     msg.className     = 'error';
@@ -81,7 +81,7 @@ const AuthAPI = (() => {
                 const result = await register(data.email, data.password, data.full_name || '', refCode);
                 btn.disabled = false;
                 if (result.success) {
-                    window.location.href = '/pages/public/login.php';
+                    window.location.href = '/login';
                 } else if (msg) {
                     msg.textContent   = result.message;
                     msg.className     = 'error';
@@ -124,7 +124,7 @@ const AuthAPI = (() => {
                     msg.className     = result.success ? 'success' : 'error';
                     msg.style.display = 'block';
                 }
-                if (result.success) setTimeout(() => window.location.href = '/pages/public/login.php', 2000);
+                if (result.success) setTimeout(() => window.location.href = '/login', 2000);
             });
         }
 

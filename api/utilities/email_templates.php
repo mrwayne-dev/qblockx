@@ -54,16 +54,8 @@ class Mailer
             );
         }
 
-        // ── Rebrand: replace every "Tesla Investment" reference ──────────────
-        $html = str_replace('Tesla Investment', $appName, $html);
-        $html = str_replace('tesla-investment.com', $appHost, $html);
-
-        // Replace Tesla logo image with our logo
-        $html = str_replace(
-            'https://tesla-investment.com/assets/images/logo/tesla-symbol-logo.svg',
-            $appUrl . '/assets/images/logo/1.png',
-            $html
-        );
+        // Ensure {{app_host}} is replaced (not in allVars by default)
+        $html = str_replace('{{app_host}}', $appHost, $html);
 
         // Fix any remaining {{...}} that were not supplied — leave them blank
         $html = preg_replace('/\{\{[^}]+\}\}/', '', $html);

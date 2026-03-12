@@ -32,10 +32,10 @@ require_once '../../includes/head.php';
         we provide the tools to build trust, retention, and long-term growth.
       </p>
       <div class="hero-actions">
-        <a href="/pages/public/login.php" class="btn-hero-outline">
+        <a href="/login" class="btn-hero-outline">
           Get Started <i class="ph ph-arrow-right" aria-hidden="true"></i>
         </a>
-        <a href="/pages/public/contact.php" class="btn-hero-ghost">
+        <a href="/contact" class="btn-hero-ghost">
           Contact Us <i class="ph ph-arrow-right" aria-hidden="true"></i>
         </a>
       </div>
@@ -127,7 +127,7 @@ require_once '../../includes/head.php';
       </div>
       <div class="implement-image">
         <div class="feature-image-placeholder glass">
-        <img src="/assets/images/background/pre-built.svg" alt="Platform preview" class="solutions-image"></div>
+        <img loading="lazy" src="/assets/images/background/pre-built.svg" alt="Platform preview" class="solutions-image"></div>
       </div>
     </div>
   </section>
@@ -150,7 +150,7 @@ require_once '../../includes/head.php';
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Duration: 5 Days</li>
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Return of Capital: Yes</li>
           </ul>
-          <a href="/pages/public/login.php" class="btn-primary pricing-button">Get Started</a>
+          <a href="/login" class="btn-primary pricing-button">Get Started</a>
         </div>
         <div class="pricing-card glass">
           <p class="pricing-subtitle">For investors scaling up.</p>
@@ -161,7 +161,7 @@ require_once '../../includes/head.php';
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Duration: 5 Days</li>
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Return of Capital: Yes</li>
           </ul>
-          <a href="/pages/public/login.php" class="btn-shiny pricing-button">Get Started</a>
+          <a href="/login" class="btn-shiny pricing-button">Get Started</a>
         </div>
         <div class="pricing-card glass">
           <p class="pricing-subtitle">For advanced investors.</p>
@@ -172,7 +172,7 @@ require_once '../../includes/head.php';
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Duration: 5 Days</li>
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Return of Capital: Yes</li>
           </ul>
-          <a href="/pages/public/login.php" class="btn-primary pricing-button">Get Started</a>
+          <a href="/login" class="btn-primary pricing-button">Get Started</a>
         </div>
         <div class="pricing-card glass">
           <p class="pricing-subtitle">For elite investors.</p>
@@ -183,7 +183,7 @@ require_once '../../includes/head.php';
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Duration: 5 Days</li>
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Return of Capital: Yes</li>
           </ul>
-          <a href="/pages/public/login.php" class="btn-primary pricing-button">Get Started</a>
+          <a href="/login" class="btn-primary pricing-button">Get Started</a>
         </div>
       </div>
     </div>

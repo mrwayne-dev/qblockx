@@ -3,23 +3,73 @@ Options -Indexes
 RewriteEngine On
 RewriteBase /
 
-# Remove .php extension
+# ── Force HTTPS (production only — skips localhost/local dev) ─
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP_HOST} !^localhost [NC]
+RewriteCond %{HTTP_HOST} !^127\.0\.0\.1 [NC]
+RewriteCond %{HTTP_HOST} !\.test$ [NC]
+RewriteCond %{HTTP_HOST} !\.local$ [NC]
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ── Redirect direct .php URL access to clean URL ─────────────
+# Prevents .php extensions appearing in browser address bar
+# Excludes /api/ paths — redirecting API calls breaks POST requests
+RewriteCond %{THE_REQUEST} \.php[\s?/]
+RewriteCond %{REQUEST_URI} !^/api/ [NC]
+RewriteRule ^(.*)\.php(/?)(.*)$ /$1$3 [R=301,L]
+
+# ── Remove trailing slashes (except root) ────────────────────
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)/$ /$1 [R=301,L]
+
+# ── Short clean URL aliases ───────────────────────────────────
+# Public pages
+RewriteRule ^login/?$                  /pages/public/login.php              [L]
+RewriteRule ^register/?$               /pages/public/register.php           [L]
+RewriteRule ^forgot-password/?$        /pages/public/forgot-password.php    [L]
+RewriteRule ^reset-password/?$         /pages/public/reset-password.php     [QSA,L]
+RewriteRule ^verify-email/?$           /pages/public/verify-email.php       [QSA,L]
+RewriteRule ^contact/?$                /pages/public/contact.php            [L]
+RewriteRule ^about/?$                  /pages/public/about.php              [L]
+RewriteRule ^company/?$                /pages/public/company.php            [L]
+RewriteRule ^solutions/?$              /pages/public/solutions.php          [L]
+RewriteRule ^learnmore/?$              /pages/public/learnmore.php          [L]
+RewriteRule ^terms/?$                  /pages/public/terms.php              [L]
+RewriteRule ^privacy/?$                /pages/public/privacy.php            [L]
+RewriteRule ^risk/?$                   /pages/public/risk.php               [L]
+
+# User dashboard
+RewriteRule ^dashboard/?$              /pages/user/dashboard.php            [L]
+RewriteRule ^wallet/?$                 /pages/user/dashboard.php            [L]
+RewriteRule ^deposit/?$                /pages/user/dashboard.php            [L]
+
+# Admin panel
+RewriteRule ^admin/login/?$            /pages/admin/login.php               [L]
+RewriteRule ^admin/forgot-password/?$  /pages/admin/forgot-password.php     [L]
+RewriteRule ^admin/reset-password/?$   /pages/admin/reset-password.php      [QSA,L]
+RewriteRule ^admin/dashboard/?$        /pages/admin/dashboard.php           [L]
+RewriteRule ^admin/users/?$            /pages/admin/dashboard.php           [L]
+RewriteRule ^admin/trades/?$           /pages/admin/dashboard.php           [L]
+RewriteRule ^admin/transactions/?$     /pages/admin/dashboard.php           [L]
+RewriteRule ^admin/referrals/?$        /pages/admin/dashboard.php           [L]
+
+# ── Remove .php extension (file-based extensionless URLs) ────
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}\.php -f
 RewriteRule ^(.*)$ $1.php [L]
 
-# Route unknown URLs to index.php
+# ── Route unknown URLs to index.php ──────────────────────────
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [L,QSA]
 
-# Block direct access to sensitive files
+# ── Block direct access to sensitive files ───────────────────
 <FilesMatch "^\.(env|gitignore|htaccess)$">
     Order allow,deny
     Deny from all
 </FilesMatch>
 
-# Prevent access to vendor directory
+# ── Prevent access to vendor directory ───────────────────────
 <IfModule mod_rewrite.c>
     RewriteRule ^vendor/ - [F,L]
 </IfModule>
