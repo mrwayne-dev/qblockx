@@ -226,6 +226,10 @@ require_once '../../includes/head.php';
 
   <section class="features section" role="region" aria-labelledby="feat2-title">
     <div class="feature-container container" data-appear>
+      <div class="feature-image">
+        <div class="feature-image-placeholder glass">
+        <img loading="lazy" src="/assets/images/background/flexinvest.svg" alt="Flexible investment contracts"></div>
+      </div>
       <div class="feature-content">
         <span class="section-label">SOLUTIONS</span>
         <h2 id="feat2-title" class="feature-title">Flexible Investment Contracts</h2>
@@ -237,10 +241,6 @@ require_once '../../includes/head.php';
         <a href="/solutions" class="btn-learn-more" aria-label="Learn more about investment contracts">
           Learn More <i class="ph ph-arrow-right" aria-hidden="true"></i>
         </a>
-      </div>
-      <div class="feature-image">
-        <div class="feature-image-placeholder glass">
-        <img loading="lazy" src="/assets/images/background/flexinvest.svg" alt="Flexible investment contracts"></div>
       </div>
     </div>
   </section>
@@ -268,6 +268,9 @@ require_once '../../includes/head.php';
   <!-- ── Why Us ──────────────────────────────────────────────────── -->
   <section class="why-us section" role="region" aria-labelledby="why-us-title">
     <div class="why-us-container container" data-appear>
+      <div class="why-us-image">
+        <div class="feature-image-placeholder glass"><img loading="lazy" src="/assets/images/background/heavy-lifting.svg" alt="Why choose ArqoraCapital"></div>
+      </div>
       <div class="why-us-content">
         <span class="section-label">WHY US</span>
         <h2 id="why-us-title" class="why-us-title">We've done all the heavy lifting for you</h2>
@@ -275,9 +278,6 @@ require_once '../../includes/head.php';
           ArqoraCapital's end-to-end investment solution removes the complexity —
           letting you focus entirely on growing your <strong>wealth</strong>.
         </p>
-      </div>
-      <div class="why-us-image">
-        <div class="feature-image-placeholder glass"><img loading="lazy" src="/assets/images/background/heavy-lifting.svg" alt="Why choose ArqoraCapital"></div>
       </div>
     </div>
   </section>

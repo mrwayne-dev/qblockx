@@ -1,14 +1,13 @@
-# Environment Configuration - arqoracapital
-
 # Database
 DB_HOST=localhost
-DB_NAME=arqoracapital
+DB_PORT=3306
+DB_NAME=crestvalebank
 DB_USER=root
 DB_PASS=
 
 # Application
-APP_NAME="arqoracapital"
-APP_URL=http://arqoracapital.test/
+APP_NAME="crestvalebank"
+APP_URL=http://crestvalebank.test
 APP_ENV=development
 
 # Security
@@ -18,18 +17,18 @@ PASSWORD_HASH_COST=12
 # Email (SMTP)
 SMTP_HOST=mail.spacemail.com
 SMTP_PORT=465
-SMTP_USER=support@arqoracapital.com
-SMTP_PASS=ArqoraCapital@001
-SMTP_FROM=support@arqoracapital.com
-SMTP_FROM_NAME="arqoracapital"
+SMTP_USER=support@crestvalebank.com
+SMTP_PASS=CrestvaleBank@001
+SMTP_FROM=support@crestvalebank.com
+SMTP_FROM_NAME="crestvalebank"
 
 # NOWPayments (crypto payment gateway)
-NOWPAYMENTS_API_KEY=Z1E2RVQ-TAKMFTZ-NZSFZY6-TFAPE3E
-NOWPAYMENTS_PUBLIC_KEY=9cdd5507-df0e-4e34-ac46-09459cebd305
-NOWPAYMENTS_IPN_SECRET=WEtFI6MPp3f2sP7FoveOyksZolm7lnr3
-NOWPAYMENTS_IPN_CALLBACK_URL=http://arqoracapital.test/api/webhooks/webhook.php
-NOWPAYMENTS_SUCCESS_URL=http://arqoracapital.test/pages/user/dashboard.php#wallet
-NOWPAYMENTS_CANCEL_URL=http://arqoracapital.test/pages/user/dashboard.php#wallet
+NOWPAYMENTS_API_KEY=CMNY1EE-P0XMYM1-PC8JD8M-FDH2TTF
+NOWPAYMENTS_PUBLIC_KEY=aa12919d-20bb-4e8f-9020-03a1bdf1dc69
+NOWPAYMENTS_IPN_SECRET=bNkRaiqF+FndWyWoXe5Sv/J0NBUrYBMs
+NOWPAYMENTS_IPN_CALLBACK_URL=https://crestvalebank.com/api/webhooks/webhook.php
+NOWPAYMENTS_SUCCESS_URL=https://crestvalebank.com/pages/user/dashboard.php#wallet
+NOWPAYMENTS_CANCEL_URL=https://crestvalebank.com/pages/user/dashboard.php#wallet
 
 # Admin Registration — change this to a strong secret code
-ADMIN_INVITE_CODE=ARQORA-ADMIN-2026
+ADMIN_INVITE_CODE=CRESTVALEBANK-ADMIN-2026
