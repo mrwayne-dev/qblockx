@@ -69,7 +69,7 @@ try {
         } elseif ($action === 'update_setting') {
             $key   = $input['key']   ?? '';
             $value = $input['value'] ?? '';
-            $allowed = ['deposits_enabled', 'withdrawals_enabled', 'maintenance_mode', 'min_deposit', 'min_withdrawal'];
+            $allowed = ['deposits_enabled', 'withdrawals_enabled', 'maintenance_mode', 'min_deposit', 'min_withdrawal', 'withdrawal_fee'];
             if (!in_array($key, $allowed)) {
                 echo json_encode(['success' => false, 'message' => 'Invalid setting key']); exit;
             }

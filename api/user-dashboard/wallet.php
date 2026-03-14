@@ -34,7 +34,7 @@ try {
 
         // Pending withdrawal requests
         $wdStmt = $db->prepare(
-            "SELECT id, amount, currency, wallet_address, status, created_at
+            "SELECT id, amount, currency, wallet_address, withdrawal_method, status, created_at
              FROM withdrawal_requests
              WHERE user_id = :uid
              ORDER BY created_at DESC
@@ -43,12 +43,17 @@ try {
         $wdStmt->execute(['uid' => $user['id']]);
         $withdrawals = $wdStmt->fetchAll();
 
+        // Withdrawal fee from settings
+        $feeRow = $db->query("SELECT value FROM system_settings WHERE `key` = 'withdrawal_fee' LIMIT 1")->fetch();
+        $withdrawal_fee = $feeRow ? (float) $feeRow['value'] : 0.0;
+
         echo json_encode([
             'success' => true,
             'data'    => [
-                'balance'      => number_format($balance, 2, '.', ''),
-                'transactions' => $transactions,
-                'withdrawals'  => $withdrawals,
+                'balance'         => number_format($balance, 2, '.', ''),
+                'transactions'    => $transactions,
+                'withdrawals'     => $withdrawals,
+                'withdrawal_fee'  => $withdrawal_fee,
             ]
         ]);
 
@@ -161,57 +166,115 @@ try {
 
         // ── Withdraw ─────────────────────────────────────────────────────────
         } else {
-            $amount         = (float)  ($input['amount']         ?? 0);
-            $currency       = strtolower(trim($input['currency']       ?? 'usd'));
-            $wallet_address = trim($input['wallet_address'] ?? '');
+            $amount = (float) ($input['amount'] ?? 0);
+            $method = trim($input['withdrawal_method'] ?? 'crypto');
 
             if ($amount <= 0) {
                 echo json_encode(['success' => false, 'message' => 'Invalid withdrawal amount']);
                 exit;
             }
-            if (empty($wallet_address)) {
-                echo json_encode(['success' => false, 'message' => 'Wallet address is required']);
-                exit;
+
+            // Fetch withdrawal fee
+            $feeRow = $db->query("SELECT value FROM system_settings WHERE `key` = 'withdrawal_fee' LIMIT 1")->fetch();
+            $fee = $feeRow ? (float) $feeRow['value'] : 0.0;
+            $total_deduct = $amount + $fee;
+
+            // Method-specific validation
+            if ($method === 'bank') {
+                $bank_country           = trim($input['bank_country']           ?? '');
+                $bank_name              = trim($input['bank_name']              ?? '');
+                $account_holder_name    = trim($input['account_holder_name']   ?? '');
+                $iban                   = trim($input['iban']                   ?? '');
+                $bic_swift              = trim($input['bic_swift']              ?? '');
+                $sort_code              = trim($input['sort_code']              ?? '');
+                $bank_currency          = strtoupper(trim($input['bank_currency'] ?? 'EUR'));
+                $transaction_reference  = trim($input['transaction_reference']  ?? '');
+
+                if (empty($bank_country) || empty($bank_name) || empty($account_holder_name) || empty($iban) || empty($bic_swift)) {
+                    echo json_encode(['success' => false, 'message' => 'Please fill in all required bank details']);
+                    exit;
+                }
+            } else {
+                // Crypto
+                $currency       = strtolower(trim($input['currency']       ?? 'usdttrc20'));
+                $wallet_address = trim($input['wallet_address'] ?? '');
+
+                if (empty($wallet_address)) {
+                    echo json_encode(['success' => false, 'message' => 'Wallet address is required']);
+                    exit;
+                }
             }
 
-            // Check balance
-            $walletStmt = $db->prepare("SELECT balance FROM wallets WHERE user_id = :uid FOR UPDATE");
-
+            // Check balance (amount + fee)
             $db->beginTransaction();
+            $walletStmt = $db->prepare("SELECT balance FROM wallets WHERE user_id = :uid FOR UPDATE");
             $walletStmt->execute(['uid' => $user['id']]);
-            $wallet = $walletStmt->fetch();
+            $wallet  = $walletStmt->fetch();
             $balance = $wallet ? (float) $wallet['balance'] : 0.0;
 
-            if ($amount > $balance) {
+            if ($total_deduct > $balance) {
                 $db->rollBack();
-                echo json_encode(['success' => false, 'message' => 'Insufficient balance']);
+                $msg = $fee > 0
+                    ? 'Insufficient balance. This withdrawal requires $' . number_format($total_deduct, 2) . ' (amount + $' . number_format($fee, 2) . ' fee)'
+                    : 'Insufficient balance';
+                echo json_encode(['success' => false, 'message' => $msg]);
                 exit;
             }
 
-            // Debit the balance immediately (hold funds during review)
+            // Debit wallet (amount + fee)
             $db->prepare(
                 "UPDATE wallets SET balance = balance - :amount, updated_at = NOW() WHERE user_id = :uid"
-            )->execute(['amount' => $amount, 'uid' => $user['id']]);
+            )->execute(['amount' => $total_deduct, 'uid' => $user['id']]);
 
             // Create withdrawal request
-            $db->prepare(
-                "INSERT INTO withdrawal_requests (user_id, amount, currency, wallet_address)
-                 VALUES (:uid, :amount, :currency, :address)"
-            )->execute([
-                'uid'      => $user['id'],
-                'amount'   => $amount,
-                'currency' => $currency,
-                'address'  => $wallet_address,
-            ]);
+            if ($method === 'bank') {
+                $db->prepare(
+                    "INSERT INTO withdrawal_requests
+                        (user_id, amount, currency, wallet_address, withdrawal_method, fee,
+                         bank_country, bank_name, account_holder_name, iban, bic_swift,
+                         sort_code, bank_currency, transaction_reference)
+                     VALUES
+                        (:uid, :amount, 'bank', NULL, 'bank', :fee,
+                         :bank_country, :bank_name, :account_holder_name, :iban, :bic_swift,
+                         :sort_code, :bank_currency, :transaction_reference)"
+                )->execute([
+                    'uid'                   => $user['id'],
+                    'amount'                => $amount,
+                    'fee'                   => $fee,
+                    'bank_country'          => $bank_country,
+                    'bank_name'             => $bank_name,
+                    'account_holder_name'   => $account_holder_name,
+                    'iban'                  => $iban,
+                    'bic_swift'             => $bic_swift,
+                    'sort_code'             => $sort_code ?: null,
+                    'bank_currency'         => $bank_currency,
+                    'transaction_reference' => $transaction_reference ?: null,
+                ]);
 
-            // Create transaction record
+                $txNotes = 'Bank transfer to ' . $bank_name . ', ' . $bank_country . ' — pending admin approval';
+            } else {
+                $db->prepare(
+                    "INSERT INTO withdrawal_requests (user_id, amount, currency, wallet_address, withdrawal_method, fee)
+                     VALUES (:uid, :amount, :currency, :address, 'crypto', :fee)"
+                )->execute([
+                    'uid'      => $user['id'],
+                    'amount'   => $amount,
+                    'currency' => $currency,
+                    'address'  => $wallet_address,
+                    'fee'      => $fee,
+                ]);
+
+                $txNotes = 'Withdrawal (' . strtoupper($currency) . ') — pending admin approval';
+            }
+
+            // Transaction record
             $db->prepare(
                 "INSERT INTO transactions (user_id, type, amount, status, notes)
                  VALUES (:uid, 'withdrawal', :amount, 'pending', :notes)"
             )->execute([
-                'uid'   => $user['id'],
-                'amount' => $amount,
-                'notes'  => 'Withdrawal (' . strtoupper($currency) . ') — pending admin approval',
+                'uid'    => $user['id'],
+                'amount' => $total_deduct,
+                'notes'  => $txNotes,
             ]);
 
             $db->commit();

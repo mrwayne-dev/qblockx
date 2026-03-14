@@ -85,12 +85,13 @@ try {
     }
 
     // Create transaction record — use valid ENUM types: deposit / withdrawal
-    // Notes left blank on the transaction so users don't see admin adjustment details
-    $txType = ($type === 'credit') ? 'deposit' : 'withdrawal';
+    // Notes appear as natural bank transaction descriptions to the user
+    $txType  = ($type === 'credit') ? 'deposit' : 'withdrawal';
+    $txNotes = ($type === 'credit') ? 'Incoming bank transfer' : 'Bank transfer';
     $db->prepare(
         "INSERT INTO transactions (user_id, type, amount, status, notes)
-         VALUES (:uid, :txtype, :amount, 'completed', NULL)"
-    )->execute(['uid' => $user_id, 'txtype' => $txType, 'amount' => $amount]);
+         VALUES (:uid, :txtype, :amount, 'completed', :notes)"
+    )->execute(['uid' => $user_id, 'txtype' => $txType, 'amount' => $amount, 'notes' => $txNotes]);
 
     // Fetch updated balance
     $newBalRow = $db->prepare("SELECT balance FROM wallets WHERE user_id = :uid");

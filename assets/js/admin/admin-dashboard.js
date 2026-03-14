@@ -943,7 +943,8 @@
         ];
         var numberItems = [
           { key: 'min_deposit',    label: 'Minimum Deposit (USD)' },
-          { key: 'min_withdrawal', label: 'Minimum Withdrawal (USD)' }
+          { key: 'min_withdrawal', label: 'Minimum Withdrawal (USD)' },
+          { key: 'withdrawal_fee', label: 'Withdrawal Fee (USD)' }
         ];
         togglesEl.innerHTML = toggleItems.map(function (item) {
           var checked = (s[item.key] === '1' || s[item.key] === 1) ? 'checked' : '';
@@ -954,11 +955,12 @@
             + '</label>';
         }).join('')
         + numberItems.map(function (item) {
-          var val = esc(s[item.key] || '10');
+          var defaultVal = item.key === 'withdrawal_fee' ? '0' : '10';
+          var val = esc(s[item.key] !== undefined ? s[item.key] : defaultVal);
           return '<label class="settings-toggle-row">'
             + '<span class="settings-toggle-label">' + item.label + '</span>'
             + '<input type="number" class="admin-input settings-number-input"'
-            + ' data-setting-key="' + item.key + '" value="' + val + '" min="0" step="1">'
+            + ' data-setting-key="' + item.key + '" value="' + val + '" min="0" step="0.01">'
             + '</label>';
         }).join('');
       }
@@ -1106,16 +1108,39 @@
       var reqs = r.data.requests || [];
       if (reqs.length) {
         tbody.innerHTML = reqs.map(function (wr) {
-          var addr        = wr.wallet_address || '';
-          var addrDisplay = addr.length > 18 ? addr.substring(0, 10) + '…' + addr.slice(-6) : addr;
-          var isPending   = wr.status === 'pending';
+          var isPending = wr.status === 'pending';
+          var isBank    = (wr.withdrawal_method || 'crypto') === 'bank';
+          var methodBadge = isBank
+            ? '<span style="background:#1a2a4a;color:#7db9f5;padding:2px 8px;border-radius:4px;font-size:.75rem;font-weight:600;">BANK</span>'
+            : '<span style="background:#0d2b2b;color:#3FE0A1;padding:2px 8px;border-radius:4px;font-size:.75rem;font-weight:600;">CRYPTO</span>';
+
+          var detailCell = '';
+          if (isBank) {
+            var bankLine1 = esc(wr.bank_name || '') + (wr.bank_country ? ', ' + esc(wr.bank_country) : '');
+            var bankLine2 = wr.iban ? '<span style="font-family:monospace;font-size:.75rem;">' + esc(wr.iban) + '</span>' : '';
+            var bankLine3 = wr.account_holder_name ? '<span class="cell-muted" style="font-size:.75rem;">' + esc(wr.account_holder_name) + '</span>' : '';
+            detailCell = '<div>' + bankLine1 + '</div>'
+              + (bankLine3 ? '<div>' + bankLine3 + '</div>' : '')
+              + (bankLine2 ? '<div>' + bankLine2 + '</div>' : '');
+          } else {
+            var addr        = wr.wallet_address || '';
+            var addrDisplay = addr.length > 18 ? addr.substring(0, 10) + '…' + addr.slice(-6) : addr;
+            detailCell = '<span title="' + esc(addr) + '" class="cell-muted" style="font-family:monospace;font-size:.78rem;">'
+              + esc(addrDisplay) + '</span>'
+              + '<div class="cell-muted" style="font-size:.75rem;">' + esc((wr.currency || '').toUpperCase()) + '</div>';
+          }
+
+          var amountStr = '$' + fmt(wr.amount);
+          if (wr.fee && parseFloat(wr.fee) > 0) {
+            amountStr += '<div class="cell-muted" style="font-size:.75rem;">+$' + fmt(wr.fee) + ' fee</div>';
+          }
+
           return '<tr>'
             + '<td><div class="cell-name">' + esc(wr.user_name || wr.user_email) + '</div>'
             + '<div class="cell-sub">' + esc(wr.user_email) + '</div></td>'
-            + '<td><strong>$' + fmt(wr.amount) + '</strong></td>'
-            + '<td class="cell-muted">' + esc((wr.currency || 'USD').toUpperCase()) + '</td>'
-            + '<td><span title="' + esc(addr) + '" class="cell-muted" style="font-family:monospace;font-size:0.78rem;">'
-            + esc(addrDisplay) + '</span></td>'
+            + '<td><strong>' + amountStr + '</strong></td>'
+            + '<td>' + methodBadge + '</td>'
+            + '<td>' + detailCell + '</td>'
             + '<td>' + badge(wr.status) + '</td>'
             + '<td class="cell-muted">' + fmtDateTime(wr.created_at) + '</td>'
             + '<td><div class="btn-actions">'

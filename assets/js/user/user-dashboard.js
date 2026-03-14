@@ -492,13 +492,115 @@
 
   // ── Wallet ────────────────────────────────────────────────────────────────────
 
+  // Withdrawal fee cached from last wallet load
+  var _withdrawalFee = 0;
+
+  // Banks by country for bank transfer modal
+  var _banksByCountry = {
+    "Germany":        ["Deutsche Bank","Commerzbank","Postbank","HypoVereinsbank (UniCredit Bank AG)","DZ Bank","KfW (Kreditanstalt für Wiederaufbau)","Sparkasse","Volksbanken und Raiffeisenbanken","Berenberg Bank","Bankhaus Lampe"],
+    "France":         ["BNP Paribas","Crédit Agricole","Société Générale","BPCE (Banque Populaire and Caisse d'Epargne)","Crédit Mutuel","La Banque Postale","HSBC France","CIC (Crédit Industriel et Commercial)"],
+    "United Kingdom": ["HSBC","Barclays","Lloyds Banking Group","NatWest Group","Standard Chartered","Santander UK","Nationwide Building Society","TSB Bank"],
+    "Italy":          ["UniCredit","Intesa Sanpaolo","Banco BPM","Monte dei Paschi di Siena","UBI Banca","Mediobanca","Banca Nazionale del Lavoro (BNL)","Cassa Depositi e Prestiti (CDP)"],
+    "Spain":          ["Banco Santander","BBVA (Banco Bilbao Vizcaya Argentaria)","CaixaBank","Bankia","Sabadell","Bankinter","Kutxabank","Abanca"],
+    "Netherlands":    ["ING Bank","Rabobank","ABN AMRO","De Nederlandsche Bank (DNB)","SNS Bank","F. van Lanschot Bankiers","Achmea Bank","KAS BANK"],
+    "Sweden":         ["Nordea","SEB (Skandinaviska Enskilda Banken)","Swedbank","Handelsbanken","Länsförsäkringar Bank","SBAB Bank","Ikano Bank"],
+    "Switzerland":    ["UBS","Credit Suisse","Raiffeisen Switzerland","Zürcher Kantonalbank (ZKB)","Julius Baer","Pictet & Cie","PostFinance","Banque Cantonale Vaudoise (BCV)"],
+    "Poland":         ["PKO Bank Polski","Bank Pekao","Santander Bank Polska","mBank","ING Bank Śląski","Bank Millennium","Alior Bank","Getinormen Bank"],
+    "Austria":        ["Erste Group Bank","Raiffeisen Bank International","BAWAG P.S.K.","UniCredit Bank Austria","Oberbank","Volksbank Wien","Sberbank Europe","Kathrein & Co. Privatgeschäftsbank"],
+    "Greece":         ["National Bank of Greece","Piraeus Bank","Alpha Bank","Eurobank","Attica Bank","HSBC Greece","Pancreta Bank","Optima Bank"],
+    "Portugal":       ["Caixa Geral de Depósitos","Millennium BCP (Banco Comercial Português)","Banco BPI","Novo Banco","Santander Totta","Montepio","Crédito Agrícola","Banco Mais"],
+    "Norway":         ["DNB Bank","Nordea Bank Norge","SpareBank 1 Group","Handelsbanken Norge","Danske Bank Norway","Storebrand Bank","Santander Consumer Bank","Sparebanken Vest"],
+    "Denmark":        ["Danske Bank","Nordea Bank Danmark","Jyske Bank","Sydbank","Nykredit Bank","Spar Nord Bank","Arbejdernes Landsbank","Saxo Bank"],
+    "Belgium":        ["KBC Bank","BNP Paribas Fortis","ING Belgium","Belfius Bank","Argenta","Bank J. Van Breda en Co","AXA Bank Belgium","Crelan"],
+    "Finland":        ["Nordea Bank Finland","OP Financial Group","Danske Bank Finland","S-Pankki (S-Bank)","Aktia Bank","Bank of Åland","Handelsbanken Finland","Oma Savings Bank"],
+    "Ireland":        ["Bank of Ireland","Allied Irish Banks (AIB)","Ulster Bank","Permanent TSB","KBC Bank Ireland","Citibank Europe","Danske Bank Ireland","Bank of America Europe"],
+    "Czech Republic": ["ČSOB (Československá Obchodní Banka)","Česká Spořitelna","Komerční Banka","UniCredit Bank Czech Republic","Raiffeisenbank Czech Republic","MONETA Money Bank","Air Bank","Fio Banka"],
+    "Hungary":        ["OTP Bank","K&H Bank","Erste Bank Hungary","UniCredit Bank Hungary","Raiffeisen Bank Hungary","CIB Bank","MKB Bank","Budapest Bank"],
+    "Ukraine":        ["PrivatBank","Oschadbank","Ukrgasbank","Raiffeisen Bank Aval","Ukrsibbank","Sense Bank","PUMB (First Ukrainian International Bank)","UkrEximBank"]
+  };
+
+  // ── Withdraw modal tab + bank dropdown logic ────────────────────────────────
+  document.addEventListener('click', function (e) {
+    var tab = e.target.closest('[data-withdraw-tab]');
+    if (!tab) return;
+    var method = tab.dataset.withdrawTab;
+
+    // Update hidden input
+    var form = document.querySelector('#modal-withdraw form[data-action="withdraw"]');
+    if (form) {
+      var methodInput = form.querySelector('[name="withdrawal_method"]');
+      if (methodInput) methodInput.value = method;
+    }
+
+    // Toggle tab styles
+    document.querySelectorAll('[data-withdraw-tab]').forEach(function (t) {
+      var isActive = t.dataset.withdrawTab === method;
+      t.classList.toggle('active', isActive);
+      t.style.background   = isActive ? 'var(--accent)' : 'transparent';
+      t.style.color        = isActive ? '#fff'           : 'var(--text-muted)';
+      t.style.borderColor  = isActive ? 'var(--accent)'  : 'var(--border)';
+    });
+
+    // Show/hide sections
+    var cryptoSection = document.getElementById('withdrawCryptoSection');
+    var bankSection   = document.getElementById('withdrawBankSection');
+    if (cryptoSection) cryptoSection.style.display = method === 'crypto' ? '' : 'none';
+    if (bankSection)   bankSection.style.display   = method === 'bank'   ? '' : 'none';
+  });
+
+  // Country → bank dropdown
+  document.addEventListener('change', function (e) {
+    var countrySelect = e.target.closest('#withdrawBankCountry');
+    if (!countrySelect) return;
+    var country   = countrySelect.value;
+    var bankSelect = document.getElementById('withdrawBankName');
+    if (!bankSelect) return;
+    bankSelect.innerHTML = '';
+    if (!country || !_banksByCountry[country]) {
+      bankSelect.innerHTML = '<option value="">Select a country first</option>';
+      bankSelect.disabled  = true;
+      return;
+    }
+    var opts = '<option value="">Select a bank</option>';
+    _banksByCountry[country].forEach(function (b) {
+      opts += '<option value="' + b.replace(/"/g, '&quot;') + '">' + b + '</option>';
+    });
+    bankSelect.innerHTML = opts;
+    bankSelect.disabled  = false;
+
+    // Show/hide sort code for UK
+    var sortGroup = document.getElementById('withdrawSortCodeGroup');
+    if (sortGroup) sortGroup.style.display = country === 'United Kingdom' ? '' : 'none';
+  });
+
+  // Fee display on amount input
+  document.addEventListener('input', function (e) {
+    var amountInput = e.target.closest('#withdrawAmount');
+    if (!amountInput) return;
+    var feeNote = document.getElementById('withdrawFeeNote');
+    if (!feeNote) return;
+    var amt = parseFloat(amountInput.value) || 0;
+    if (_withdrawalFee > 0 && amt > 0) {
+      feeNote.style.display = '';
+      feeNote.textContent   = 'Withdrawal fee: $' + fmt(_withdrawalFee)
+        + ' · Total deducted from wallet: $' + fmt(amt + _withdrawalFee);
+    } else if (_withdrawalFee > 0) {
+      feeNote.style.display = '';
+      feeNote.textContent   = 'Withdrawal fee: $' + fmt(_withdrawalFee);
+    } else {
+      feeNote.style.display = 'none';
+    }
+  });
+
   async function loadWallet() {
     try {
       var r = await apiFetch('/api/user-dashboard/wallet.php');
       if (!r.success) return;
       var d = r.data;
 
-      _lastBalance = parseFloat(d.balance || 0);
+      _lastBalance    = parseFloat(d.balance || 0);
+      _withdrawalFee  = parseFloat(d.withdrawal_fee || 0);
+
       setText('[data-wallet="balance"]', '$' + fmt(_lastBalance));
       // Restore hidden-balance state from localStorage
       applyBalanceHidden(localStorage.getItem('balanceHidden') === '1');
@@ -585,14 +687,49 @@
   }
 
   async function submitWithdrawal(form) {
-    var btn      = form.querySelector('[type="submit"]');
-    var msgEl    = form.querySelector('[data-msg]');
-    var amount   = form.querySelector('[name="amount"]')        ? form.querySelector('[name="amount"]').value        : '';
-    var currency = form.querySelector('[name="currency"]')      ? form.querySelector('[name="currency"]').value      : 'usdttrc20';
-    var address  = form.querySelector('[name="wallet_address"]') ? form.querySelector('[name="wallet_address"]').value : '';
+    var btn    = form.querySelector('[type="submit"]');
+    var msgEl  = form.querySelector('[data-msg]');
+    var method = (form.querySelector('[name="withdrawal_method"]') || {}).value || 'crypto';
+    var amount = (form.querySelector('[name="amount"]') || {}).value || '';
 
     if (!amount || parseFloat(amount) <= 0) return showMsg(msgEl, 'Enter a valid amount', true);
-    if (!address.trim()) return showMsg(msgEl, 'Wallet address is required', true);
+
+    var payload = {
+      withdrawal_method: method,
+      amount: parseFloat(amount)
+    };
+
+    if (method === 'bank') {
+      var country  = (form.querySelector('[name="bank_country"]')         || {}).value || '';
+      var bankName = (form.querySelector('[name="bank_name"]')            || {}).value || '';
+      var holder   = (form.querySelector('[name="account_holder_name"]')  || {}).value || '';
+      var iban     = (form.querySelector('[name="iban"]')                 || {}).value || '';
+      var bic      = (form.querySelector('[name="bic_swift"]')            || {}).value || '';
+      var sort     = (form.querySelector('[name="sort_code"]')            || {}).value || '';
+      var cur      = (form.querySelector('[name="bank_currency"]')        || {}).value || 'EUR';
+      var txref    = (form.querySelector('[name="transaction_reference"]') || {}).value || '';
+
+      if (!country)  return showMsg(msgEl, 'Please select a country', true);
+      if (!bankName) return showMsg(msgEl, 'Please select a bank', true);
+      if (!holder.trim()) return showMsg(msgEl, 'Account holder name is required', true);
+      if (!iban.trim())   return showMsg(msgEl, 'IBAN is required', true);
+      if (!bic.trim())    return showMsg(msgEl, 'BIC/SWIFT code is required', true);
+
+      payload.bank_country          = country;
+      payload.bank_name             = bankName;
+      payload.account_holder_name   = holder.trim();
+      payload.iban                  = iban.trim();
+      payload.bic_swift             = bic.trim();
+      payload.sort_code             = sort.trim();
+      payload.bank_currency         = cur.trim().toUpperCase() || 'EUR';
+      payload.transaction_reference = txref.trim();
+    } else {
+      var currency = (form.querySelector('[name="currency"]')      || {}).value || 'usdttrc20';
+      var address  = (form.querySelector('[name="wallet_address"]') || {}).value || '';
+      if (!address.trim()) return showMsg(msgEl, 'Wallet address is required', true);
+      payload.currency       = currency;
+      payload.wallet_address = address.trim();
+    }
 
     btn.disabled = true;
     btn.textContent = 'Submitting…';
@@ -600,12 +737,26 @@
     try {
       var r = await apiFetch('/api/user-dashboard/wallet.php', {
         method: 'POST',
-        body: JSON.stringify({ amount: parseFloat(amount), currency: currency, wallet_address: address.trim() })
+        body: JSON.stringify(payload)
       });
 
       if (r.success) {
         showMsg(msgEl, r.message || 'Withdrawal request submitted. Processing in 24–48 hours.', false);
         form.reset();
+        // Reset tabs back to crypto
+        document.querySelectorAll('[data-withdraw-tab]').forEach(function (t) {
+          var isActive = t.dataset.withdrawTab === 'crypto';
+          t.classList.toggle('active', isActive);
+          t.style.background  = isActive ? 'var(--accent)' : 'transparent';
+          t.style.color       = isActive ? '#fff'          : 'var(--text-muted)';
+          t.style.borderColor = isActive ? 'var(--accent)' : 'var(--border)';
+        });
+        var cryptoSection = document.getElementById('withdrawCryptoSection');
+        var bankSection   = document.getElementById('withdrawBankSection');
+        if (cryptoSection) cryptoSection.style.display = '';
+        if (bankSection)   bankSection.style.display   = 'none';
+        var methodInput = form.querySelector('[name="withdrawal_method"]');
+        if (methodInput) methodInput.value = 'crypto';
         loadWallet();
         setTimeout(function () { closeModal('modal-withdraw'); }, 2000);
         showToast('Withdrawal request submitted!', 'success');

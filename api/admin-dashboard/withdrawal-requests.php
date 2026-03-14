@@ -27,6 +27,9 @@ try {
 
     $stmt = $db->prepare(
         "SELECT wr.id, wr.amount, wr.currency, wr.wallet_address,
+                wr.withdrawal_method, wr.fee,
+                wr.bank_country, wr.bank_name, wr.account_holder_name,
+                wr.iban, wr.bic_swift, wr.sort_code, wr.bank_currency, wr.transaction_reference,
                 wr.status, wr.admin_notes, wr.created_at, wr.updated_at,
                 u.id AS user_id, u.email AS user_email, u.full_name AS user_name
          FROM withdrawal_requests wr

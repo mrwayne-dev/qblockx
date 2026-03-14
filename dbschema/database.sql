@@ -339,4 +339,23 @@ INSERT IGNORE INTO `system_settings` (`key`, `value`) VALUES
   ('withdrawals_enabled', '1'),
   ('maintenance_mode',    '0'),
   ('min_deposit',         '10'),
-  ('min_withdrawal',      '10');
+  ('min_withdrawal',      '10'),
+  ('withdrawal_fee',      '0');
+
+-- ============================================================
+-- MIGRATION: Withdrawal requests — bank transfer support
+-- Run once on existing databases
+-- ============================================================
+
+ALTER TABLE `withdrawal_requests`
+  MODIFY COLUMN `wallet_address`      VARCHAR(255)  NULL DEFAULT NULL,
+  ADD COLUMN `withdrawal_method`      ENUM('crypto','bank') NOT NULL DEFAULT 'crypto' AFTER `currency`,
+  ADD COLUMN `fee`                    DECIMAL(18,8) DEFAULT NULL AFTER `withdrawal_method`,
+  ADD COLUMN `bank_country`           VARCHAR(100)  DEFAULT NULL,
+  ADD COLUMN `bank_name`              VARCHAR(255)  DEFAULT NULL,
+  ADD COLUMN `account_holder_name`    VARCHAR(255)  DEFAULT NULL,
+  ADD COLUMN `iban`                   VARCHAR(50)   DEFAULT NULL,
+  ADD COLUMN `bic_swift`              VARCHAR(20)   DEFAULT NULL,
+  ADD COLUMN `sort_code`              VARCHAR(20)   DEFAULT NULL,
+  ADD COLUMN `bank_currency`          VARCHAR(10)   DEFAULT NULL,
+  ADD COLUMN `transaction_reference`  VARCHAR(255)  DEFAULT NULL;

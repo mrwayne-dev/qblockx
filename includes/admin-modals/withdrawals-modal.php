@@ -25,8 +25,8 @@
             <tr>
               <th>User</th>
               <th>Amount</th>
-              <th>Currency</th>
-              <th>Wallet</th>
+              <th>Method</th>
+              <th>Details</th>
               <th>Status</th>
               <th>Date</th>
               <th>Actions</th>
