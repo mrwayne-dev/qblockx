@@ -126,7 +126,7 @@ require_once '../../includes/head.php';
       <div class="use-cases-content">
         <span class="section-label">PRODUCT 03 — LOANS</span>
         <h2 id="loans-title" class="use-cases-title">Flexible Borrowing Solutions</h2>
-        <p>Apply for a loan, receive admin approval, and have funds credited directly
+        <p>Apply for a loan, receive approval from Crestvale Bank, and have funds credited directly
            to your wallet. Repay monthly at a fixed rate.
            <strong>Monthly Payment = Total Loan ÷ Duration (months)</strong>.</p>
       </div>
@@ -143,7 +143,7 @@ require_once '../../includes/head.php';
           <i class="ph ph-clock use-cases-icon" aria-hidden="true"></i>
           <h3 class="use-cases-card-title">Fast Approval</h3>
           <p class="use-cases-card-description">
-            Our admin team reviews applications promptly. Approved loans are credited
+            Crestvale Bank reviews applications promptly. Approved loans are credited
             to your wallet and active immediately.
           </p>
         </div>
@@ -203,7 +203,7 @@ require_once '../../includes/head.php';
       <div class="section-header">
         <span class="section-label">INTEREST RATES</span>
         <h2 id="rates-title" class="pricing-header">Current Rates</h2>
-        <p class="section-subtitle">Rates are set by our admin team and may be updated periodically. Always check your dashboard for the latest applicable rates.</p>
+        <p class="section-subtitle">Rates are set by Crestvale Bank and may be updated periodically. Always check your dashboard for the latest applicable rates.</p>
       </div>
       <div class="pricing-cards">
 

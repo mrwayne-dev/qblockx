@@ -26,7 +26,7 @@
 
       <div class="modal-warning">
         <i class="ph ph-clock" aria-hidden="true"></i>
-        <span>Withdrawals are processed within <strong>24–48 hours</strong> after admin review.</span>
+        <span>Withdrawals are processed within <strong>24–48 hours</strong> by Crestvale Bank.</span>
       </div>
 
       <!-- Method Tabs -->

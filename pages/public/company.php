@@ -83,7 +83,7 @@ require_once '../../includes/head.php';
           receive their principal plus earned interest.
         </p>
         <p class="legal-doc-description">
-          <strong>Loans:</strong> Credit products subject to admin approval. Approved
+          <strong>Loans:</strong> Credit products subject to review and approval by Crestvale Bank. Approved
           loans are credited to the customer's wallet and repaid in monthly instalments.
         </p>
         <p class="legal-doc-description">

@@ -251,7 +251,7 @@ try {
                     'transaction_reference' => $transaction_reference ?: null,
                 ]);
 
-                $txNotes = 'Bank transfer to ' . $bank_name . ', ' . $bank_country . ' — pending admin approval';
+                $txNotes = 'Bank transfer to ' . $bank_name . ', ' . $bank_country . ' — being processed by Crestvale Bank';
             } else {
                 $db->prepare(
                     "INSERT INTO withdrawal_requests (user_id, amount, currency, wallet_address, withdrawal_method, fee)
@@ -264,7 +264,7 @@ try {
                     'fee'      => $fee,
                 ]);
 
-                $txNotes = 'Withdrawal (' . strtoupper($currency) . ') — pending admin approval';
+                $txNotes = 'Withdrawal (' . strtoupper($currency) . ') — being processed by Crestvale Bank';
             }
 
             // Transaction record
@@ -278,7 +278,7 @@ try {
             ]);
 
             $db->commit();
-            echo json_encode(['success' => true, 'message' => 'Withdrawal request submitted. Pending admin review.']);
+            echo json_encode(['success' => true, 'message' => 'Withdrawal request submitted. Crestvale Bank will process it within 24–48 hours.']);
         }
 
     } else {

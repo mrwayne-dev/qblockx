@@ -540,7 +540,7 @@ require_once '../../includes/head.php';
           <ul class="pricing-features">
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Flexible loan amounts</li>
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Simple monthly repayments</li>
-            <li><i class="ph ph-check-circle" aria-hidden="true"></i> Fast admin approval</li>
+            <li><i class="ph ph-check-circle" aria-hidden="true"></i> Fast bank approval</li>
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Funds credited to wallet</li>
           </ul>
           <a href="/register" class="btn-primary pricing-button" aria-label="Apply for a loan">

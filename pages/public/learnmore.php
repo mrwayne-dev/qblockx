@@ -91,7 +91,7 @@ require_once '../../includes/head.php';
           <details class="faq-item">
             <summary>What interest rate do savings plans earn?</summary>
             <div class="faq-body">
-              Current savings plans earn up to 5.5<i class="ph ph-percent"></i>&thinsp;per annum. Rates are set by our admin team and
+              Current savings plans earn up to 5.5<i class="ph ph-percent"></i>&thinsp;per annum. Rates are set by Crestvale Bank and
               may change — always check your dashboard for your plan's specific rate.
             </div>
           </details>
@@ -145,7 +145,7 @@ require_once '../../includes/head.php';
             <summary>How do I apply for a loan?</summary>
             <div class="faq-body">
               Go to your Loans dashboard and click "Apply for Loan". Enter the amount and
-              preferred duration. Your application will be reviewed by our admin team, who
+              preferred duration. Your application will be reviewed by Crestvale Bank, who
               will approve, reject, or modify the terms.
             </div>
           </details>
