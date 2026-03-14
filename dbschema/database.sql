@@ -10,9 +10,9 @@
 --   • INSERT IGNORE               → skips duplicate seed rows
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS `crestvalebank`
-  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `crestvalebank`;
+-- CREATE DATABASE IF NOT EXISTS `crestvalebank`
+--   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- USE `crestvalebank`;
 
 -- ============================================================
 -- USERS
