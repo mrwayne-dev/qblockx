@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: arqoracapital
+ * Project: crestvalebank
  * Created by: Wayne
  */
 
@@ -17,10 +17,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $input  = json_decode(file_get_contents('php://input'), true);
-$id     = (int) ($input['id']  ?? 0);
-$action = trim($input['action'] ?? '');  // 'verify', 'unverify', 'promote', 'demote'
+$id     = (int) ($input['id'] ?? $input['user_id'] ?? 0);  // accept either key
+$action = trim($input['action'] ?? '');  // 'verify', 'unverify', 'promote', 'demote', 'disable', 'enable', 'delete'
 
-if (!$id || !in_array($action, ['verify', 'unverify', 'promote', 'demote'])) {
+if (!$id || !in_array($action, ['verify', 'unverify', 'promote', 'demote', 'disable', 'enable', 'delete'])) {
     echo json_encode(['success' => false, 'message' => 'Invalid request']);
     exit;
 }
@@ -59,6 +59,22 @@ try {
         case 'demote':
             $db->prepare("UPDATE users SET role = 'user' WHERE id = :id")->execute(['id' => $id]);
             $msg = 'Admin demoted to user';
+            break;
+        case 'disable':
+            $db->prepare("UPDATE users SET is_active = 0 WHERE id = :id")->execute(['id' => $id]);
+            $msg = 'User account disabled';
+            break;
+        case 'enable':
+            $db->prepare("UPDATE users SET is_active = 1 WHERE id = :id")->execute(['id' => $id]);
+            $msg = 'User account enabled';
+            break;
+        case 'delete':
+            if ($user['role'] === 'admin') {
+                echo json_encode(['success' => false, 'message' => 'Cannot delete an admin account']);
+                exit;
+            }
+            $db->prepare("DELETE FROM users WHERE id = :id")->execute(['id' => $id]);
+            $msg = 'User deleted';
             break;
     }
 

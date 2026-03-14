@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: arqoracapital
+ * Project: crestvalebank
  * Created by: Wayne
  *
  * NOWPayments hosted-invoice deposit flow.
@@ -48,7 +48,7 @@ try {
         'price_currency'    => 'usd',
         'pay_currency'      => $currency,
         'order_id'          => $order_id,
-        'order_description' => 'Deposit for ArqoraCapital account',
+        'order_description' => 'Deposit for CrestVale Bank account',
         'ipn_callback_url'  => getenv('NOWPAYMENTS_IPN_CALLBACK_URL'),
         'success_url'       => getenv('NOWPAYMENTS_SUCCESS_URL'),
         'cancel_url'        => getenv('NOWPAYMENTS_CANCEL_URL'),

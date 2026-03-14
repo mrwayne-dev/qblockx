@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: arqoracapital
+ * Project: crestvalebank
  * API: Admin Registration — invite-code gated, creates role=admin user
  */
 ob_start();

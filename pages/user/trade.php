@@ -1,1 +1,1 @@
-<?php header('Location: /dashboard#trade'); exit; ?>
+<?php header('Location: /dashboard#savings'); exit; ?>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fixed Deposit Opened</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 0; background: #f5f5f7; font-family: 'Inter', Helvetica, Arial, sans-serif; }
+    .wrapper { max-width: 640px; margin: 0 auto; padding: 40px 16px; }
+    .card { background: #ffffff; border-radius: 20px; padding: 40px 40px 32px; }
+    .logo { display: block; width: 100px; margin: 0 auto 32px; }
+    h1 { font-size: 26px; font-weight: 700; color: #040b22; margin: 0 0 12px; line-height: 1.25; }
+    p { font-size: 16px; color: #4a4f5f; line-height: 1.6; margin: 0 0 16px; }
+    .badge { display: inline-block; background: #e8faf3; color: #15803d; font-weight: 600; font-size: 14px; padding: 4px 14px; border-radius: 99px; margin-bottom: 24px; }
+    .summary { background: #f5f5f7; border-radius: 12px; padding: 20px 24px; margin: 24px 0; }
+    .summary-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 15px; color: #4a4f5f; border-bottom: 1px solid #e8e8ee; }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-row strong { color: #040b22; font-weight: 600; }
+    .btn { display: inline-block; background: #3FE0A1; color: #0C1F18; font-weight: 700; font-size: 15px; text-decoration: none; padding: 13px 28px; border-radius: 99px; margin-top: 8px; }
+    .divider { border: none; border-top: 1px solid #e8e8ee; margin: 28px 0; }
+    .footer { text-align: center; font-size: 13px; color: #9ca3af; line-height: 1.6; padding-top: 24px; }
+    .footer a { color: #6b7280; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="card">
+      <img class="logo" src="{{app_url}}/assets/images/logo/1.png" alt="CrestVale Bank">
+      <span class="badge">✓ Deposit Confirmed</span>
+      <h1>Your fixed deposit is now active, {{first_name}}.</h1>
+      <p>Your funds have been locked in and are earning interest. At maturity, your full principal plus all accumulated interest will be automatically returned to your wallet.</p>
+
+      <div class="summary">
+        <div class="summary-row"><span>Amount Deposited</span><strong>${{amount}}</strong></div>
+        <div class="summary-row"><span>Interest Rate</span><strong>{{interest_rate}}% p.a.</strong></div>
+        <div class="summary-row"><span>Duration</span><strong>{{duration_months}} months</strong></div>
+        <div class="summary-row"><span>Maturity Date</span><strong>{{maturity_date}}</strong></div>
+        <div class="summary-row"><span>Expected Return</span><strong>${{expected_return}}</strong></div>
+      </div>
+
+      <p>Your deposit is locked until the maturity date. On that date, your principal and interest will be automatically credited to your wallet — no action required.</p>
+
+      <a class="btn" href="{{app_url}}/dashboard">View My Deposits</a>
+
+      <hr class="divider">
+      <p style="font-size:14px;">If you have any questions about your deposit, please <a href="{{app_url}}/contact" style="color:#3FE0A1;">contact our support team</a>.</p>
+    </div>
+    <div class="footer">
+      <p>You received this email because a fixed deposit was opened on your CrestVale Bank account.<br>
+      <a href="{{app_url}}/contact">Help Centre</a> &bull; <a href="{{app_url}}/terms">Terms of Use</a></p>
+      <p>&copy; {{year}} CrestVale Bank. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

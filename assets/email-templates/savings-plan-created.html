@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Savings Plan Created</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 0; background: #f5f5f7; font-family: 'Inter', Helvetica, Arial, sans-serif; }
+    .wrapper { max-width: 640px; margin: 0 auto; padding: 40px 16px; }
+    .logo { display: block; width: 100px; margin: 0 auto 32px; }
+    .card { background: #ffffff; border-radius: 20px; padding: 40px 40px 32px; }
+    .badge { display: inline-block; background: #e8faf3; color: #15803d; font-weight: 600; font-size: 14px; padding: 4px 14px; border-radius: 99px; margin-bottom: 24px; }
+    h1 { font-size: 26px; font-weight: 700; color: #040b22; margin: 0 0 12px; line-height: 1.25; }
+    p { font-size: 16px; color: #4a4f5f; line-height: 1.6; margin: 0 0 16px; }
+    .summary { background: #f5f5f7; border-radius: 12px; padding: 20px 24px; margin: 24px 0; }
+    .summary-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 15px; color: #4a4f5f; border-bottom: 1px solid #e8e8ee; }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-row strong { color: #040b22; font-weight: 600; }
+    .btn { display: inline-block; background: #3FE0A1; color: #0C1F18; font-weight: 700; font-size: 15px; text-decoration: none; padding: 13px 28px; border-radius: 99px; margin-top: 8px; }
+    .tip { background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 8px; padding: 14px 18px; margin: 20px 0; font-size: 14px; color: #1e40af; }
+    .divider { border: none; border-top: 1px solid #e8e8ee; margin: 28px 0; }
+    .footer { text-align: center; font-size: 13px; color: #9ca3af; line-height: 1.6; padding-top: 24px; }
+    .footer a { color: #6b7280; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="card">
+      <img class="logo" src="{{app_url}}/assets/images/logo/1.png" alt="CrestVale Bank">
+      <span class="badge">✓ Savings Plan Created</span>
+      <h1>Your savings plan is active, {{first_name}}.</h1>
+      <p>You've taken a great step towards your financial goals. Your savings plan has been set up and is ready to receive contributions. Start adding funds from your wallet to grow your balance towards your target.</p>
+
+      <div class="summary">
+        <div class="summary-row"><span>Plan Name</span><strong>{{plan_name}}</strong></div>
+        <div class="summary-row"><span>Savings Target</span><strong>${{target_amount}}</strong></div>
+        <div class="summary-row"><span>Interest Rate</span><strong>{{interest_rate}}% p.a.</strong></div>
+        <div class="summary-row"><span>Duration</span><strong>{{duration_months}} months</strong></div>
+      </div>
+
+      <div class="tip">
+        <strong>How interest works:</strong> Interest is calculated monthly on your current balance using the formula: Balance × Rate ÷ 12. It is credited directly to your wallet at the end of each month.
+      </div>
+
+      <p>You can add funds to your plan at any time from your Savings dashboard. The plan completes when you reach your target or the duration ends.</p>
+
+      <a class="btn" href="{{app_url}}/dashboard">View My Savings</a>
+
+      <hr class="divider">
+      <p style="font-size:14px;">If you have any questions about your savings plan, please <a href="{{app_url}}/contact" style="color:#3FE0A1;">contact our support team</a>.</p>
+    </div>
+    <div class="footer">
+      <p>You received this email because a new savings plan was created on your CrestVale Bank account.<br>
+      <a href="{{app_url}}/dashboard">Dashboard</a> &bull; <a href="{{app_url}}/contact">Help Centre</a> &bull; <a href="{{app_url}}/terms">Terms of Use</a></p>
+      <p>&copy; {{year}} CrestVale Bank. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>

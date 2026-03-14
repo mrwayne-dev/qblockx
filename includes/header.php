@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: arqoracapital
+ * Project: crestvalebank
  * Include: header.php — floating glass nav pill + mobile drawer
  */
 
@@ -14,20 +14,56 @@ function navActive(string $page, string $current): string {
 <header class="nav-pill" data-header>
   <!-- Logo -->
   <a href="/" class="nav-logo">
-    <span class="nav-logo-mark" aria-hidden="true"><img src="/assets/images/logo/5.png" alt=""></span>
-    ArqoraCapital
+    <span class="nav-logo-mark" aria-hidden="true"><img src="/assets/images/logo/2.png" alt=""></span>
+    CrestVale Bank
   </a>
 
   <!-- Desktop nav links -->
   <nav class="nav-links" aria-label="Main navigation">
-    <a href="/solutions"<?= navActive('solutions.php', $currentPage) ?>>Solutions</a>
+    <!-- Products dropdown -->
+    <div class="nav-dropdown">
+      <a href="/products"<?= navActive('solutions.php', $currentPage) ?> class="nav-dropdown-trigger">
+        Products <i class="ph ph-caret-down" aria-hidden="true"></i>
+      </a>
+      <div class="nav-dropdown-menu">
+        <a href="/products#savings" class="nav-dropdown-item">
+          <i class="ph ph-piggy-bank" aria-hidden="true"></i>
+          <span>
+            <strong>Savings Plans</strong>
+            <small>Goal-based savings accounts</small>
+          </span>
+        </a>
+        <a href="/products#deposits" class="nav-dropdown-item">
+          <i class="ph ph-vault" aria-hidden="true"></i>
+          <span>
+            <strong>Fixed Deposits</strong>
+            <small>Locked returns, higher rates</small>
+          </span>
+        </a>
+        <a href="/products#loans" class="nav-dropdown-item">
+          <i class="ph ph-hand-coins" aria-hidden="true"></i>
+          <span>
+            <strong>Loans</strong>
+            <small>Flexible borrowing solutions</small>
+          </span>
+        </a>
+        <a href="/products#transfers" class="nav-dropdown-item">
+          <i class="ph ph-arrows-left-right" aria-hidden="true"></i>
+          <span>
+            <strong>Transfers</strong>
+            <small>Instant wallet-to-wallet transfers</small>
+          </span>
+        </a>
+      </div>
+    </div>
     <a href="/company"<?= navActive('company.php', $currentPage) ?>>Company</a>
+    <a href="/security"<?= navActive('security.php', $currentPage) ?>>Security</a>
     <a href="/about"<?= navActive('about.php', $currentPage) ?>>About</a>
     <a href="/contact"<?= navActive('contact.php', $currentPage) ?>>Contact</a>
   </nav>
 
   <!-- Desktop CTA -->
-  <a href="/login" class="nav-cta">Get Started</a>
+  <a href="/register" class="nav-cta">Get Started</a>
 
   <!-- Mobile hamburger -->
   <button class="nav-toggle" data-nav-toggler aria-label="Toggle menu" aria-expanded="false" aria-controls="mobileMenu">
@@ -48,38 +84,25 @@ function navActive(string $page, string $current): string {
     <!-- Brand mark -->
     <a href="/" class="mobile-drawer-logo">
       <span class="nav-logo-mark" aria-hidden="true">
-        <img src="/assets/images/logo/5.png" alt="">
+        <img src="/assets/images/logo/2.png" alt="">
       </span>
-      ArqoraCapital
+      CrestVale Bank
     </a>
 
-    <!-- Nav links -->
+    <!-- Nav links — plain uppercase, no icons -->
     <nav class="mobile-drawer-nav" aria-label="Mobile navigation">
-      <a href="/solutions"<?= navActive('solutions.php', $currentPage) ?>>
-        <i class="ph ph-lightning" aria-hidden="true"></i>
-        Solutions
-      </a>
-      <a href="/company"<?= navActive('company.php', $currentPage) ?>>
-        <i class="ph ph-buildings" aria-hidden="true"></i>
-        Company
-      </a>
-      <a href="/about"<?= navActive('about.php', $currentPage) ?>>
-        <i class="ph ph-users" aria-hidden="true"></i>
-        About
-      </a>
-      <a href="/contact"<?= navActive('contact.php', $currentPage) ?>>
-        <i class="ph ph-envelope" aria-hidden="true"></i>
-        Contact
-      </a>
-      <a href="/learnmore"<?= navActive('learnmore.php', $currentPage) ?>>
-        <i class="ph ph-book-open" aria-hidden="true"></i>
-        Learn More
-      </a>
+      <a href="/products"<?= navActive('solutions.php', $currentPage) ?>>Products</a>
+      <a href="/company"<?= navActive('company.php', $currentPage) ?>>Company</a>
+      <a href="/security"<?= navActive('security.php', $currentPage) ?>>Security</a>
+      <a href="/about"<?= navActive('about.php', $currentPage) ?>>About</a>
+      <a href="/help"<?= navActive('learnmore.php', $currentPage) ?>>Help</a>
+      <a href="/contact"<?= navActive('contact.php', $currentPage) ?>>Contact</a>
     </nav>
 
-    <!-- CTA -->
+    <!-- Bottom: LOG IN + GET STARTED -->
     <div class="mobile-drawer-actions">
-      <a href="/login" class="btn-shiny" style="text-align:center;">Get Started</a>
+      <a href="/login" class="mobile-drawer-login">Log In</a>
+      <a href="/register" class="btn-shiny" style="text-align:center;">Get Started</a>
     </div>
   </div>
 </div>

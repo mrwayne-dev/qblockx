@@ -1,5 +1,5 @@
 /* ============================================================
-   ArqoraCapital — Responsive CSS
+   CrestVale Bank — Responsive CSS
    Breakpoints: 1199px (tablet) | 899px (mobile) | 600px (small)
    ============================================================ */
 
@@ -18,9 +18,23 @@
     max-width: 960px;
   }
 
-  /* Hero */
-  .hero-heading {
-    font-size: clamp(4rem, 7vw, 7rem);
+  /* Hero — collapse to single column at tablet, hide widget */
+  .hero-split {
+    grid-template-columns: 1fr;
+    padding: 9rem 4rem 3rem;
+    gap: 0;
+  }
+  .hero-right    { display: none; }
+  .hero-heading  { font-size: clamp(4.5rem, 7vw, 7rem); }
+  .hero-steps    { grid-template-columns: repeat(4, 1fr); }
+  .hero-step     { padding: 1.2rem 1.4rem 1rem; }
+  .step-name     { font-size: 1.2rem; }
+
+  /* Recentre gradient orb — single-column viewport is taller/narrower */
+  .hero::before {
+    background:
+      radial-gradient(ellipse 90% 45% at 50% 28%, rgba(63, 224, 161, 0.18), transparent 65%),
+      radial-gradient(ellipse 65% 30% at 55% 62%, rgba(43, 201, 138, 0.10), transparent 60%);
   }
 
   /* Bento — collapse 3-col spans to 6 */
@@ -79,34 +93,23 @@
   }
 
   /* ── Hero ── */
-  .hero {
-    min-height: 100vh;
-    padding-bottom: 5rem;
+  .hero-split   { padding: 8rem 2.4rem 3rem; }
+  .hero-heading { font-size: clamp(3.2rem, 9vw, 5.5rem); }
+  .hero-subtext { font-size: var(--text-base); }
+  .hero-actions { gap: var(--space-3); }
+
+  /* Tighter orb on narrow portrait screens */
+  .hero::before {
+    background:
+      radial-gradient(ellipse 110% 38% at 50% 22%, rgba(63, 224, 161, 0.15), transparent 65%),
+      radial-gradient(ellipse 75% 25% at 50% 58%, rgba(43, 201, 138, 0.08), transparent 60%);
   }
 
-  .hero-container {
-    max-width: 100%;
-    padding-inline: var(--space-6);
-  }
-
-  .hero-heading {
-    font-size: clamp(3.2rem, 9vw, 5.5rem);
-    max-width: none;
-  }
-
-  .hero-subtext {
-    font-size: var(--text-base);
-  }
-
-  .hero-actions {
-    gap: var(--space-3);
-  }
-
-  /* Carousel dots — align with reduced padding */
-  .hero-dots {
-    right: var(--space-6);
-    bottom: 3rem;
-  }
+  /* 2×2 grid — all 4 steps visible on mobile */
+  .hero-steps { grid-template-columns: repeat(2, 1fr); }
+  .hero-step { padding: 0.8rem 1rem 0.7rem; }
+  .step-name { font-size: 1rem; }
+  .step-bar  { height: 2px; }
 
   /* ── Bento Grid — 2 columns ── */
   .bento-card--sm   { grid-column: span 6; }
@@ -215,21 +218,21 @@
   /* ── CTA ── */
   .cta-section {
     padding-block: var(--space-16);
-    text-align: left;
+    text-align: center;
   }
   .cta-container {
-    text-align: left;
+    text-align: center;
   }
   .cta-subtext {
-    margin-inline: 0;
+    margin-inline: auto;
   }
   .cta-header {
     font-size: var(--text-3xl);
   }
   .cta-actions {
-    justify-content: flex-start;
+    justify-content: center;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: var(--space-3);
   }
   .cta-actions .btn-primary,
@@ -407,26 +410,16 @@
     font-size: clamp(2.8rem, 11vw, 4.4rem);
     line-height: 1.1;
   }
-  .hero-subtext {
-    font-size: var(--text-sm);
-    margin-bottom: var(--space-6);
-  }
-  .hero-tag,
-  .hero-label {
-    font-size: 1rem;
-    letter-spacing: 0.08em;
-  }
-  .btn-hero-outline,
-  .btn-hero-ghost {
-    font-size: var(--text-xs);
-    padding: 0.9rem 1.6rem;
-  }
-
-  /* Carousel dots — align with tighter padding */
-  .hero-dots {
-    right: var(--space-5);
-    bottom: 2.5rem;
-  }
+  .hero-split   { padding: 7rem 1.8rem 2.5rem; }
+  .hero-subtext { font-size: var(--text-sm); margin-bottom: var(--space-6); }
+  .hero-tag, .hero-label { font-size: 1rem; letter-spacing: 0.08em; }
+  .btn-hero-outline, .btn-hero-ghost { font-size: var(--text-xs); padding: 0.9rem 1.6rem; }
+  .hero-steps { grid-template-columns: repeat(2, 1fr); }
+  .hero-step  { padding: 0.65rem 0.8rem 0.6rem; }
+  .step-num   { font-size: 0.9rem; }
+  .step-name  { font-size: 0.88rem; }
+  .step-bar   { height: 2px; }
+  .hw-card { width: 100%; }
 
   /* Bento — single column */
   .bento-card--sm,

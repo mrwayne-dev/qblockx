@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: arqoracapital
+ * Project: crestvalebank
  * Central Mailer: loads HTML templates, fills {{placeholders}}, sends via PHPMailer SMTP
  *
  * Usage:
@@ -35,9 +35,9 @@ class Mailer
         }
 
         $html    = file_get_contents($path);
-        $appName = getenv('APP_NAME') ?: 'ArqoraCapital';
-        $appUrl  = rtrim(getenv('APP_URL') ?: 'https://arqoracapital.com', '/');
-        $appHost = parse_url($appUrl, PHP_URL_HOST) ?: 'arqoracapital.com';
+        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+        $appUrl  = rtrim(getenv('APP_URL') ?: 'https://crestvalebank.com', '/');
+        $appHost = parse_url($appUrl, PHP_URL_HOST) ?: 'crestvalebank.com';
 
         // Merge caller vars with defaults
         $allVars = array_merge([
@@ -98,8 +98,8 @@ class Mailer
             $mail->CharSet    = 'UTF-8';
 
             $mail->setFrom(
-                getenv('SMTP_FROM')      ?: 'noreply@arqoracapital.com',
-                getenv('SMTP_FROM_NAME') ?: (getenv('APP_NAME') ?: 'ArqoraCapital')
+                getenv('SMTP_FROM')      ?: 'noreply@crestvalebank.com',
+                getenv('SMTP_FROM_NAME') ?: (getenv('APP_NAME') ?: 'CrestVale Bank')
             );
             $mail->addAddress($to, $toName);
             $mail->isHTML(true);
@@ -120,35 +120,23 @@ class Mailer
     // ── Convenience senders ──────────────────────────────────────────────────
 
     /**
-     * Email verification link — sent on registration and resend requests.
+     * Email verification code — sent on registration and resend requests.
+     *
+     * @param  string $code  6-digit numeric verification code
      */
-    public static function sendVerification(string $email, string $name, string $verifyLink): bool
+    public static function sendVerification(string $email, string $name, string $code): bool
     {
-        $appName = getenv('APP_NAME') ?: 'ArqoraCapital';
-        $appUrl  = rtrim(getenv('APP_URL') ?: '', '/');
+        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
 
         $html = self::render('verify-email.html', [
             'first_name'        => $name ?: 'there',
-            // Template shows a "code" — we repurpose it to show the link text
-            'verification_code' => 'Use the button below to verify your account.',
+            'verification_code' => $code,
         ]);
-
-        // The template button href is {{app_url}}/register (already rendered to $appUrl/register)
-        // Replace that with the real verify link
-        if ($appUrl) {
-            $html = str_replace(
-                htmlspecialchars($appUrl . '/register', ENT_QUOTES, 'UTF-8'),
-                htmlspecialchars($verifyLink, ENT_QUOTES, 'UTF-8'),
-                $html
-            );
-            // Also handle un-encoded version (href attributes may not encode the URL)
-            $html = str_replace($appUrl . '/register', $verifyLink, $html);
-        }
 
         return self::send(
             $email,
             $name,
-            'Verify your email — ' . $appName,
+            'Your verification code is ' . $code . ' — ' . $appName,
             $html
         );
     }
@@ -158,7 +146,7 @@ class Mailer
      */
     public static function sendPasswordReset(string $email, string $name, string $resetUrl): bool
     {
-        $appName = getenv('APP_NAME') ?: 'ArqoraCapital';
+        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
 
         $html = self::render('password-reset.html', [
             'first_name' => $name ?: 'there',
@@ -173,7 +161,7 @@ class Mailer
      */
     public static function sendDepositPending(string $email, string $name): bool
     {
-        $appName = getenv('APP_NAME') ?: 'ArqoraCapital';
+        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
 
         $html = self::render('deposit-pending.html', [
             'first_name' => $name ?: 'there',
@@ -192,7 +180,7 @@ class Mailer
         string $currency,
         string $paymentId
     ): bool {
-        $appName = getenv('APP_NAME') ?: 'ArqoraCapital';
+        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
 
         $html = self::render('deposit-confirmed.html', [
             'first_name' => $name ?: 'there',
@@ -205,75 +193,71 @@ class Mailer
     }
 
     /**
-     * Investment contract started.
+     * Savings plan created.
      */
-    public static function sendInvestmentStarted(
+    public static function sendSavingsPlanCreated(
         string $email,
         string $name,
         string $planName,
-        string $amount,
-        string $dailyYieldMin,
-        string $dailyYieldMax,
-        int    $durationDays
+        string $targetAmount,
+        string $interestRate,
+        int    $durationMonths
     ): bool {
-        $appName = getenv('APP_NAME') ?: 'ArqoraCapital';
+        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
 
-        $html = self::render('investment-started.html', [
+        $html = self::render('savings-plan-created.html', [
             'first_name'      => $name ?: 'there',
             'plan_name'       => $planName,
-            'amount'          => $amount,
-            'daily_yield_min' => $dailyYieldMin,
-            'daily_yield_max' => $dailyYieldMax,
-            'duration_days'   => (string) $durationDays,
+            'target_amount'   => $targetAmount,
+            'interest_rate'   => $interestRate,
+            'duration_months' => (string) $durationMonths,
         ]);
 
-        return self::send($email, $name, 'Investment Started — ' . $appName, $html);
+        return self::send($email, $name, 'Savings Plan Created — ' . $appName, $html);
     }
 
     /**
-     * Investment contract completed (all 5 days done).
+     * Fixed deposit matured and return credited.
      */
-    public static function sendInvestmentCompleted(
+    public static function sendDepositMatured(
         string $email,
         string $name,
-        string $planName,
         string $amount,
-        string $totalProfit,
-        string $completionDate
+        string $totalReturn,
+        string $maturityDate
     ): bool {
-        $appName = getenv('APP_NAME') ?: 'ArqoraCapital';
+        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
 
-        $html = self::render('investment-completed.html', [
-            'first_name'      => $name ?: 'there',
-            'plan_name'       => $planName,
-            'amount'          => $amount,
-            'total_profit'    => $totalProfit,
-            'completion_date' => $completionDate,
+        $html = self::render('deposit-matured.html', [
+            'first_name'    => $name ?: 'there',
+            'amount'        => $amount,
+            'total_return'  => $totalReturn,
+            'maturity_date' => $maturityDate,
         ]);
 
-        return self::send($email, $name, 'Investment Completed — ' . $appName, $html);
+        return self::send($email, $name, 'Fixed Deposit Matured — ' . $appName, $html);
     }
 
     /**
-     * Daily profit credited to wallet.
+     * Interest credited to wallet.
      */
-    public static function sendProfitCredited(
+    public static function sendInterestCredited(
         string $email,
         string $name,
-        string $profitAmount,
+        string $interestAmount,
         string $planName,
         string $creditDate
     ): bool {
-        $appName = getenv('APP_NAME') ?: 'ArqoraCapital';
+        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
 
-        $html = self::render('profit-credited.html', [
-            'first_name'    => $name ?: 'there',
-            'profit_amount' => $profitAmount,
-            'plan_name'     => $planName,
-            'credit_date'   => $creditDate,
+        $html = self::render('interest-credited.html', [
+            'first_name'      => $name ?: 'there',
+            'interest_amount' => $interestAmount,
+            'plan_name'       => $planName,
+            'credit_date'     => $creditDate,
         ]);
 
-        return self::send($email, $name, 'Profit Credited — ' . $appName, $html);
+        return self::send($email, $name, 'Interest Credited — ' . $appName, $html);
     }
 
     /**
@@ -286,7 +270,7 @@ class Mailer
         string $walletAddress,
         int    $processingHours = 24
     ): bool {
-        $appName = getenv('APP_NAME') ?: 'ArqoraCapital';
+        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
 
         $html = self::render('withdrawal-pending.html', [
             'first_name'       => $name ?: 'there',
@@ -308,7 +292,7 @@ class Mailer
         string $walletAddress,
         string $txHash = ''
     ): bool {
-        $appName = getenv('APP_NAME') ?: 'ArqoraCapital';
+        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
 
         $html = self::render('withdrawal-confirmed.html', [
             'first_name'     => $name ?: 'there',
@@ -331,7 +315,7 @@ class Mailer
         string $submittedDate,
         string $rejectionReason = ''
     ): bool {
-        $appName = getenv('APP_NAME') ?: 'ArqoraCapital';
+        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
 
         $html = self::render('withdrawal-rejected.html', [
             'first_name'       => $name ?: 'there',
@@ -353,7 +337,7 @@ class Mailer
         string $bonusAmount,
         string $referredName
     ): bool {
-        $appName = getenv('APP_NAME') ?: 'ArqoraCapital';
+        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
 
         $html = self::render('referral-bonus.html', [
             'first_name'    => $name ?: 'there',
@@ -369,7 +353,7 @@ class Mailer
      */
     public static function sendUserSignIn(string $email, string $name, string $loginTime): bool
     {
-        $appName = getenv('APP_NAME') ?: 'ArqoraCapital';
+        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
 
         $html = self::render('user-signin.html', [
             'first_name' => $name ?: 'there',
@@ -384,7 +368,7 @@ class Mailer
      */
     public static function sendAdminSignIn(string $email, string $name, string $loginTime): bool
     {
-        $appName = getenv('APP_NAME') ?: 'ArqoraCapital';
+        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
 
         $html = self::render('admin-signin.html', [
             'first_name' => $name ?: 'Admin',
@@ -392,6 +376,96 @@ class Mailer
         ]);
 
         return self::send($email, $name, 'Admin Panel Sign-In Alert — ' . $appName, $html);
+    }
+
+    /**
+     * Fixed deposit opened confirmation.
+     */
+    public static function sendFixedDepositOpened(
+        string $email,
+        string $name,
+        string $amount,
+        string $interestRate,
+        int    $durationMonths,
+        string $maturityDate,
+        string $expectedReturn
+    ): bool {
+        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+
+        $html = self::render('fixed-deposit-opened.html', [
+            'first_name'      => $name ?: 'there',
+            'amount'          => $amount,
+            'interest_rate'   => $interestRate,
+            'duration_months' => (string) $durationMonths,
+            'maturity_date'   => $maturityDate,
+            'expected_return' => $expectedReturn,
+        ]);
+
+        return self::send($email, $name, 'Fixed Deposit Opened — ' . $appName, $html);
+    }
+
+    /**
+     * Loan application approved and funds disbursed.
+     */
+    public static function sendLoanApproved(
+        string $email,
+        string $name,
+        string $amount,
+        string $monthlyPayment,
+        int    $durationMonths
+    ): bool {
+        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+
+        $html = self::render('loan-approved.html', [
+            'first_name'      => $name ?: 'there',
+            'amount'          => $amount,
+            'monthly_payment' => $monthlyPayment,
+            'duration_months' => (string) $durationMonths,
+        ]);
+
+        return self::send($email, $name, 'Loan Approved — ' . $appName, $html);
+    }
+
+    /**
+     * Loan application rejected.
+     */
+    public static function sendLoanRejected(
+        string $email,
+        string $name,
+        string $amount,
+        string $reason = ''
+    ): bool {
+        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+
+        $html = self::render('loan-rejected.html', [
+            'first_name' => $name ?: 'there',
+            'amount'     => $amount,
+            'reason'     => $reason ?: 'Your application did not meet our current lending criteria.',
+        ]);
+
+        return self::send($email, $name, 'Loan Application Update — ' . $appName, $html);
+    }
+
+    /**
+     * Monthly loan payment due reminder.
+     */
+    public static function sendLoanPaymentDue(
+        string $email,
+        string $name,
+        string $monthlyPayment,
+        string $remainingBalance,
+        string $dueDate
+    ): bool {
+        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+
+        $html = self::render('loan-payment-due.html', [
+            'first_name'        => $name ?: 'there',
+            'monthly_payment'   => $monthlyPayment,
+            'remaining_balance' => $remainingBalance,
+            'due_date'          => $dueDate,
+        ]);
+
+        return self::send($email, $name, 'Loan Payment Due — ' . $appName, $html);
     }
 
 }

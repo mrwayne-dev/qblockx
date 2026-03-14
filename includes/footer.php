@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: arqoracapital
+ * Project: crestvalebank
  * Include: footer.php — 4-column footer + disclosure + scripts
  */
 $currentYear = date('Y');
@@ -12,14 +12,14 @@ $currentYear = date('Y');
 
     <!-- Brand column -->
     <div class="footer-brand">
-      <a href="/" class="footer-logo" aria-label="ArqoraCapital home">
+      <a href="/" class="footer-logo" aria-label="CrestVale Bank home">
         <span class="nav-logo-mark" aria-hidden="true">
-          <img src="/assets/images/logo/5.png" alt="">
+          <img src="/assets/images/logo/2.png" alt="">
         </span>
-        ArqoraCapital
+        CrestVale Bank
       </a>
       <p class="footer-tagline">
-        Globally trusted crypto investment platform. Earn daily returns with full transparency.
+        Modern fintech banking — savings, deposits, loans, and instant transfers built for the future.
       </p>
     </div>
 
@@ -27,9 +27,10 @@ $currentYear = date('Y');
     <div class="footer-col">
       <h4 class="footer-col-title">Products</h4>
       <ul class="footer-col-links">
-        <li><a href="/solutions">Investment Plans</a></li>
-        <li><a href="/solutions#pricing">Pricing</a></li>
-        <li><a href="/learnmore">How It Works</a></li>
+        <li><a href="/products#savings">Savings Plans</a></li>
+        <li><a href="/products#deposits">Fixed Deposits</a></li>
+        <li><a href="/products#loans">Loans</a></li>
+        <li><a href="/products#transfers">Transfers</a></li>
       </ul>
     </div>
 
@@ -39,14 +40,16 @@ $currentYear = date('Y');
       <ul class="footer-col-links">
         <li><a href="/about">About Us</a></li>
         <li><a href="/company">Our Mission</a></li>
+        <li><a href="/security">Security</a></li>
         <li><a href="/contact">Contact</a></li>
       </ul>
     </div>
 
-    <!-- Legal -->
+    <!-- Support & Legal -->
     <div class="footer-col">
-      <h4 class="footer-col-title">Legal</h4>
+      <h4 class="footer-col-title">Support & Legal</h4>
       <ul class="footer-col-links">
+        <li><a href="/help">Help Centre</a></li>
         <li><a href="/privacy">Privacy Policy</a></li>
         <li><a href="/terms">Terms of Service</a></li>
         <li><a href="/risk">Risk Disclosure</a></li>
@@ -58,7 +61,7 @@ $currentYear = date('Y');
   <!-- Footer bottom bar -->
   <div class="footer-bottom container">
     <span class="footer-copy">
-      &copy; <?= $currentYear ?> ArqoraCapital Inc. All rights reserved.
+      &copy; <?= $currentYear ?> CrestVale Bank. All rights reserved.
     </span>
     <span class="footer-status">
       <span class="status-dot" aria-hidden="true"></span>
@@ -72,13 +75,13 @@ $currentYear = date('Y');
 <section class="disclosure" aria-label="Risk disclosure">
   <div class="container">
     <p class="disclosure-text">
-      <strong>Risk Disclosure:</strong> Cryptocurrency investments carry significant risk. The value of digital assets can be highly volatile and you may lose some or all of your investment. Past performance is not indicative of future results. ArqoraCapital does not guarantee investment returns. Please consider your financial situation and risk tolerance before investing. ArqoraCapital is not a registered investment advisor and this platform does not constitute financial advice.
+      <strong>Important Notice:</strong> CrestVale Bank is a fintech banking platform. Financial products including savings plans, fixed deposits, and loans carry inherent risk. Interest rates are subject to change. Fixed deposit returns depend on the agreed term and are not guaranteed beyond stated contract terms. Loan approvals are subject to eligibility assessment.
     </p>
     <p class="disclosure-text">
-      By using ArqoraCapital, you agree to our <a href="/terms" style="color:inherit;text-decoration:underline;">Terms of Service</a> and acknowledge you have read and understood the <a href="/risk" style="color:inherit;text-decoration:underline;">Risk Disclosure</a>. Investment contracts are subject to the terms outlined at the time of purchase. ArqoraCapital Inc. reserves the right to modify product offerings at any time.
+      By using CrestVale Bank, you agree to our <a href="/terms" style="color:inherit;text-decoration:underline;">Terms of Service</a> and acknowledge you have read and understood the <a href="/risk" style="color:inherit;text-decoration:underline;">Risk Disclosure</a>. CrestVale Bank reserves the right to modify product offerings and interest rates at any time with appropriate notice.
     </p>
   </div>
 </section>
 
 <!-- ── Scripts ────────────────────────────────────────────── -->
-<!-- main.js is now loaded via head.php so auth pages also receive it -->
+<!-- main.js is loaded via head.php -->

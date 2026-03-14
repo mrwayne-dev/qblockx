@@ -1,19 +1,21 @@
 /* ============================================================
-   Admin Panel Styles — arqoracapital
+   Admin Panel Styles — crestvalebank
    Scoped to body.admin-body
    Builds on top of main.css (design tokens + base styles).
    ============================================================ */
 
 /* ── Root font-size reset ────────────────────────────
    main.css sets html { font-size: 10px } for the marketing site.
-   Admin panel expects 1rem = 16px (browser default), so reset here.
+   Admin panel (dashboard) expects 1rem = 16px, so reset here.
+   Scoped to pages that contain .admin-layout so the admin login/register
+   pages keep the same 10px rem base as the user auth pages.
    ─────────────────────────────────────────────────── */
-html:has(body.admin-body) {
+html:has(body.admin-body .admin-layout) {
   font-size: 16px !important;
 }
 
 /* Fallback for browsers without :has() support */
-body.admin-body {
+body.admin-body .admin-layout {
   font-size: 16px;
 }
 
@@ -314,7 +316,7 @@ body.admin-body .section-subtitle {
 /* ── Stat Cards ─────────────────────────────────────── */
 body.admin-body .stat-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   margin-bottom: 2rem;
 }
@@ -416,6 +418,46 @@ body.admin-body .filter-btn:hover {
   background: var(--color-accent-glow);
   color: var(--color-accent);
   border-color: rgba(37, 99, 235, 0.3);
+}
+
+/* ── Small Buttons — toolbar + modal actions ─────────── */
+body.admin-body .btn-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.48rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  font-family: var(--font-body);
+  line-height: 1;
+}
+
+body.admin-body .btn-sm:hover {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+}
+
+body.admin-body .btn-sm.btn-accent {
+  background: var(--color-accent);
+  color: #fff;
+  border-color: transparent;
+}
+
+body.admin-body .btn-sm.btn-accent:hover {
+  filter: brightness(0.88);
+}
+
+body.admin-body .btn-sm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 /* ── Data Table ─────────────────────────────────────── */
@@ -630,6 +672,16 @@ body.admin-body .btn-action--warning:hover {
   background: rgba(245, 158, 11, 0.16);
 }
 
+body.admin-body .btn-action--info {
+  color: #065F46;
+  border-color: rgba(6, 95, 70, 0.3);
+  background: rgba(6, 95, 70, 0.08);
+}
+
+body.admin-body .btn-action--info:hover {
+  background: rgba(6, 95, 70, 0.16);
+}
+
 body.admin-body .btn-action:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -724,6 +776,117 @@ body.admin-body .empty-rows i {
   margin-bottom: 0.25rem;
 }
 
+/* ── Settings System Controls ────────────────────────── */
+
+body.admin-body .settings-toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0.25rem 0;
+}
+
+body.admin-body .settings-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background 0.15s;
+  gap: 1rem;
+}
+
+body.admin-body .settings-toggle-row:last-child {
+  border-bottom: none;
+}
+
+body.admin-body .settings-toggle-row:hover {
+  background: rgba(255,255,255,0.02);
+}
+
+body.admin-body .settings-toggle-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text);
+  flex: 1;
+}
+
+body.admin-body .settings-toggle-label small {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+/* Toggle switch — custom checkbox */
+body.admin-body .toggle-input {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  min-width: 44px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--color-border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+  outline-offset: 3px;
+}
+
+body.admin-body .toggle-input::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+body.admin-body .toggle-input:checked {
+  background: var(--color-accent);
+}
+
+body.admin-body .toggle-input:checked::after {
+  transform: translateX(20px);
+}
+
+/* Number input inside settings rows (min deposit / min withdrawal) */
+body.admin-body .settings-number-input {
+  width: 80px;
+  text-align: right;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.88rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+body.admin-body .settings-number-input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-glow);
+}
+
+/* Hide native number spinner arrows */
+body.admin-body .settings-number-input::-webkit-outer-spin-button,
+body.admin-body .settings-number-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+body.admin-body .settings-number-input[type=number] {
+  -moz-appearance: textfield;
+}
+
 /* ── Alert Feedback ──────────────────────────────────── */
 body.admin-body .admin-alert {
   padding: 0.65rem 1rem;
@@ -757,12 +920,19 @@ body.admin-body .mobile-dock.admin-mobile-dock {
   border-top: 1px solid var(--color-border);
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
   flex-direction: row;
+  flex-wrap: nowrap;
   align-items: stretch;
   padding-bottom: env(safe-area-inset-bottom, 0);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
+body.admin-body .mobile-dock.admin-mobile-dock::-webkit-scrollbar { display: none; }
 
 body.admin-body .mobile-dock.admin-mobile-dock .dock-item {
   flex: 1;
+  flex-shrink: 0;
+  min-width: 60px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -801,7 +971,7 @@ body.admin-body .mobile-dock.admin-mobile-dock .dock-item--center.active {
 /* ── Quick Action Cards (overview) ──────────────────── */
 body.admin-body .quick-actions-row {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   margin-bottom: 2rem;
 }
@@ -1046,6 +1216,33 @@ body.admin-body .admin-modal-body {
   padding: 1.4rem 1.75rem 1.75rem;
 }
 
+/* ── Wide modal variant ───────────────────────────────── */
+body.admin-body .admin-modal-body--scrollable {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 1.25rem 1.75rem 1.75rem;
+}
+
+/* ── View User Modal ──────────────────────────────────── */
+body.admin-body .view-user-section {
+  margin-bottom: 1.5rem;
+}
+
+body.admin-body .view-user-section:last-child {
+  margin-bottom: 0;
+}
+
+body.admin-body .view-user-section-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
 /* ── Modal Form Layout ────────────────────────────────── */
 body.admin-body .admin-form-row {
   display: grid;
@@ -1115,13 +1312,21 @@ body.admin-body .admin-form-note {
   margin-top: 0.25rem;
 }
 
-body.admin-body .admin-modal-actions {
+body.admin-body .admin-modal-actions,
+body.admin-body .admin-modal-footer {
   display: flex;
   gap: 0.75rem;
   justify-content: flex-end;
   margin-top: 1.4rem;
-  padding-top: 1rem;
+  padding: 1rem 1.75rem 1.4rem;
   border-top: 1px solid var(--color-border);
+}
+
+body.admin-body .admin-modal-note {
+  font-size: 0.83rem;
+  color: var(--color-text-muted);
+  margin: 0 0 1.1rem;
+  line-height: 1.5;
 }
 
 body.admin-body .admin-modal-msg {
@@ -1275,8 +1480,9 @@ body.admin-body .table-filters-bar {
   }
 
   body.admin-body .btn-actions {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
     gap: 0.25rem;
   }
 

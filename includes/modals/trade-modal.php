@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: arqoracapital
+ * Project: crestvalebank
  * Modal: Trade / Invest — start a new investment contract
  *
  * data-action="invest" — handled by startInvestment() in user-dashboard.js

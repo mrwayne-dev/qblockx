@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: arqoracapital
+ * Project: crestvalebank
  * Page: User Login
  */
 $pageTitle = 'Sign In';
@@ -12,11 +12,11 @@ require_once '../../includes/head.php';
 
     <!-- ── Left brand panel ── -->
     <div class="auth-panel">
-      <a href="/" class="auth-panel-logo" aria-label="ArqoraCapital home">
+      <a href="/" class="auth-panel-logo" aria-label="CrestVale Bank home">
         <span class="nav-logo-mark" aria-hidden="true">
           <img src="/assets/images/logo/2.png" alt="">
         </span>
-        ArqoraCapital
+        CrestVale Bank
       </a>
 
       <div class="auth-panel-body">
@@ -34,7 +34,7 @@ require_once '../../includes/head.php';
             <span class="auth-panel-stat-label">Countries</span>
           </div>
           <div class="auth-panel-stat">
-            <span class="auth-panel-stat-value">8%</span>
+            <span class="auth-panel-stat-value">8<i class="ph ph-percent"></i></span>
             <span class="auth-panel-stat-label">Max Daily</span>
           </div>
         </div>

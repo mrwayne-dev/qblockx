@@ -1,1 +1,1 @@
-<?php header('Location: /admin/dashboard#referrals'); exit;
+<?php header('Location: /admin/dashboard#settings'); exit;

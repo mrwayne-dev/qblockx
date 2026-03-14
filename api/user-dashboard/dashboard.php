@@ -1,7 +1,7 @@
 <?php
 /**
- * Project: arqoracapital
- * Created by: Wayne
+ * Project: crestvalebank
+ * API: user-dashboard/dashboard.php — Overview stats
  */
 
 require_once '../../config/database.php';
@@ -12,57 +12,80 @@ requireAuth();
 $user = getAuthUser();
 
 try {
-    $db = Database::getInstance()->getConnection();
+    $db  = Database::getInstance()->getConnection();
+    $uid = $user['id'];
 
     // Wallet balance
     $walletStmt = $db->prepare("SELECT balance FROM wallets WHERE user_id = :uid");
-    $walletStmt->execute(['uid' => $user['id']]);
-    $wallet = $walletStmt->fetch();
+    $walletStmt->execute(['uid' => $uid]);
+    $wallet  = $walletStmt->fetch();
     $balance = $wallet ? (float) $wallet['balance'] : 0.0;
 
-    // Total earned (all time)
-    $earnedStmt = $db->prepare(
-        "SELECT COALESCE(SUM(amount), 0) FROM transactions
-         WHERE user_id = :uid AND type = 'earning' AND status = 'completed'"
+    // Savings balance (sum of current_amount across active plans)
+    $savingsStmt = $db->prepare(
+        "SELECT COALESCE(SUM(current_amount), 0) FROM savings_plans
+         WHERE user_id = :uid AND status = 'active'"
     );
-    $earnedStmt->execute(['uid' => $user['id']]);
-    $total_earned = (float) $earnedStmt->fetchColumn();
+    $savingsStmt->execute(['uid' => $uid]);
+    $savings_balance = (float) $savingsStmt->fetchColumn();
 
-    // Active investments
-    $activeStmt = $db->prepare(
-        "SELECT COUNT(*) AS count, COALESCE(SUM(amount), 0) AS invested
-         FROM investments WHERE user_id = :uid AND status = 'active'"
+    // Deposits balance (sum of amounts in active fixed deposits)
+    $depositsStmt = $db->prepare(
+        "SELECT COALESCE(SUM(amount), 0) FROM fixed_deposits
+         WHERE user_id = :uid AND status = 'active'"
     );
-    $activeStmt->execute(['uid' => $user['id']]);
-    $active = $activeStmt->fetch();
+    $depositsStmt->execute(['uid' => $uid]);
+    $deposits_balance = (float) $depositsStmt->fetchColumn();
+
+    // Loan balance (sum of remaining_balance on active loans)
+    $loansStmt = $db->prepare(
+        "SELECT COALESCE(SUM(remaining_balance), 0) FROM loans
+         WHERE user_id = :uid AND status = 'active'"
+    );
+    $loansStmt->execute(['uid' => $uid]);
+    $loan_balance = (float) $loansStmt->fetchColumn();
 
     // Recent transactions (last 5)
     $txStmt = $db->prepare(
-        "SELECT type, amount, currency, status, created_at
+        "SELECT type, amount, status, created_at
          FROM transactions WHERE user_id = :uid
          ORDER BY created_at DESC LIMIT 5"
     );
-    $txStmt->execute(['uid' => $user['id']]);
+    $txStmt->execute(['uid' => $uid]);
     $recent_transactions = $txStmt->fetchAll();
 
     // User info
     $userStmt = $db->prepare("SELECT email, full_name, created_at FROM users WHERE id = :uid");
-    $userStmt->execute(['uid' => $user['id']]);
+    $userStmt->execute(['uid' => $uid]);
     $userInfo = $userStmt->fetch();
+
+    // Product rates — wrapped defensively; never let a missing column crash the whole dashboard
+    $rates = [];
+    try {
+        $ratesStmt = $db->query(
+            "SELECT product, label, duration_months, rate
+             FROM rates WHERE is_active = 1
+             ORDER BY product, duration_months"
+        );
+        $rates = $ratesStmt->fetchAll();
+    } catch (PDOException $rateErr) {
+        $rates = [];
+    }
 
     echo json_encode([
         'success' => true,
         'data'    => [
             'user'                => [
-                'email'      => $userInfo['email'],
-                'full_name'  => $userInfo['full_name'],
+                'email'        => $userInfo['email'],
+                'full_name'    => $userInfo['full_name'],
                 'member_since' => $userInfo['created_at'],
             ],
-            'balance'             => number_format($balance, 2, '.', ''),
-            'total_earned'        => number_format($total_earned, 2, '.', ''),
-            'active_investments'  => (int) $active['count'],
-            'total_invested'      => number_format((float) $active['invested'], 2, '.', ''),
+            'balance'             => number_format($balance,          2, '.', ''),
+            'savings_balance'     => number_format($savings_balance,  2, '.', ''),
+            'deposits_balance'    => number_format($deposits_balance, 2, '.', ''),
+            'loan_balance'        => number_format($loan_balance,     2, '.', ''),
             'recent_transactions' => $recent_transactions,
+            'rates'               => $rates,
         ]
     ]);
 } catch (PDOException $e) {

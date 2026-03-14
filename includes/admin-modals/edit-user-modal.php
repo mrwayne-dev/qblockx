@@ -44,17 +44,10 @@
 
       <hr class="admin-form-divider">
 
-      <div class="admin-form-row">
-        <div class="admin-form-group">
-          <label for="editUserBalance">Wallet Balance (USD)</label>
-          <input type="number" id="editUserBalance" min="0" step="0.01" placeholder="e.g. 500.00">
-          <p class="admin-form-note">Sets the balance directly. Leave blank to keep unchanged.</p>
-        </div>
-        <div class="admin-form-group">
-          <label for="editUserReferral">Referral Commission Total (USD)</label>
-          <input type="number" id="editUserReferral" min="0" step="0.01" placeholder="e.g. 50.00">
-          <p class="admin-form-note">Leave blank to keep unchanged.</p>
-        </div>
+      <div class="admin-form-group">
+        <label for="editUserBalance">Wallet Balance (USD)</label>
+        <input type="number" id="editUserBalance" min="0" step="0.01" placeholder="e.g. 500.00">
+        <p class="admin-form-note">Sets the balance directly. Leave blank to keep unchanged.</p>
       </div>
 
       <div id="editUserMsg" class="admin-modal-msg"></div>

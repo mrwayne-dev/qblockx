@@ -1,10 +1,10 @@
 <?php
 /**
- * Project: arqoracapital
- * Page: Company (Legal Documents)
+ * Project: crestvalebank
+ * Page: Company
  */
 $pageTitle       = 'Company';
-$pageDescription = 'Explore ArqoraCapital\'s legal documents including general disclosures, privacy policy, terms of use, and form ADV information.';
+$pageDescription = 'Explore CrestVale Bank\'s company information, regulatory disclosures, banking services summary, privacy practices, and terms of use.';
 require_once '../../includes/head.php';
 ?>
 
@@ -13,27 +13,28 @@ require_once '../../includes/head.php';
 <main>
 
   <!-- ── Hero ──────────────────────────────────────────────────── -->
-  <section class="hero" role="region" aria-label="Company hero">
-    <img
-      src="/assets/images/background/arqorabgimage2.png"
-      alt=""
-      class="hero-bg"
-      aria-hidden="true"
-      draggable="false"
-    >
-
-    <div class="hero-container" data-appear>
-      <span class="hero-tag">Company</span>
-      <h1 class="hero-heading">Legal Documents</h1>
-      <p class="hero-subtext">
-        Explore the key legal documents governing ArqoraCapital's operations,
-        including agreements, disclosures, and regulatory information. These
-        resources support our commitment to transparency.
-      </p>
-      <div class="hero-actions">
-        <a href="/contact" class="btn-hero-outline">
-          Contact Us <i class="ph ph-arrow-right" aria-hidden="true"></i>
-        </a>
+  <section class="hero hero--static" role="region" aria-label="Company hero">
+    <div class="hero-split">
+      <div class="hero-left">
+        <div class="hero-content active" data-slide="0">
+          <span class="hero-tag">Company</span>
+          <h1 class="hero-heading">
+            <span class="hero-line">Corporate Information</span>
+          </h1>
+          <p class="hero-subtext">
+            CrestVale Bank is committed to full transparency in its operations.
+            Explore our company disclosures, banking services summary, privacy practices,
+            and regulatory information — all in one place.
+          </p>
+          <div class="hero-actions">
+            <a href="/contact" class="btn-hero-outline">
+              Contact Us <i class="ph ph-arrow-right" aria-hidden="true"></i>
+            </a>
+            <a href="/help" class="btn-hero-ghost">
+              Help Centre <i class="ph ph-arrow-right" aria-hidden="true"></i>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -42,35 +43,52 @@ require_once '../../includes/head.php';
   <section class="legal-doc section" role="region" aria-labelledby="general-disc-title">
     <div class="legal-doc-container container" data-appear>
       <div class="legal-doc-content">
-        <span class="section-label">LEGAL DOCUMENTS</span>
+        <span class="section-label">DISCLOSURES</span>
         <h2 id="general-disc-title" class="legal-doc-title">General Disclosures</h2>
         <p class="legal-doc-description">
-          Investing with ArqoraCapital opens up exciting opportunities to build your
-          wealth with innovative solutions. Our platform is designed to empower you with
-          educational content, tools, and models to support your financial journey.
-          While past performance is not a guaranteed predictor of future results,
-          ArqoraCapital provides a robust foundation to explore your investment goals.
-          We encourage you to consult your own financial professionals to tailor
-          decisions to your unique objectives and preferences.
+          CrestVale Bank offers a suite of fintech banking products designed to help
+          customers grow their savings, invest in fixed deposits, access loans, and
+          make transfers. While our interest rates are competitive, all financial
+          products carry inherent risk and past performance is not a guarantee of
+          future results. We encourage customers to review all product terms carefully
+          and consult independent financial advisors where appropriate.
+        </p>
+        <p class="legal-doc-description">
+          CrestVale Bank does not constitute a licensed deposit-taking institution in
+          all jurisdictions. Customers are responsible for understanding the regulatory
+          framework applicable in their country of residence.
         </p>
       </div>
     </div>
   </section>
 
-  <!-- ── Investment Adviser Disclosure ─────────────────────────── -->
-  <section class="legal-doc section" role="region" aria-labelledby="form-adv-title">
+  <!-- ── Banking Services Summary ──────────────────────────────── -->
+  <section class="legal-doc section" role="region" aria-labelledby="services-title">
     <div class="legal-doc-container container" data-appear>
       <div class="legal-doc-content">
-        <span class="section-label">LEGAL DOCUMENTS</span>
-        <h2 id="form-adv-title" class="legal-doc-title">Investment Services Summary</h2>
+        <span class="section-label">SERVICES</span>
+        <h2 id="services-title" class="legal-doc-title">Banking Services Summary</h2>
         <p class="legal-doc-description">
-          ArqoraCapital provides investment management services to both retail and
-          institutional clients through automated 5-day investment contracts. Our services
-          include personalised portfolio construction, risk-adjusted asset allocation, and
-          access to digital assets. Fees are applied based on the chosen investment plan.
-          Investment decisions carry risk — no strategy guarantees profit, and all investing
-          involves the possibility of loss. ArqoraCapital has no material legal or disciplinary
-          events to disclose.
+          CrestVale Bank provides the following core financial services to retail and
+          business customers through its digital platform:
+        </p>
+        <p class="legal-doc-description">
+          <strong>Savings Plans:</strong> Goal-based savings accounts where customers
+          set a target amount and duration. Interest accrues on contributions using the
+          formula: Interest = Principal × Rate × Time.
+        </p>
+        <p class="legal-doc-description">
+          <strong>Fixed Deposits:</strong> Locked investment accounts offering higher
+          interest rates for a defined term (6 or 12 months). At maturity, customers
+          receive their principal plus earned interest.
+        </p>
+        <p class="legal-doc-description">
+          <strong>Loans:</strong> Credit products subject to admin approval. Approved
+          loans are credited to the customer's wallet and repaid in monthly instalments.
+        </p>
+        <p class="legal-doc-description">
+          <strong>Transfers:</strong> Instant wallet-to-wallet transfers between
+          CrestVale Bank customers. All transactions are recorded and auditable.
         </p>
       </div>
     </div>
@@ -80,17 +98,20 @@ require_once '../../includes/head.php';
   <section class="legal-doc section" role="region" aria-labelledby="privacy-title">
     <div class="legal-doc-container container" data-appear>
       <div class="legal-doc-content">
-        <span class="section-label">LEGAL DOCUMENTS</span>
-        <h2 id="privacy-title" class="legal-doc-title">Privacy Policy</h2>
+        <span class="section-label">PRIVACY</span>
+        <h2 id="privacy-title" class="legal-doc-title">Privacy Practices</h2>
         <p class="legal-doc-description">
-          ArqoraCapital values your privacy and is committed to protecting your personal
-          information. We collect personal identifiers such as your name, email, and
-          address; financial data including account balances and trading activity; and
-          device information. Your information is used to provide investment services,
-          communicate account details, and meet regulatory requirements. You have the
-          right to access, correct, or request deletion of your data, and we do not sell
-          your information. We employ security measures such as encryption, firewalls,
-          and access controls to protect your data at all times.
+          CrestVale Bank values your privacy. We collect personal identifiers (name,
+          email, address), financial data (balances, transactions), and device
+          information to deliver our services, meet regulatory requirements, and
+          communicate relevant account updates. We do not sell your personal data
+          to third parties.
+        </p>
+        <p class="legal-doc-description">
+          You have the right to access, correct, or request deletion of your personal
+          data at any time. We employ AES-256 encryption, firewalls, and strict access
+          controls to protect your information. See our full <a href="/privacy">Privacy Policy</a>
+          for complete details.
         </p>
       </div>
     </div>
@@ -100,17 +121,19 @@ require_once '../../includes/head.php';
   <section class="legal-doc section" role="region" aria-labelledby="terms-title">
     <div class="legal-doc-container container" data-appear>
       <div class="legal-doc-content">
-        <span class="section-label">LEGAL DOCUMENTS</span>
+        <span class="section-label">LEGAL</span>
         <h2 id="terms-title" class="legal-doc-title">Terms of Use</h2>
         <p class="legal-doc-description">
-          By using ArqoraCapital, you agree to abide by these Terms of Use. You are
-          prohibited from using the platform for any unlawful purposes or attempting
-          to gain unauthorised access to our systems. All website content is the
-          intellectual property of ArqoraCapital or its licensors and may not be
-          reproduced without prior written consent. ArqoraCapital disclaims liability
-          for any direct, indirect, or incidental damages resulting from the use of
-          this platform. These terms are governed by applicable law, and ArqoraCapital
-          reserves the right to update them at any time without prior notice.
+          By using CrestVale Bank, you agree to our Terms of Service. You must not
+          use the platform for any unlawful purposes or attempt to gain unauthorised
+          access to our systems. All platform content is the intellectual property
+          of CrestVale Bank or its licensors.
+        </p>
+        <p class="legal-doc-description">
+          CrestVale Bank disclaims liability for indirect or incidental damages
+          resulting from platform use. These terms are governed by applicable law,
+          and CrestVale Bank reserves the right to update them at any time with
+          appropriate notice. See our full <a href="/terms">Terms of Service</a> for details.
         </p>
       </div>
     </div>
@@ -119,11 +142,14 @@ require_once '../../includes/head.php';
   <!-- ── CTA ────────────────────────────────────────────────────── -->
   <section class="cta-section section" role="region" aria-labelledby="company-cta-title">
     <div class="cta-container container" data-appear>
-      <h2 id="company-cta-title" class="cta-header">Need assistance? We're here to help.</h2>
-      <p class="cta-subtext">Get quick, reliable support from our team.</p>
+      <h2 id="company-cta-title" class="cta-header">Have questions? We're here to help.</h2>
+      <p class="cta-subtext">Get in touch with our support team any time.</p>
       <div class="cta-actions">
         <a href="/contact" class="btn-cta">
           Contact Support <i class="ph ph-arrow-right" aria-hidden="true"></i>
+        </a>
+        <a href="/help" class="btn-cta-ghost">
+          Help Centre <i class="ph ph-arrow-right" aria-hidden="true"></i>
         </a>
       </div>
     </div>

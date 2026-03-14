@@ -1,5 +1,5 @@
 /* ============================================================
-   ArqoraCapital — LightRays WebGL Effect
+   CrestVale Bank — LightRays WebGL Effect
    Vanilla JS port of OGL/React LightRays component.
    Usage: window.LightRays.init(container, options) → { destroy() }
    ============================================================ */
@@ -159,7 +159,7 @@
       rayPos:         [0.5, 0.0],
       lightSpread:    0.4,
       rayLength:      0.9,
-      raysColor:      [0.15, 0.38, 0.92],
+      raysColor:      [0.247, 0.878, 0.631],
       mouseInfluence: 0.1,
       noiseAmount:    0.08,
       distortion:     0.04,

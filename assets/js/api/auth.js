@@ -1,5 +1,5 @@
 /**
- * ArqoraCapital — Auth API helpers
+ * CrestVale Bank — Auth API helpers
  * Reusable auth functions for login, register, logout across pages
  */
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: arqoracapital
+ * Project: crestvalebank
  * Modal: Delete Account — confirmation dialog
  *
  * Submits action:"delete" to POST /api/user-dashboard/profile.php

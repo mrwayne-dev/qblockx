@@ -1,9 +1,9 @@
 <?php
 /**
- * Project: arqoracapital
- * API: User registration — creates account + sends email verification
+ * Project: crestvalebank
+ * API: User registration — creates account + sends email verification code
  */
-ob_start(); // buffer any stray notices so they don't corrupt JSON
+ob_start();
 
 require_once '../../config/database.php';
 require_once __DIR__ . '/../../api/utilities/email_templates.php';
@@ -33,8 +33,7 @@ if (strlen($password) < 8) {
     exit;
 }
 
-$ref_code = trim($input['ref_code'] ?? '');
-$db       = null;
+$db = null;
 
 try {
     $db = Database::getInstance()->getConnection();
@@ -60,52 +59,25 @@ try {
     $db->prepare("INSERT INTO wallets (user_id) VALUES (:uid)")
        ->execute(['uid' => $new_user_id]);
 
-    // Generate unique referral code
-    do {
-        $code = strtoupper(substr(base_convert(bin2hex(random_bytes(4)), 16, 36), 0, 8));
-        $chk  = $db->prepare("SELECT id FROM referral_codes WHERE code = :code");
-        $chk->execute(['code' => $code]);
-    } while ($chk->fetch());
-
-    $db->prepare("INSERT INTO referral_codes (user_id, code) VALUES (:uid, :code)")
-       ->execute(['uid' => $new_user_id, 'code' => $code]);
-
-    // Link referral if a valid ref_code was provided
-    if (!empty($ref_code)) {
-        $refStmt = $db->prepare("SELECT user_id FROM referral_codes WHERE code = :code");
-        $refStmt->execute(['code' => $ref_code]);
-        $referrer = $refStmt->fetch();
-
-        if ($referrer && (int) $referrer['user_id'] !== $new_user_id) {
-            $db->prepare(
-                "INSERT IGNORE INTO referrals (referrer_id, referred_id) VALUES (:ref, :new)"
-            )->execute(['ref' => $referrer['user_id'], 'new' => $new_user_id]);
-
-            $db->prepare("UPDATE referral_codes SET uses = uses + 1 WHERE user_id = :uid")
-               ->execute(['uid' => $referrer['user_id']]);
-        }
-    }
-
-    // Create email verification token (24-hour expiry)
-    $verify_token = bin2hex(random_bytes(32));
-    $expires_at   = date('Y-m-d H:i:s', strtotime('+24 hours'));
+    // Generate 6-digit verification code (15-minute expiry)
+    $code       = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    $expires_at = date('Y-m-d H:i:s', strtotime('+15 minutes'));
 
     $db->prepare(
         "INSERT INTO email_verifications (user_id, token, expires_at) VALUES (:uid, :token, :expires_at)"
-    )->execute(['uid' => $new_user_id, 'token' => $verify_token, 'expires_at' => $expires_at]);
+    )->execute(['uid' => $new_user_id, 'token' => $code, 'expires_at' => $expires_at]);
 
     $db->commit();
 
-    // ── Send verification email via Mailer ──────────────────────────────────
-    $verifyLink = getenv('APP_URL') . '/pages/public/verify-email.php?token=' . $verify_token;
-    $emailSent  = Mailer::sendVerification($email, $full_name, $verifyLink);
+    // ── Send verification code via email ────────────────────────────────────
+    $emailSent = Mailer::sendVerification($email, $full_name, $code);
 
     ob_end_clean();
     echo json_encode([
         'success'    => true,
         'email_sent' => $emailSent,
         'message'    => $emailSent
-            ? 'Account created! Please check your email to verify your account.'
+            ? 'Account created! Check your email for your verification code.'
             : 'Account created! Verification email could not be sent — use the resend option on the next screen.',
     ]);
 

@@ -1,10 +1,10 @@
 <?php
 /**
- * Project: arqoracapital
+ * Project: crestvalebank
  * Page: Terms of Service
  */
 $pageTitle       = 'Terms of Service';
-$pageDescription = 'ArqoraCapital Terms of Service — the rules and conditions governing your use of our platform.';
+$pageDescription = 'CrestVale Bank Terms of Service — the rules and conditions governing your use of our platform.';
 require_once '../../includes/head.php';
 ?>
 
@@ -25,7 +25,7 @@ require_once '../../includes/head.php';
       <span class="hero-tag">Legal</span>
       <h1 class="hero-heading">Terms of Service</h1>
       <p class="hero-subtext">
-        These Terms of Service govern your use of ArqoraCapital's platform and services.
+        These Terms of Service govern your use of CrestVale Bank's platform and services.
         Please read them carefully before creating an account or making investments.
       </p>
     </div>
@@ -40,19 +40,19 @@ require_once '../../includes/head.php';
 
         <h2>1. Acceptance of Terms</h2>
         <p>
-          By accessing or using the ArqoraCapital platform ("Platform"), creating an account, or making
+          By accessing or using the CrestVale Bank platform ("Platform"), creating an account, or making
           any investment, you agree to be bound by these Terms of Service ("Terms") and our
           <a href="/privacy">Privacy Policy</a>. If you do not agree to these Terms,
           you must not use our Platform.
         </p>
         <p>
-          ArqoraCapital reserves the right to modify these Terms at any time. We will provide reasonable
+          CrestVale Bank reserves the right to modify these Terms at any time. We will provide reasonable
           notice of material changes. Continued use of the Platform following any changes constitutes
           your acceptance of the new Terms.
         </p>
 
         <h2>2. Eligibility</h2>
-        <p>To use the ArqoraCapital Platform, you must:</p>
+        <p>To use the CrestVale Bank Platform, you must:</p>
         <ul>
           <li>Be at least 18 years of age (or the age of majority in your jurisdiction).</li>
           <li>Have the legal capacity to enter into binding contracts.</li>
@@ -71,17 +71,17 @@ require_once '../../includes/head.php';
         <p>
           You are responsible for maintaining the confidentiality of your account credentials and for all
           activity occurring under your account. You must notify us immediately at
-          <a href="mailto:support@arqoracapital.com">support@arqoracapital.com</a> if you suspect
+          <a href="mailto:support@crestvalebank.com">support@crestvalebank.com</a> if you suspect
           unauthorised access to your account.
         </p>
         <p>
-          ArqoraCapital reserves the right to suspend or terminate accounts that violate these Terms,
+          CrestVale Bank reserves the right to suspend or terminate accounts that violate these Terms,
           provide false information, or engage in fraudulent activity.
         </p>
 
         <h2>4. Investment Contracts</h2>
         <p>
-          ArqoraCapital offers automated 5-day cryptocurrency investment contracts. By selecting and funding
+          CrestVale Bank offers automated 5-day cryptocurrency investment contracts. By selecting and funding
           an investment plan, you enter into an investment contract with us on the following terms:
         </p>
         <ul>
@@ -101,7 +101,7 @@ require_once '../../includes/head.php';
         <p>
           All transactions on the Platform are conducted exclusively in cryptocurrency. You are responsible
           for ensuring that deposits are made to the correct wallet addresses provided in your dashboard.
-          ArqoraCapital cannot recover funds sent to incorrect addresses.
+          CrestVale Bank cannot recover funds sent to incorrect addresses.
         </p>
         <p>
           Withdrawals are processed to the cryptocurrency wallet address registered to your account.
@@ -111,13 +111,13 @@ require_once '../../includes/head.php';
 
         <h2>6. Referral Programme</h2>
         <p>
-          ArqoraCapital operates a referral programme that awards a 5% commission on investments made by
+          CrestVale Bank operates a referral programme that awards a 5<i class="ph ph-percent"></i> commission on investments made by
           users who register using your referral code. Referral commissions are subject to the following:
         </p>
         <ul>
           <li>Commissions are credited once the referred user's investment contract is confirmed.</li>
           <li>Self-referrals and fraudulent referral activity are prohibited and will result in account suspension.</li>
-          <li>ArqoraCapital reserves the right to modify or terminate the referral programme at any time.</li>
+          <li>CrestVale Bank reserves the right to modify or terminate the referral programme at any time.</li>
         </ul>
 
         <h2>7. Prohibited Activities</h2>
@@ -129,13 +129,13 @@ require_once '../../includes/head.php';
           <li>Engage in money laundering, terrorist financing, or any other financial crime.</li>
           <li>Use automated tools, bots, or scripts to access or manipulate the Platform without written consent.</li>
           <li>Reverse engineer, decompile, or disassemble any component of the Platform.</li>
-          <li>Harass, threaten, or intimidate other users or ArqoraCapital staff.</li>
+          <li>Harass, threaten, or intimidate other users or CrestVale Bank staff.</li>
         </ul>
 
         <h2>8. Intellectual Property</h2>
         <p>
           All content on the Platform, including but not limited to text, graphics, logos, software, and
-          data compilations, is the exclusive property of ArqoraCapital or its licensors and is protected
+          data compilations, is the exclusive property of CrestVale Bank or its licensors and is protected
           by applicable intellectual property laws. You may not reproduce, distribute, or create derivative
           works without our prior written consent.
         </p>
@@ -143,21 +143,21 @@ require_once '../../includes/head.php';
         <h2>9. Disclaimer of Warranties</h2>
         <p>
           The Platform is provided on an "as is" and "as available" basis without any warranties of any kind,
-          either express or implied. ArqoraCapital does not warrant that the Platform will be uninterrupted,
+          either express or implied. CrestVale Bank does not warrant that the Platform will be uninterrupted,
           error-free, or free of viruses or other harmful components. We do not warrant the accuracy,
           completeness, or usefulness of any information on the Platform.
         </p>
 
         <h2>10. Limitation of Liability</h2>
         <p>
-          To the fullest extent permitted by applicable law, ArqoraCapital shall not be liable for any
+          To the fullest extent permitted by applicable law, CrestVale Bank shall not be liable for any
           indirect, incidental, special, consequential, or punitive damages arising from your use of the
           Platform or inability to access it, including but not limited to loss of profits, loss of data,
           or loss of investment capital.
         </p>
         <p>
           Our total liability for any claim arising from use of the Platform shall not exceed the total
-          fees paid by you to ArqoraCapital in the three months preceding the claim.
+          fees paid by you to CrestVale Bank in the three months preceding the claim.
         </p>
 
         <h2>11. Governing Law</h2>
@@ -172,7 +172,7 @@ require_once '../../includes/head.php';
           For questions regarding these Terms, please contact us:
         </p>
         <ul>
-          <li>Email: <a href="mailto:support@arqoracapital.com">support@arqoracapital.com</a></li>
+          <li>Email: <a href="mailto:support@crestvalebank.com">support@crestvalebank.com</a></li>
           <li>Address: 36 Springfield Road, Guildford GU52 0DM, United Kingdom</li>
         </ul>
 

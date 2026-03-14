@@ -1,10 +1,10 @@
 <?php
 /**
- * Project: arqoracapital
+ * Project: crestvalebank
  * Page: Risk Disclosure
  */
 $pageTitle       = 'Risk Disclosure';
-$pageDescription = 'ArqoraCapital Risk Disclosure — understand the risks associated with cryptocurrency investments before you invest.';
+$pageDescription = 'CrestVale Bank Risk Disclosure — understand the risks associated with cryptocurrency investments before you invest.';
 require_once '../../includes/head.php';
 ?>
 
@@ -26,7 +26,7 @@ require_once '../../includes/head.php';
       <h1 class="hero-heading">Risk Disclosure</h1>
       <p class="hero-subtext">
         Investing in cryptocurrency carries significant risk. Please read this disclosure carefully
-        before making any investment decision on ArqoraCapital.
+        before making any investment decision on CrestVale Bank.
       </p>
     </div>
   </section>
@@ -43,7 +43,7 @@ require_once '../../includes/head.php';
           Cryptocurrency investments carry significant risk. The value of digital assets can be highly volatile
           and you may lose some or all of your invested capital. You should only invest money that you can afford
           to lose. Past performance of any investment contract is not indicative of future results, and no
-          representation is made that any ArqoraCapital investment plan will achieve similar returns in the future.
+          representation is made that any CrestVale Bank investment plan will achieve similar returns in the future.
         </p>
 
         <h2>2. Market Volatility Risk</h2>
@@ -57,17 +57,17 @@ require_once '../../includes/head.php';
 
         <h2>3. No Guaranteed Returns</h2>
         <p>
-          The daily return rates advertised on ArqoraCapital (2% to 8% per day) reflect target rates based on
-          current market strategies. These rates are not guaranteed and may vary. ArqoraCapital does not guarantee
+          The daily return rates advertised on CrestVale Bank (2<i class="ph ph-percent"></i> to 8<i class="ph ph-percent"></i> per day) reflect target rates based on
+          current market strategies. These rates are not guaranteed and may vary. CrestVale Bank does not guarantee
           any specific level of return on investments. Investors should treat all projected returns as estimates
           only and should not rely on them as a basis for financial planning.
         </p>
 
         <h2>4. Liquidity Risk</h2>
         <p>
-          Investment contracts on ArqoraCapital are locked for the duration of the 5-day contract period.
+          Investment contracts on CrestVale Bank are locked for the duration of the 5-day contract period.
           Once an investment contract is initiated, capital cannot be accessed or withdrawn until the contract
-          completes. In exceptional market conditions, ArqoraCapital may be unable to process withdrawals
+          completes. In exceptional market conditions, CrestVale Bank may be unable to process withdrawals
           immediately upon contract completion.
         </p>
 
@@ -76,7 +76,7 @@ require_once '../../includes/head.php';
           The regulatory environment for cryptocurrency investments is evolving rapidly across different
           jurisdictions. Changes in laws, regulations, or government policy may adversely affect the
           availability or legality of our services in certain territories, restrict the use of digital
-          assets, or impose additional compliance requirements. ArqoraCapital is not responsible for
+          assets, or impose additional compliance requirements. CrestVale Bank is not responsible for
           any losses resulting from regulatory changes.
         </p>
         <p>
@@ -87,7 +87,7 @@ require_once '../../includes/head.php';
 
         <h2>6. Operational and Technology Risk</h2>
         <p>
-          ArqoraCapital's platform relies on complex technology infrastructure including blockchain networks,
+          CrestVale Bank's platform relies on complex technology infrastructure including blockchain networks,
           third-party payment processors, and cloud service providers. There is a risk of:</p>
         <ul>
           <li>System outages, downtime, or technical failures that temporarily prevent platform access.</li>
@@ -95,12 +95,12 @@ require_once '../../includes/head.php';
           <li>Smart contract bugs or blockchain network congestion causing transaction delays.</li>
           <li>Third-party service provider failures affecting deposits, withdrawals, or contract execution.</li>
         </ul>
-        <p>ArqoraCapital employs industry-standard security measures but cannot guarantee absolute protection against all technical risks.</p>
+        <p>CrestVale Bank employs industry-standard security measures but cannot guarantee absolute protection against all technical risks.</p>
 
         <h2>7. Counterparty Risk</h2>
         <p>
-          When you invest with ArqoraCapital, you are entering into a contract with us as the counterparty.
-          In the unlikely event that ArqoraCapital experiences financial difficulties, becomes insolvent, or
+          When you invest with CrestVale Bank, you are entering into a contract with us as the counterparty.
+          In the unlikely event that CrestVale Bank experiences financial difficulties, becomes insolvent, or
           ceases operations, you may be unable to recover your invested capital or accrued returns.
           Cryptocurrency investments are generally not covered by government-backed deposit protection schemes.
         </p>
@@ -120,13 +120,13 @@ require_once '../../includes/head.php';
         <p>
           Cryptocurrency investment returns may be subject to taxation in your jurisdiction. Tax laws
           applicable to digital assets vary by country and are subject to change. It is your sole
-          responsibility to determine, report, and pay any taxes arising from your use of ArqoraCapital.
+          responsibility to determine, report, and pay any taxes arising from your use of CrestVale Bank.
           We strongly recommend consulting a qualified tax adviser regarding your specific circumstances.
         </p>
 
         <h2>10. Not Financial Advice</h2>
         <p>
-          ArqoraCapital is not a registered investment adviser, broker-dealer, or financial institution.
+          CrestVale Bank is not a registered investment adviser, broker-dealer, or financial institution.
           Nothing on this platform constitutes financial, investment, legal, or tax advice. All content
           is provided for informational purposes only. You should seek independent professional advice
           before making any investment decision.
@@ -134,12 +134,12 @@ require_once '../../includes/head.php';
 
         <h2>11. Acknowledgement</h2>
         <p>
-          By using the ArqoraCapital platform and making investments, you acknowledge that:
+          By using the CrestVale Bank platform and making investments, you acknowledge that:
         </p>
         <ul>
           <li>You have read and understood this Risk Disclosure in full.</li>
           <li>You understand that all investments carry risk of total loss.</li>
-          <li>You are investing of your own free will and are not relying solely on ArqoraCapital's representations.</li>
+          <li>You are investing of your own free will and are not relying solely on CrestVale Bank's representations.</li>
           <li>You have the financial capacity to bear any losses that may result from your investments.</li>
           <li>You have sought independent advice where appropriate.</li>
         </ul>
@@ -149,7 +149,7 @@ require_once '../../includes/head.php';
           If you have questions about this Risk Disclosure or our investment offerings, please contact us:
         </p>
         <ul>
-          <li>Email: <a href="mailto:support@arqoracapital.com">support@arqoracapital.com</a></li>
+          <li>Email: <a href="mailto:support@crestvalebank.com">support@crestvalebank.com</a></li>
           <li>Address: 36 Springfield Road, Guildford GU52 0DM, United Kingdom</li>
         </ul>
 

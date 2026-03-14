@@ -1,13 +1,10 @@
 <?php
 /**
- * Project: arqoracapital
+ * Project: crestvalebank
  * Page: User Registration
  */
 $pageTitle = 'Create Account';
 require_once '../../includes/head.php';
-
-// Capture referral code from URL parameter
-$refCode = htmlspecialchars(trim($_GET['ref'] ?? ''));
 ?>
 
 <div class="auth-page">
@@ -15,30 +12,30 @@ $refCode = htmlspecialchars(trim($_GET['ref'] ?? ''));
 
     <!-- ── Left brand panel ── -->
     <div class="auth-panel">
-      <a href="/" class="auth-panel-logo" aria-label="ArqoraCapital home">
+      <a href="/" class="auth-panel-logo" aria-label="CrestVale Bank home">
         <span class="nav-logo-mark" aria-hidden="true">
           <img src="/assets/images/logo/2.png" alt="">
         </span>
-        ArqoraCapital
+        CrestVale Bank
       </a>
 
       <div class="auth-panel-body">
-        <h2 class="auth-panel-heading">Join thousands<br>of investors.</h2>
+        <h2 class="auth-panel-heading">Banking built<br>for modern living.</h2>
         <p class="auth-panel-sub">
-          Create your account today and start earning daily returns through automated crypto investment contracts.
+          Open your account in minutes and access savings, fixed deposits, and loans — all in one place.
         </p>
         <div class="auth-panel-stats">
           <div class="auth-panel-stat">
-            <span class="auth-panel-stat-value">48K+</span>
-            <span class="auth-panel-stat-label">Investors</span>
+            <span class="auth-panel-stat-value">50K+</span>
+            <span class="auth-panel-stat-label">Members</span>
           </div>
           <div class="auth-panel-stat">
-            <span class="auth-panel-stat-value">$2M+</span>
-            <span class="auth-panel-stat-label">Paid Out</span>
+            <span class="auth-panel-stat-value">$120M+</span>
+            <span class="auth-panel-stat-label">Managed</span>
           </div>
           <div class="auth-panel-stat">
-            <span class="auth-panel-stat-value">5 Days</span>
-            <span class="auth-panel-stat-label">Per Cycle</span>
+            <span class="auth-panel-stat-value">Bank-Grade</span>
+            <span class="auth-panel-stat-label">Security</span>
           </div>
         </div>
       </div>
@@ -48,7 +45,7 @@ $refCode = htmlspecialchars(trim($_GET['ref'] ?? ''));
     <div class="auth-form-panel">
 
       <h1 class="auth-heading">Create your account</h1>
-      <p class="auth-subtext">Start earning daily returns from your first investment.</p>
+      <p class="auth-subtext">Create your free CrestVale Bank account.</p>
 
       <div id="authMsg" class="auth-msg" role="alert" aria-live="polite" style="display:none;"></div>
 
@@ -92,27 +89,6 @@ $refCode = htmlspecialchars(trim($_GET['ref'] ?? ''));
                    placeholder="Repeat your password" autocomplete="new-password">
           </div>
         </div>
-
-        <?php if ($refCode): ?>
-        <div class="form-group">
-          <label for="ref_code">Referral code</label>
-          <div class="input-icon-wrap">
-            <i class="ph ph-gift input-icon" aria-hidden="true"></i>
-            <input type="text" id="ref_code" name="ref_code"
-                   value="<?= $refCode ?>" readonly
-                   class="input-readonly">
-          </div>
-        </div>
-        <?php else: ?>
-        <div class="form-group">
-          <label for="ref_code">Referral code <span class="label-optional">(optional)</span></label>
-          <div class="input-icon-wrap">
-            <i class="ph ph-gift input-icon" aria-hidden="true"></i>
-            <input type="text" id="ref_code" name="ref_code"
-                   placeholder="Enter referral code">
-          </div>
-        </div>
-        <?php endif; ?>
 
         <button type="submit" class="btn-primary full-width auth-submit" id="registerBtn">
           <span class="btn-text">Create Account</span>

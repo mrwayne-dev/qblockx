@@ -1,10 +1,10 @@
 <?php
 /**
- * Project: arqoracapital
+ * Project: crestvalebank
  * Page: Contact
  */
 $pageTitle       = 'Contact';
-$pageDescription = 'Get in touch with ArqoraCapital. We\'re available 24/7 to assist with account questions, payment issues, and investment enquiries.';
+$pageDescription = 'Get in touch with CrestVale Bank. We\'re available 24/7 to assist with account questions, payment issues, and investment enquiries.';
 require_once '../../includes/head.php';
 ?>
 
@@ -13,22 +13,20 @@ require_once '../../includes/head.php';
 <main>
 
   <!-- ── Hero ──────────────────────────────────────────────────── -->
-  <section class="hero" role="region" aria-label="Contact hero">
-    <img
-      src="/assets/images/background/arqorabgimage.png"
-      alt=""
-      class="hero-bg"
-      aria-hidden="true"
-      draggable="false"
-    >
-
-    <div class="hero-container" data-appear>
-      <span class="hero-tag">Support</span>
-      <h1 class="hero-heading">Get in touch</h1>
-      <p class="hero-subtext">
-        If you have any questions or would like to find out more about our services,
-        please get in touch. Our team is available 24/7.
-      </p>
+  <section class="hero hero--static" role="region" aria-label="Contact hero">
+    <div class="hero-split">
+      <div class="hero-left">
+        <div class="hero-content active" data-slide="0">
+          <span class="hero-tag">Support</span>
+          <h1 class="hero-heading">
+            <span class="hero-line">Get in touch</span>
+          </h1>
+          <p class="hero-subtext">
+            If you have any questions or would like to find out more about our services,
+            please get in touch. Our team is available 24/7.
+          </p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -47,6 +45,11 @@ require_once '../../includes/head.php';
         <div class="alert alert-success glass" role="alert">
           <i class="ph ph-check-circle" aria-hidden="true"></i>
           Your message has been received. We'll be in touch shortly.
+        </div>
+      <?php elseif (!empty($_GET['error'])): ?>
+        <div class="alert alert-error glass" role="alert">
+          <i class="ph ph-warning-circle" aria-hidden="true"></i>
+          <?php echo $_GET['error'] === 'missing_fields' ? 'Please fill in all required fields.' : 'Something went wrong. Please try again or email us directly.'; ?>
         </div>
       <?php endif; ?>
 
@@ -113,7 +116,7 @@ require_once '../../includes/head.php';
         <div class="reach-out-card glass">
           <i class="ph ph-envelope reach-out-icon" aria-hidden="true"></i>
           <h3>Email</h3>
-          <p><a href="mailto:support@arqoracapital.com" class="contact-link">support@arqoracapital.com</a></p>
+          <p><a href="mailto:support@crestvalebank.com" class="contact-link">support@crestvalebank.com</a></p>
         </div>
 
       </div>

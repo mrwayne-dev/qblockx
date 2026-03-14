@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: arqoracapital
+ * Project: crestvalebank
  * Include: admin-mobile-dock.php — bottom mobile navigation dock (admin dashboard)
  * Visible only on ≤ 899px via responsive.css
  */
@@ -21,10 +21,10 @@ $currentAdminSection = $currentAdminSection ?? 'overview';
     <span>Users</span>
   </a>
 
-  <a href="#" class="dock-item dock-item--center <?= $currentAdminSection === 'trades' ? 'active' : '' ?>"
-     data-nav="trades" aria-label="Trades">
-    <i class="ph ph-arrows-left-right" aria-hidden="true"></i>
-    <span>Trades</span>
+  <a href="#" class="dock-item <?= $currentAdminSection === 'loans' ? 'active' : '' ?>"
+     data-nav="loans" aria-label="Loans">
+    <i class="ph ph-hand-coins" aria-hidden="true"></i>
+    <span>Loans</span>
   </a>
 
   <a href="#" class="dock-item <?= $currentAdminSection === 'transactions' ? 'active' : '' ?>"
@@ -33,10 +33,10 @@ $currentAdminSection = $currentAdminSection ?? 'overview';
     <span>Txns</span>
   </a>
 
-  <a href="#" class="dock-item <?= $currentAdminSection === 'referrals' ? 'active' : '' ?>"
-     data-nav="referrals" aria-label="Referrals">
-    <i class="ph ph-share-network" aria-hidden="true"></i>
-    <span>Referrals</span>
+  <a href="#" class="dock-item <?= $currentAdminSection === 'settings' ? 'active' : '' ?>"
+     data-nav="settings" aria-label="Settings">
+    <i class="ph ph-sliders" aria-hidden="true"></i>
+    <span>Settings</span>
   </a>
 
 </nav>

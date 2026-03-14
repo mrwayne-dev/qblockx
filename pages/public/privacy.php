@@ -1,10 +1,10 @@
 <?php
 /**
- * Project: arqoracapital
+ * Project: crestvalebank
  * Page: Privacy Policy
  */
 $pageTitle       = 'Privacy Policy';
-$pageDescription = 'ArqoraCapital Privacy Policy — learn how we collect, use, and protect your personal data.';
+$pageDescription = 'CrestVale Bank Privacy Policy — learn how we collect, use, and protect your personal data.';
 require_once '../../includes/head.php';
 ?>
 
@@ -26,7 +26,7 @@ require_once '../../includes/head.php';
       <h1 class="hero-heading">Privacy Policy</h1>
       <p class="hero-subtext">
         We are committed to protecting your personal information and your right to privacy.
-        This policy outlines how ArqoraCapital collects, uses, and safeguards your data.
+        This policy outlines how CrestVale Bank collects, uses, and safeguards your data.
       </p>
     </div>
   </section>
@@ -40,7 +40,7 @@ require_once '../../includes/head.php';
 
         <h2>1. Introduction</h2>
         <p>
-          ArqoraCapital Inc. ("ArqoraCapital", "we", "our", or "us") is committed to protecting your
+          CrestVale Bank Inc. ("CrestVale Bank", "we", "our", or "us") is committed to protecting your
           personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard
           your information when you use our platform and related services. Please read this policy carefully.
           If you do not agree with the terms of this Privacy Policy, please do not access the platform.
@@ -60,7 +60,7 @@ require_once '../../includes/head.php';
         <h2>3. How We Use Your Information</h2>
         <p>We use your personal information for the following purposes:</p>
         <ul>
-          <li>To create and manage your ArqoraCapital account.</li>
+          <li>To create and manage your CrestVale Bank account.</li>
           <li>To process investment transactions and disburse daily returns.</li>
           <li>To communicate important account updates, security alerts, and platform notices.</li>
           <li>To comply with applicable legal and regulatory requirements (including anti-money laundering obligations).</li>
@@ -82,7 +82,7 @@ require_once '../../includes/head.php';
 
         <h2>5. Sharing Your Information</h2>
         <p>
-          ArqoraCapital does not sell your personal information to third parties. We may share your data with:
+          CrestVale Bank does not sell your personal information to third parties. We may share your data with:
         </p>
         <ul>
           <li>Service providers who assist in platform operations (payment processors, cloud infrastructure, email delivery).</li>
@@ -110,7 +110,7 @@ require_once '../../includes/head.php';
         </ul>
         <p>
           To exercise any of these rights, please contact us at
-          <a href="mailto:support@arqoracapital.com">support@arqoracapital.com</a>.
+          <a href="mailto:support@crestvalebank.com">support@crestvalebank.com</a>.
           We will respond to all legitimate requests within 30 days.
         </p>
 
@@ -148,7 +148,7 @@ require_once '../../includes/head.php';
           If you have questions or concerns about this Privacy Policy or our data practices, please contact us:
         </p>
         <ul>
-          <li>Email: <a href="mailto:support@arqoracapital.com">support@arqoracapital.com</a></li>
+          <li>Email: <a href="mailto:support@crestvalebank.com">support@crestvalebank.com</a></li>
           <li>Address: 36 Springfield Road, Guildford GU52 0DM, United Kingdom</li>
         </ul>
 

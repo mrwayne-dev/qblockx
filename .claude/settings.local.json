@@ -20,7 +20,16 @@
       "Bash(xargs grep:*)",
       "Bash(grep -rn href=[''].*.php /c/mrwayne/web_dev/arqoracapital/pages/ /c/mrwayne/web_dev/arqoracapital/includes/)",
       "Bash(xargs sed:*)",
-      "Bash(/dev/null __NEW_LINE_dc62fba4bab9cd16__ echo '=== 4. Error handling in env.php ===' grep -c display_errors /c/mrwayne/web_dev/arqoracapital/config/env.php __NEW_LINE_dc62fba4bab9cd16__ echo '=== 5. admin-responsive.css size ===' wc -l /c/mrwayne/web_dev/arqoracapital/assets/css/admin/admin-responsive.css __NEW_LINE_dc62fba4bab9cd16__ echo '=== 6. HTTPS rule in .htaccess ===' grep -c HTTPS /c/mrwayne/web_dev/arqoracapital/.htaccess)"
+      "Bash(/dev/null __NEW_LINE_dc62fba4bab9cd16__ echo '=== 4. Error handling in env.php ===' grep -c display_errors /c/mrwayne/web_dev/arqoracapital/config/env.php __NEW_LINE_dc62fba4bab9cd16__ echo '=== 5. admin-responsive.css size ===' wc -l /c/mrwayne/web_dev/arqoracapital/assets/css/admin/admin-responsive.css __NEW_LINE_dc62fba4bab9cd16__ echo '=== 6. HTTPS rule in .htaccess ===' grep -c HTTPS /c/mrwayne/web_dev/arqoracapital/.htaccess)",
+      "Bash(for f:*)",
+      "Bash(do sed:*)",
+      "Bash(grep -l \"3FE0A1\" assets/email-templates/*.html)",
+      "Bash(grep -r \"ArqoraCapital\\\\|arqoracapital\\\\|Arqora Capital\" --include=*.php --include=*.js --include=*.html --include=*.css -l)",
+      "Bash(grep -r \"ArqoraCapital\\\\|Arqora Capital\" --include=*.php --include=*.js --include=*.html --include=*.css -l)",
+      "Bash(find /c/mrwayne/web_dev/crestvalebank/pages/admin -type f -name *.php)",
+      "Bash(find /c/mrwayne/web_dev/crestvalebank/includes/admin-modals -name *.php)",
+      "Bash(find /c/mrwayne/web_dev/crestvalebank/includes -name *settings* -o -name *admin*section*)",
+      "Bash(find /c/mrwayne/web_dev/crestvalebank/includes -name *admin* -type f)"
     ]
   }
 }

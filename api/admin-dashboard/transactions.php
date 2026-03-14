@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: arqoracapital
+ * Project: crestvalebank
  * Created by: Wayne
  * Generated: 2026-03-09
  * 
@@ -37,7 +37,7 @@ try {
     $totalWithdrawals= $db->query("SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE type = 'withdrawal' AND status = 'completed'")->fetchColumn();
 
     $stmt = $db->prepare(
-        "SELECT t.id, t.type, t.amount, t.currency, t.status, t.payment_id, t.notes, t.created_at,
+        "SELECT t.id, t.type, t.amount, t.status, t.notes, t.created_at,
                 u.email AS user_email, u.full_name AS user_name
          FROM transactions t
          JOIN users u ON u.id = t.user_id

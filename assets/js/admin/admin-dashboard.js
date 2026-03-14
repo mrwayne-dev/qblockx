@@ -1,5 +1,5 @@
 /**
- * Project: arqoracapital
+ * Project: crestvalebank
  * Admin Dashboard — SPA JS
  */
 (function () {
@@ -40,7 +40,7 @@
 
   function badge(status) {
     if (!status) return '<span class="badge">—</span>';
-    var cls = 'badge badge-' + status.toLowerCase().replace('_', '-');
+    var cls = 'badge badge-' + status.toLowerCase().replace(/_/g, '-');
     return '<span class="' + cls + '">' + esc(status) + '</span>';
   }
 
@@ -59,6 +59,8 @@
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
   }
+
+  function setText(sel, val) { var el = qs(sel); if (el) el.textContent = val; }
 
   /* ── Toast Notifications ──────────────────────────────────────────── */
 
@@ -143,7 +145,6 @@
     }
   }
 
-  // Expose globally so inline onclick attributes work
   window.openAdminModal  = openAdminModal;
   window.closeAdminModal = closeAdminModal;
 
@@ -158,34 +159,24 @@
       if (!r.success) return;
       var d = r.data;
 
-      // 6 Stat Cards
-      var defs = [
-        { label: 'Total Users',          val: d.total_users,                       icon: 'ph-users',               cls: '' },
-        { label: 'New Today',             val: d.new_today,                         icon: 'ph-user-plus',           cls: 'accent' },
-        { label: 'Total Deposited',       val: '$' + fmt(d.total_deposits),         icon: 'ph-arrow-circle-down',   cls: 'success' },
-        { label: 'Amount Invested',       val: '$' + fmt(d.total_invested),         icon: 'ph-chart-bar',           cls: 'accent' },
-        { label: 'Profit Distributed',    val: '$' + fmt(d.profit_distributed),     icon: 'ph-coins',               cls: 'success' },
-        { label: 'Total Trades',          val: d.total_trades,                      icon: 'ph-arrows-left-right',   cls: '' },
-      ];
+      setText('[data-stat="total-users"]',           d.total_users);
+      setText('[data-stat="new-today"]',             '+' + d.new_today + ' today');
+      setText('[data-stat="total-deposits"]',        '$' + fmt(d.total_deposits));
+      setText('[data-stat="pending-deposits"]',      d.pending_deposits + ' pending');
+      setText('[data-stat="active-savings"]',        d.active_savings);
+      setText('[data-stat="active-fixed-deposits"]', d.active_fixed_deposits);
+      setText('[data-stat="fixed-deposits-value"]',  '$' + fmt(d.fixed_deposits_value));
+      setText('[data-stat="active-loans"]',          d.active_loans);
+      setText('[data-stat="pending-loans"]',         d.pending_loans + ' pending');
+      setText('[data-stat="pending-withdrawals"]',   d.pending_withdrawals);
 
-      var grid = qs('[data-stats-grid]');
-      if (grid) {
-        grid.innerHTML = defs.map(function (item) {
-          return '<div class="stat-card">'
-            + '<div class="stat-icon"><i class="ph ' + item.icon + '"></i></div>'
-            + '<div class="stat-label">' + item.label + '</div>'
-            + '<div class="stat-value ' + item.cls + '">' + item.val + '</div>'
-            + '</div>';
-        }).join('');
-      }
+      var qaDep  = document.getElementById('qaPendingDeposits');
+      var qaWdr  = document.getElementById('qaPendingWithdrawals');
+      var qaLoan = document.getElementById('qaPendingLoans');
+      if (qaDep)  qaDep.textContent  = d.pending_deposits   || 0;
+      if (qaWdr)  qaWdr.textContent  = d.pending_withdrawals || 0;
+      if (qaLoan) qaLoan.textContent = d.pending_loans       || 0;
 
-      // Quick-action badge counts
-      var qaDep = document.getElementById('qaPendingDeposits');
-      var qaWdr = document.getElementById('qaPendingWithdrawals');
-      if (qaDep) qaDep.textContent = d.pending_deposits_count  || 0;
-      if (qaWdr) qaWdr.textContent = d.pending_withdrawals      || 0;
-
-      // Recent Transactions table (last 5)
       var tbody = qs('[data-table="overview-txns"]');
       if (tbody) {
         var txns = d.recent_transactions || [];
@@ -231,6 +222,7 @@
       if (d.users && d.users.length) {
         tbody.innerHTML = d.users.map(function (u) {
           var isVerified = (u.is_verified == 1 || u.is_verified === true || u.is_verified === '1');
+          var isActive   = (u.is_active == null || u.is_active == 1 || u.is_active === true || u.is_active === '1');
           var userData   = esc(JSON.stringify({
             id: u.id, full_name: u.full_name, email: u.email,
             role: u.role, is_verified: u.is_verified, balance: u.balance
@@ -244,10 +236,15 @@
             + '<td>' + verifiedBadge(u.is_verified) + '</td>'
             + '<td class="cell-muted">' + fmtDate(u.created_at) + '</td>'
             + '<td><div class="btn-actions">'
+            + '<button class="btn-action btn-action--info" data-user-view="' + u.id + '">View</button>'
             + '<button class="btn-action btn-action--primary" data-user-edit="1" data-user=\'' + userData + '\'>Edit</button>'
             + '<button class="btn-action ' + (isVerified ? 'btn-action--danger' : 'btn-action--success') + '"'
             + ' data-user-action="' + (isVerified ? 'unverify' : 'verify') + '" data-id="' + u.id + '">'
             + (isVerified ? 'Unverify' : 'Verify') + '</button>'
+            + '<button class="btn-action ' + (isActive ? 'btn-action--danger' : 'btn-action--success') + '"'
+            + ' data-user-action="' + (isActive ? 'disable' : 'enable') + '" data-id="' + u.id + '">'
+            + (isActive ? 'Disable' : 'Enable') + '</button>'
+            + '<button class="btn-action btn-action--danger" data-user-action="delete" data-id="' + u.id + '">Delete</button>'
             + '</div></td>'
             + '</tr>';
         }).join('');
@@ -296,8 +293,6 @@
     document.getElementById('editUserRole').value       = userData.role      || 'user';
     document.getElementById('editUserVerified').checked = (userData.is_verified == 1 || userData.is_verified === true);
     document.getElementById('editUserBalance').value    = '';
-    var commField = document.getElementById('editUserReferral');
-    if (commField) commField.value = '';
     openAdminModal('modal-edit-user');
   };
 
@@ -314,11 +309,8 @@
       is_verified: document.getElementById('editUserVerified').checked ? 1 : 0
     };
 
-    var bal  = document.getElementById('editUserBalance').value.trim();
+    var bal = document.getElementById('editUserBalance').value.trim();
     if (bal !== '') payload.balance_override = parseFloat(bal);
-
-    var comm = document.getElementById('editUserReferral');
-    if (comm && comm.value.trim() !== '') payload.referral_commission_override = parseFloat(comm.value.trim());
 
     try {
       var r = await apiFetch('/api/admin-dashboard/edit-user.php', {
@@ -330,7 +322,6 @@
         closeAdminModal('modal-edit-user');
         usersLoaded = false;
         loadUsers(usersPage);
-        // Refresh overview counts if loaded
         overviewLoaded = false;
         if (currentSection === 'overview') loadOverview();
       } else {
@@ -343,246 +334,306 @@
     }
   };
 
-  /* ── Trades Section ───────────────────────────────────────────────── */
+  /* ── Add Rate ─────────────────────────────────────────────────────── */
 
-  var tradesPage    = 1;
-  var tradesLoaded  = false;
-  var tradesFilter  = 'all';
+  window.saveNewRate = async function () {
+    var product  = document.getElementById('addRateProduct').value;
+    var label    = document.getElementById('addRateLabel').value.trim();
+    var duration = parseInt(document.getElementById('addRateDuration').value, 10);
+    var rate     = parseFloat(document.getElementById('addRateValue').value);
+    var msgEl    = document.getElementById('addRateMsg');
+    msgEl.style.display  = 'none';
+    msgEl.textContent    = '';
+    msgEl.className      = 'admin-modal-msg';
 
-  async function loadTrades(page, status) {
-    if (status !== undefined) tradesFilter = status;
-    tradesPage   = page || 1;
-    tradesLoaded = true;
-
-    // Update filter buttons
-    document.querySelectorAll('[data-trade-filter]').forEach(function (btn) {
-      btn.classList.toggle('active', btn.dataset.tradeFilter === tradesFilter);
-    });
+    if (!label)                    { msgEl.textContent = 'Label is required.';   msgEl.style.display = ''; return; }
+    if (!duration || duration < 1) { msgEl.textContent = 'Invalid duration.';    msgEl.style.display = ''; return; }
+    if (isNaN(rate) || rate < 0)   { msgEl.textContent = 'Invalid rate value.';  msgEl.style.display = ''; return; }
 
     try {
-      var url = '/api/admin-dashboard/trades.php?page=' + tradesPage + '&limit=20';
-      if (tradesFilter && tradesFilter !== 'all') url += '&status=' + tradesFilter;
-      var r = await apiFetch(url);
-      if (!r.success) return;
-      var d = r.data;
-      tradesPage = d.page;
-
-      var tbody = qs('[data-table="trades"]');
-      if (!tbody) return;
-
-      if (d.trades && d.trades.length) {
-        tbody.innerHTML = d.trades.map(function (t) {
-          var plan     = (t.plan_name || '').charAt(0).toUpperCase() + (t.plan_name || '').slice(1);
-          var rate     = (parseFloat(t.daily_rate || 0) * 100).toFixed(1) + '%/day';
-          var invData  = esc(JSON.stringify({
-            id: t.id, user_name: t.user_name, user_email: t.user_email,
-            amount: t.amount, daily_rate: t.daily_rate, total_earned: t.total_earned,
-            status: t.status, starts_at: t.starts_at, ends_at: t.ends_at
-          }).replace(/'/g, '&apos;'));
-          return '<tr>'
-            + '<td><div class="cell-name">' + esc(t.user_name || t.user_email) + '</div>'
-            + '<div class="cell-sub">' + esc(t.user_email) + '</div></td>'
-            + '<td>' + plan + '</td>'
-            + '<td><strong>$' + fmt(t.amount) + '</strong></td>'
-            + '<td class="cell-muted">' + rate + '</td>'
-            + '<td class="cell-muted">$' + fmt(t.total_earned) + '</td>'
-            + '<td>' + badge(t.status) + '</td>'
-            + '<td class="cell-muted">' + fmtDate(t.ends_at) + '</td>'
-            + '<td><button class="btn-action btn-action--primary" data-inv-edit="1" data-inv=\'' + invData + '\'>Edit</button></td>'
-            + '</tr>';
-        }).join('');
+      var r = await apiFetch('/api/admin-dashboard/settings.php', {
+        method: 'POST',
+        body: JSON.stringify({ action: 'add_rate', product: product, label: label, duration_months: duration, rate: rate })
+      });
+      if (r.success) {
+        showToast('Rate added');
+        closeAdminModal('modal-add-rate');
+        document.getElementById('addRateLabel').value    = '';
+        document.getElementById('addRateDuration').value = '';
+        document.getElementById('addRateValue').value    = '';
+        settingsLoaded = false;
+        loadSettings();
       } else {
-        showEmpty(tbody, 8, 'No trades found');
-      }
-
-      var pag = qs('[data-pagination="trades"]');
-      if (d.pages > 1) {
-        renderPagination(pag, d.page, d.pages, d.total, 20, loadTrades);
-      } else if (pag) {
-        pag.innerHTML = '';
+        msgEl.textContent   = r.message || 'Failed to add rate.';
+        msgEl.style.display = '';
+        msgEl.classList.add('error');
       }
     } catch (e) {
-      console.error('loadTrades:', e);
+      msgEl.textContent   = 'Network error.';
+      msgEl.style.display = '';
+      msgEl.classList.add('error');
     }
-  }
+  };
 
-  /* ── Investment Plans ─────────────────────────────────────────────── */
+  /* ── Edit Rate ────────────────────────────────────────────────────── */
 
-  async function loadInvestmentPlans() {
-    var grid = document.getElementById('planConfigsGrid');
-    if (!grid) return;
+  window.openEditRateModal = function (id, label, duration, rate, isActive) {
+    document.getElementById('editRateId').value       = id;
+    document.getElementById('editRateLabel').value    = label;
+    document.getElementById('editRateDuration').value = duration + ' months';
+    document.getElementById('editRateValue').value    = rate;
+    document.getElementById('editRateActive').checked = (isActive == 1 || isActive === true || isActive === '1');
+    var msgEl = document.getElementById('editRateMsg');
+    msgEl.style.display = 'none';
+    msgEl.textContent   = '';
+    openAdminModal('modal-edit-rate');
+  };
+
+  window.saveEditRate = async function () {
+    var id     = parseInt(document.getElementById('editRateId').value, 10);
+    var rate   = parseFloat(document.getElementById('editRateValue').value);
+    var active = document.getElementById('editRateActive').checked ? 1 : 0;
+    var msgEl  = document.getElementById('editRateMsg');
+    msgEl.style.display = 'none';
+    msgEl.textContent   = '';
+    msgEl.className     = 'admin-modal-msg';
+
+    if (isNaN(rate) || rate < 0) { msgEl.textContent = 'Enter a valid rate.'; msgEl.style.display = ''; return; }
+
     try {
-      var r = await apiFetch('/api/admin-dashboard/investment-plans.php');
-      if (!r.success || !r.data) return;
-      var plans = Array.isArray(r.data) ? r.data : (r.data.plans || []);
-      if (!plans.length) {
-        grid.innerHTML = '<p class="cell-muted">No plans found.</p>';
+      var r = await apiFetch('/api/admin-dashboard/settings.php', {
+        method: 'POST',
+        body: JSON.stringify({ action: 'update_rate', id: id, rate: rate, is_active: active })
+      });
+      if (r.success) {
+        showToast('Rate updated');
+        closeAdminModal('modal-edit-rate');
+        settingsLoaded = false;
+        loadSettings();
+      } else {
+        msgEl.textContent   = r.message || 'Failed to update rate.';
+        msgEl.style.display = '';
+        msgEl.classList.add('error');
+      }
+    } catch (e) {
+      msgEl.textContent   = 'Network error.';
+      msgEl.style.display = '';
+      msgEl.classList.add('error');
+    }
+  };
+
+  /* ── Credit / Debit User ──────────────────────────────────────────── */
+
+  window.submitCreditDebit = async function () {
+    var email  = document.getElementById('cdUserEmail').value.trim();
+    var amount = parseFloat(document.getElementById('cdAmount').value);
+    var type   = document.getElementById('cdType').value;
+    var notes  = document.getElementById('cdNotes').value.trim();
+    var msgEl  = document.getElementById('cdMsg');
+    msgEl.style.display = 'none';
+    msgEl.textContent   = '';
+    msgEl.className     = 'admin-modal-msg';
+
+    if (!email)              { msgEl.textContent = 'Email is required.';         msgEl.style.display = ''; return; }
+    if (isNaN(amount) || amount <= 0) { msgEl.textContent = 'Enter a valid amount.'; msgEl.style.display = ''; return; }
+
+    try {
+      var r = await apiFetch('/api/admin-dashboard/credit-debit.php', {
+        method: 'POST',
+        body: JSON.stringify({ user_email: email, amount: amount, type: type, notes: notes })
+      });
+      if (r.success) {
+        showToast(type === 'credit' ? 'User credited' : 'User debited');
+        closeAdminModal('modal-credit-debit');
+        document.getElementById('cdUserEmail').value = '';
+        document.getElementById('cdAmount').value    = '';
+        document.getElementById('cdNotes').value     = '';
+        txLoaded = false;
+        if (currentSection === 'transactions') loadTransactions(txPage);
+        overviewLoaded = false;
+        if (currentSection === 'overview') loadOverview();
+      } else {
+        msgEl.textContent   = r.message || 'Action failed.';
+        msgEl.style.display = '';
+        msgEl.classList.add('error');
+      }
+    } catch (e) {
+      msgEl.textContent   = 'Network error.';
+      msgEl.style.display = '';
+      msgEl.classList.add('error');
+    }
+  };
+
+  /* ── View User Profile ────────────────────────────────────────────── */
+
+  window.openViewUserModal = async function (userId) {
+    var bodyEl = document.getElementById('viewUserBody');
+    if (!bodyEl) return;
+    bodyEl.innerHTML = '<div style="text-align:center;padding:2rem;"><i class="ph ph-circle-notch ph-spin" style="font-size:2rem;"></i></div>';
+    openAdminModal('modal-view-user');
+
+    try {
+      var r = await apiFetch('/api/admin-dashboard/user-profile.php?id=' + userId);
+      if (!r.success) {
+        bodyEl.innerHTML = '<p style="color:var(--color-danger);padding:1rem;">' + esc(r.message || 'Failed to load user') + '</p>';
         return;
       }
-      grid.innerHTML = plans.map(function (p) {
-        var maxLabel = p.max_amount ? '$' + fmt(p.max_amount) : '∞';
-        var rateStr  = (parseFloat(p.daily_rate || 0) * 100).toFixed(1);
-        var inactive = p.is_active == 0 || p.is_active === false || p.is_active === '0';
-        return '<div class="plan-config-card' + (inactive ? ' plan-config-inactive' : '') + '">'
-          + '<div class="plan-config-header">'
-          + '<span class="plan-config-name">' + esc(p.name) + '</span>'
-          + '<span class="plan-config-rate">' + rateStr + '%/day</span>'
-          + '</div>'
-          + '<div class="plan-config-details">'
-          + '<span class="plan-config-detail">Min: $' + fmt(p.min_amount) + '</span>'
-          + '<span class="plan-config-detail">Max: ' + maxLabel + '</span>'
-          + '<span class="plan-config-detail">' + p.duration_days + ' days</span>'
-          + '</div>'
-          + '<div class="plan-config-actions">'
-          + '<button class="btn-action btn-action--primary" data-plan-edit="1" data-plan=\'' + esc(JSON.stringify(p).replace(/'/g, '&apos;')) + '\'>Edit</button>'
-          + '<button class="btn-action ' + (inactive ? 'btn-action--success' : 'btn-action--warning') + '" data-plan-toggle="' + p.id + '">'
-          + (inactive ? 'Enable' : 'Disable') + '</button>'
-          + '</div>'
-          + '</div>';
-      }).join('');
+      var u  = r.user;
+      var tRow = function (label, val) {
+        return '<tr><td class="cell-muted" style="width:38%;padding:0.5rem 0.75rem;">' + label + '</td>'
+             + '<td style="padding:0.5rem 0.75rem;">' + val + '</td></tr>';
+      };
+
+      var html = '<div class="view-user-section">'
+        + '<h3 class="view-user-section-title">Account Details</h3>'
+        + '<table class="admin-table" style="margin:0;"><tbody>'
+        + tRow('Name',    esc(u.full_name || '—'))
+        + tRow('Email',   esc(u.email))
+        + tRow('Role',    esc(u.role || 'user'))
+        + tRow('Status',  (u.is_active == 0 ? '<span class="badge badge-danger">Disabled</span>' : '<span class="badge badge-success">Active</span>'))
+        + tRow('Verified', verifiedBadge(u.is_verified))
+        + tRow('Joined',  fmtDate(u.created_at))
+        + tRow('Wallet Balance', '<strong>$' + fmt(u.balance) + '</strong>')
+        + '</tbody></table></div>';
+
+      // Savings plans
+      var savings = r.savings || [];
+      html += '<div class="view-user-section">'
+        + '<h3 class="view-user-section-title">Savings Plans (' + savings.length + ')</h3>';
+      if (savings.length) {
+        html += '<table class="admin-table" style="margin:0;"><thead><tr>'
+          + '<th>Plan</th><th>Saved</th><th>Target</th><th>Rate</th><th>Status</th>'
+          + '</tr></thead><tbody>'
+          + savings.map(function (p) {
+            return '<tr>'
+              + '<td>' + esc(p.plan_name) + '</td>'
+              + '<td>$' + fmt(p.current_amount) + '</td>'
+              + '<td>$' + fmt(p.target_amount) + '</td>'
+              + '<td>' + (p.interest_rate || '—') + '<i class="ph ph-percent"></i></td>'
+              + '<td>' + badge(p.status) + '</td>'
+              + '</tr>';
+          }).join('') + '</tbody></table>';
+      } else {
+        html += '<p class="cell-muted" style="padding:0.5rem 0;">No savings plans.</p>';
+      }
+      html += '</div>';
+
+      // Fixed deposits
+      var deposits = r.deposits || [];
+      html += '<div class="view-user-section">'
+        + '<h3 class="view-user-section-title">Fixed Deposits (' + deposits.length + ')</h3>';
+      if (deposits.length) {
+        html += '<table class="admin-table" style="margin:0;"><thead><tr>'
+          + '<th>Amount</th><th>Rate</th><th>Duration</th><th>Maturity</th><th>Status</th>'
+          + '</tr></thead><tbody>'
+          + deposits.map(function (d) {
+            return '<tr>'
+              + '<td>$' + fmt(d.amount) + '</td>'
+              + '<td>' + (d.interest_rate || '—') + '<i class="ph ph-percent"></i></td>'
+              + '<td>' + (d.duration_months || '—') + ' mo</td>'
+              + '<td class="cell-muted">' + fmtDate(d.maturity_date) + '</td>'
+              + '<td>' + badge(d.status) + '</td>'
+              + '</tr>';
+          }).join('') + '</tbody></table>';
+      } else {
+        html += '<p class="cell-muted" style="padding:0.5rem 0;">No fixed deposits.</p>';
+      }
+      html += '</div>';
+
+      // Loans
+      var loans = r.loans || [];
+      html += '<div class="view-user-section">'
+        + '<h3 class="view-user-section-title">Loans (' + loans.length + ')</h3>';
+      if (loans.length) {
+        html += '<table class="admin-table" style="margin:0;"><thead><tr>'
+          + '<th>Amount</th><th>Remaining</th><th>Rate</th><th>Status</th>'
+          + '</tr></thead><tbody>'
+          + loans.map(function (l) {
+            return '<tr>'
+              + '<td>$' + fmt(l.loan_amount) + '</td>'
+              + '<td>$' + fmt(l.remaining_balance) + '</td>'
+              + '<td>' + (l.interest_rate || '—') + '<i class="ph ph-percent"></i></td>'
+              + '<td>' + badge(l.status) + '</td>'
+              + '</tr>';
+          }).join('') + '</tbody></table>';
+      } else {
+        html += '<p class="cell-muted" style="padding:0.5rem 0;">No loans.</p>';
+      }
+      html += '</div>';
+
+      // Recent transactions
+      var txns = r.transactions || [];
+      html += '<div class="view-user-section">'
+        + '<h3 class="view-user-section-title">Recent Transactions</h3>';
+      if (txns.length) {
+        html += '<table class="admin-table" style="margin:0;"><thead><tr>'
+          + '<th>Type</th><th>Amount</th><th>Status</th><th>Date</th>'
+          + '</tr></thead><tbody>'
+          + txns.map(function (tx) {
+            return '<tr>'
+              + '<td>' + badge(tx.type) + '</td>'
+              + '<td>$' + fmt(tx.amount) + '</td>'
+              + '<td>' + badge(tx.status) + '</td>'
+              + '<td class="cell-muted">' + fmtDateTime(tx.created_at) + '</td>'
+              + '</tr>';
+          }).join('') + '</tbody></table>';
+      } else {
+        html += '<p class="cell-muted" style="padding:0.5rem 0;">No transactions.</p>';
+      }
+      html += '</div>';
+
+      bodyEl.innerHTML = html;
     } catch (e) {
-      console.error('loadInvestmentPlans:', e);
+      bodyEl.innerHTML = '<p style="color:var(--color-danger);padding:1rem;">Network error loading user profile.</p>';
+      console.error('openViewUserModal:', e);
     }
-  }
-
-  /* ── Investment Edit Modal ────────────────────────────────────────── */
-
-  window.openInvestmentModal = function (invData) {
-    if (typeof invData === 'string') {
-      try { invData = JSON.parse(invData); } catch (e) { return; }
-    }
-    document.getElementById('editInvId').value       = invData.id            || '';
-    document.getElementById('editInvUser').value     = (invData.user_name || invData.user_email || '');
-    document.getElementById('editInvAmount').value   = invData.amount        || '';
-    document.getElementById('editInvRate').value     = invData.daily_rate    != null
-      ? (parseFloat(invData.daily_rate) * 100).toFixed(2) : '';
-    document.getElementById('editInvEarned').value   = invData.total_earned  || '';
-    document.getElementById('editInvStatus').value   = invData.status        || 'active';
-
-    var toLocalDT = function (dt) {
-      if (!dt) return '';
-      var d = new Date(dt);
-      var pad = function (n) { return n < 10 ? '0' + n : n; };
-      return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate())
-        + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
-    };
-
-    document.getElementById('editInvStartsAt').value = toLocalDT(invData.starts_at);
-    document.getElementById('editInvEndsAt').value   = toLocalDT(invData.ends_at);
-    openAdminModal('modal-edit-investment');
   };
 
-  window.saveInvestment = async function () {
-    var id    = document.getElementById('editInvId').value;
-    var msgEl = document.getElementById('editInvMsg');
-    msgEl.textContent = '';
-    msgEl.className   = 'admin-modal-msg';
+  /* ── Record Loan Repayment ────────────────────────────────────────── */
 
-    var rateVal  = parseFloat(document.getElementById('editInvRate').value || 0) / 100;
-    var payload  = {
-      id:           parseInt(id, 10),
-      amount:       parseFloat(document.getElementById('editInvAmount').value),
-      daily_rate:   rateVal,
-      total_earned: parseFloat(document.getElementById('editInvEarned').value),
-      status:       document.getElementById('editInvStatus').value,
-      starts_at:    document.getElementById('editInvStartsAt').value || null,
-      ends_at:      document.getElementById('editInvEndsAt').value   || null
-    };
+  window.submitAdminRepayment = async function () {
+    var loanId = document.getElementById('repayLoanId').value;
+    var amount = parseFloat(document.getElementById('repayAmount').value);
+    var msgEl  = document.getElementById('repayMsg');
+    msgEl.style.display = 'none';
+    msgEl.textContent   = '';
+    msgEl.className     = 'admin-modal-msg';
+
+    if (!loanId || isNaN(amount) || amount <= 0) {
+      msgEl.textContent   = 'Enter a valid repayment amount.';
+      msgEl.style.display = '';
+      return;
+    }
 
     try {
-      var r = await apiFetch('/api/admin-dashboard/edit-investment.php', {
+      var r = await apiFetch('/api/admin-dashboard/loans.php', {
         method: 'POST',
-        body:   JSON.stringify(payload)
+        body: JSON.stringify({ action: 'record_repayment', id: parseInt(loanId, 10), amount: amount })
       });
       if (r.success) {
-        showToast(r.message || 'Trade saved');
-        closeAdminModal('modal-edit-investment');
-        tradesLoaded = false;
-        loadTrades(tradesPage, tradesFilter);
+        showToast(r.message || 'Repayment recorded');
+        closeAdminModal('modal-record-repayment');
+        document.getElementById('repayAmount').value = '';
+        loansAdminLoaded = false;
+        loadAdminLoans(loansAdminPage);
+        overviewLoaded = false;
+        if (currentSection === 'overview') loadOverview();
       } else {
-        msgEl.textContent = r.message || 'Save failed';
+        msgEl.textContent   = r.message || 'Failed to record repayment.';
+        msgEl.style.display = '';
         msgEl.classList.add('error');
       }
     } catch (e) {
-      msgEl.textContent = 'Network error';
+      msgEl.textContent   = 'Network error.';
+      msgEl.style.display = '';
       msgEl.classList.add('error');
     }
   };
-
-  /* ── Plan Edit Modal ──────────────────────────────────────────────── */
-
-  window.openPlanModal = function (planData) {
-    if (typeof planData === 'string') {
-      try { planData = JSON.parse(planData); } catch (e) { return; }
-    }
-    document.getElementById('editPlanId').value       = planData.id           || '';
-    document.getElementById('editPlanName').value     = planData.name         || '';
-    document.getElementById('editPlanMin').value      = planData.min_amount   || '';
-    document.getElementById('editPlanMax').value      = planData.max_amount   || '';
-    document.getElementById('editPlanRate').value     = planData.daily_rate   != null
-      ? (parseFloat(planData.daily_rate) * 100).toFixed(2) : '';
-    document.getElementById('editPlanDays').value     = planData.duration_days || 5;
-    openAdminModal('modal-edit-plan');
-  };
-
-  window.savePlan = async function () {
-    var id    = document.getElementById('editPlanId').value;
-    var msgEl = document.getElementById('editPlanMsg');
-    msgEl.textContent = '';
-    msgEl.className   = 'admin-modal-msg';
-
-    var rateVal = parseFloat(document.getElementById('editPlanRate').value || 0) / 100;
-    var maxVal  = document.getElementById('editPlanMax').value.trim();
-    var payload = {
-      action:        'update',
-      id:            parseInt(id, 10),
-      name:          document.getElementById('editPlanName').value.trim(),
-      min_amount:    parseFloat(document.getElementById('editPlanMin').value),
-      max_amount:    maxVal !== '' ? parseFloat(maxVal) : null,
-      daily_rate:    rateVal,
-      duration_days: parseInt(document.getElementById('editPlanDays').value, 10)
-    };
-
-    try {
-      var r = await apiFetch('/api/admin-dashboard/investment-plans.php', {
-        method: 'POST',
-        body:   JSON.stringify(payload)
-      });
-      if (r.success) {
-        showToast(r.message || 'Plan saved');
-        closeAdminModal('modal-edit-plan');
-        loadInvestmentPlans();
-      } else {
-        msgEl.textContent = r.message || 'Save failed';
-        msgEl.classList.add('error');
-      }
-    } catch (e) {
-      msgEl.textContent = 'Network error';
-      msgEl.classList.add('error');
-    }
-  };
-
-  async function togglePlan(id) {
-    try {
-      var r = await apiFetch('/api/admin-dashboard/investment-plans.php', {
-        method: 'POST',
-        body:   JSON.stringify({ action: 'toggle', id: parseInt(id, 10) })
-      });
-      if (r.success) {
-        showToast(r.message || 'Plan updated');
-        loadInvestmentPlans();
-      } else {
-        showToast(r.message || 'Action failed', true);
-      }
-    } catch (e) {
-      showToast('Network error', true);
-    }
-  }
 
   /* ── Transactions Section ─────────────────────────────────────────── */
 
-  var txPage    = 1;
-  var txLoaded  = false;
+  var txPage       = 1;
+  var txLoaded     = false;
   var txTypeFilter = '';
 
   async function loadTransactions(page, type) {
@@ -590,7 +641,6 @@
     txPage   = page || 1;
     txLoaded = true;
 
-    // Update filter buttons
     document.querySelectorAll('[data-tx-type]').forEach(function (btn) {
       btn.classList.toggle('active', btn.dataset.txType === txTypeFilter);
     });
@@ -603,11 +653,10 @@
       var d = r.data;
       txPage = d.page;
 
-      // Metric cards
       if (d.summary) {
-        var volEl  = document.getElementById('txMetricVolume');
-        var depEl  = document.getElementById('txMetricDeposits');
-        var wdrEl  = document.getElementById('txMetricWithdrawals');
+        var volEl = document.getElementById('txMetricVolume');
+        var depEl = document.getElementById('txMetricDeposits');
+        var wdrEl = document.getElementById('txMetricWithdrawals');
         if (volEl) volEl.textContent = '$' + fmt(d.summary.total_volume);
         if (depEl) depEl.textContent = '$' + fmt(d.summary.total_deposits);
         if (wdrEl) wdrEl.textContent = '$' + fmt(d.summary.total_withdrawals);
@@ -623,7 +672,6 @@
             + '<div class="cell-sub">' + esc(tx.user_email) + '</div></td>'
             + '<td>' + badge(tx.type) + '</td>'
             + '<td><strong>$' + fmt(tx.amount) + '</strong></td>'
-            + '<td class="cell-muted">' + esc((tx.currency || '—').toUpperCase()) + '</td>'
             + '<td>' + badge(tx.status) + '</td>'
             + '<td class="cell-muted" style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'
             + esc(tx.notes || '—') + '</td>'
@@ -631,7 +679,7 @@
             + '</tr>';
         }).join('');
       } else {
-        showEmpty(tbody, 7, 'No transactions found');
+        showEmpty(tbody, 6, 'No transactions found');
       }
 
       var pag = qs('[data-pagination="transactions"]');
@@ -645,60 +693,334 @@
     }
   }
 
-  /* ── Referrals Section ────────────────────────────────────────────── */
+  /* ── Admin Savings Section ────────────────────────────────────────── */
 
-  var referralsPage   = 1;
-  var referralsLoaded = false;
+  var savingsPage   = 1;
+  var savingsLoaded = false;
+  var savingsFilter = '';
 
-  async function loadReferrals(page) {
-    referralsPage   = page || referralsPage;
-    referralsLoaded = true;
+  async function loadAdminSavings(page, status) {
+    if (status !== undefined) savingsFilter = status;
+    savingsPage   = page || 1;
+    savingsLoaded = true;
+
+    document.querySelectorAll('[data-savings-filter]').forEach(function (btn) {
+      btn.classList.toggle('active', btn.dataset.savingsFilter === savingsFilter);
+    });
+
     try {
-      var r = await apiFetch('/api/admin-dashboard/referrals.php?page=' + referralsPage + '&limit=20');
+      var url = '/api/admin-dashboard/savings.php?page=' + savingsPage;
+      if (savingsFilter) url += '&status=' + savingsFilter;
+      var r = await apiFetch(url);
       if (!r.success) return;
-      var d = r.data;
-      referralsPage = d.page;
 
-      // Metric cards
-      if (d.summary) {
-        var totalEl    = document.getElementById('refMetricTotal');
-        var commEl     = document.getElementById('refMetricComm');
-        var refEl      = document.getElementById('refMetricReferrers');
-        if (totalEl) totalEl.textContent = d.summary.total_referrals;
-        if (commEl)  commEl.textContent  = '$' + fmt(d.summary.total_commission_paid);
-        if (refEl)   refEl.textContent   = d.summary.active_referrers;
-      }
+      var totalEl  = document.getElementById('savingsMetricTotal');
+      var savedEl  = document.getElementById('savingsMetricSaved');
+      var activeEl = document.getElementById('savingsMetricActive');
+      if (totalEl)  totalEl.textContent  = r.total;
+      if (savedEl)  savedEl.textContent  = '$' + fmt(r.total_saved);
+      if (activeEl) activeEl.textContent = r.active_plans;
 
-      var tbody = qs('[data-table="referrals"]');
+      var tbody = qs('[data-table="savings"]');
       if (!tbody) return;
 
-      if (d.referrals && d.referrals.length) {
-        tbody.innerHTML = d.referrals.map(function (ref) {
-          var commRate = ref.commission_rate != null
-            ? (parseFloat(ref.commission_rate) * 100).toFixed(0) + '%'
-            : '5%';
+      if (r.plans && r.plans.length) {
+        tbody.innerHTML = r.plans.map(function (p) {
           return '<tr>'
-            + '<td><div class="cell-name">' + esc(ref.referrer_name || ref.referrer_email) + '</div>'
-            + '<div class="cell-sub">' + esc(ref.referrer_email) + '</div></td>'
-            + '<td><div class="cell-name">' + esc(ref.referred_name || ref.referred_email) + '</div>'
-            + '<div class="cell-sub">' + esc(ref.referred_email) + '</div></td>'
-            + '<td class="cell-muted">' + commRate + '</td>'
-            + '<td class="cell-muted">$' + fmt(ref.total_earned) + '</td>'
-            + '<td class="cell-muted">' + fmtDateTime(ref.created_at) + '</td>'
+            + '<td><div class="cell-name">' + esc(p.user_name || p.user_email) + '</div>'
+            + '<div class="cell-sub">' + esc(p.user_email) + '</div></td>'
+            + '<td>' + esc(p.plan_name) + '</td>'
+            + '<td>$' + fmt(p.target_amount) + '</td>'
+            + '<td><strong>$' + fmt(p.current_amount) + '</strong></td>'
+            + '<td>' + (p.interest_rate || '—') + '<i class="ph ph-percent"></i></td>'
+            + '<td>' + (p.duration_months || '—') + ' mo</td>'
+            + '<td>' + badge(p.status) + '</td>'
+            + '<td><div class="btn-actions">'
+            + (p.status === 'active'
+                ? '<button class="btn-action btn-action--warning" data-savings-adjust="' + p.id + '">Adjust</button>'
+                  + '<button class="btn-action btn-action--danger" data-savings-cancel="' + p.id + '">Cancel</button>'
+                : '')
+            + '</div></td>'
             + '</tr>';
         }).join('');
       } else {
-        showEmpty(tbody, 5, 'No referrals found');
+        showEmpty(tbody, 8, 'No savings plans found');
       }
 
-      var pag = qs('[data-pagination="referrals"]');
-      if (d.pages > 1) {
-        renderPagination(pag, d.page, d.pages, d.total, 20, loadReferrals);
+      var pag = qs('[data-pagination="savings"]');
+      if (r.pages > 1) {
+        renderPagination(pag, r.page, r.pages, r.total, 20, loadAdminSavings);
       } else if (pag) {
         pag.innerHTML = '';
       }
     } catch (e) {
-      console.error('loadReferrals:', e);
+      console.error('loadAdminSavings:', e);
+    }
+  }
+
+  /* ── Admin Fixed Deposits Section ────────────────────────────────── */
+
+  var depositsAdminPage   = 1;
+  var depositsAdminLoaded = false;
+  var depositsAdminFilter = '';
+
+  async function loadAdminDeposits(page, status) {
+    if (status !== undefined) depositsAdminFilter = status;
+    depositsAdminPage   = page || 1;
+    depositsAdminLoaded = true;
+
+    document.querySelectorAll('[data-fxd-filter]').forEach(function (btn) {
+      btn.classList.toggle('active', btn.dataset.fxdFilter === depositsAdminFilter);
+    });
+
+    try {
+      var url = '/api/admin-dashboard/deposits.php?page=' + depositsAdminPage;
+      if (depositsAdminFilter) url += '&status=' + depositsAdminFilter;
+      var r = await apiFetch(url);
+      if (!r.success) return;
+
+      var totalEl   = document.getElementById('fxdMetricTotal');
+      var valueEl   = document.getElementById('fxdMetricValue');
+      var returnsEl = document.getElementById('fxdMetricReturns');
+      if (totalEl)   totalEl.textContent   = r.total_count;
+      if (valueEl)   valueEl.textContent   = '$' + fmt(r.total_value);
+      if (returnsEl) returnsEl.textContent = '$' + fmt(r.total_returns);
+
+      var tbody = qs('[data-table="admin-deposits"]');
+      if (!tbody) return;
+
+      if (r.deposits && r.deposits.length) {
+        tbody.innerHTML = r.deposits.map(function (dep) {
+          return '<tr>'
+            + '<td><div class="cell-name">' + esc(dep.user_name || dep.user_email) + '</div>'
+            + '<div class="cell-sub">' + esc(dep.user_email) + '</div></td>'
+            + '<td><strong>$' + fmt(dep.amount) + '</strong></td>'
+            + '<td>' + (dep.interest_rate || '—') + '<i class="ph ph-percent"></i></td>'
+            + '<td>' + (dep.duration_months || '—') + ' mo</td>'
+            + '<td class="cell-muted">' + fmtDate(dep.maturity_date) + '</td>'
+            + '<td>$' + fmt(dep.expected_return) + '</td>'
+            + '<td>' + badge(dep.status) + '</td>'
+            + '<td><div class="btn-actions">'
+            + (dep.status === 'active'
+                ? '<button class="btn-action btn-action--success" data-fxd-action="mature" data-id="' + dep.id + '">Mature</button>'
+                  + '<button class="btn-action btn-action--danger"  data-fxd-action="cancel" data-id="' + dep.id + '">Cancel</button>'
+                : '')
+            + '</div></td>'
+            + '</tr>';
+        }).join('');
+      } else {
+        showEmpty(tbody, 8, 'No fixed deposits found');
+      }
+
+      var pag = qs('[data-pagination="admin-deposits"]');
+      if (r.pages > 1) {
+        renderPagination(pag, r.page, r.pages, r.total, 20, loadAdminDeposits);
+      } else if (pag) {
+        pag.innerHTML = '';
+      }
+    } catch (e) {
+      console.error('loadAdminDeposits:', e);
+    }
+  }
+
+  /* ── Admin Loans Section ──────────────────────────────────────────── */
+
+  var loansAdminPage   = 1;
+  var loansAdminLoaded = false;
+
+  async function loadAdminLoans(page) {
+    loansAdminPage   = page || 1;
+    loansAdminLoaded = true;
+
+    try {
+      var r = await apiFetch('/api/admin-dashboard/loans.php?page=' + loansAdminPage);
+      if (!r.success) return;
+
+      var disbEl      = document.getElementById('loansMetricDisbursed');
+      var outstandEl  = document.getElementById('loansMetricOutstanding');
+      var pendingEl   = document.getElementById('loansMetricPending');
+      if (disbEl)     disbEl.textContent     = '$' + fmt(r.total_disbursed);
+      if (outstandEl) outstandEl.textContent = '$' + fmt(r.total_outstanding);
+      if (pendingEl)  pendingEl.textContent  = r.pending_count;
+
+      // Pending applications table
+      var pendingTbody = qs('[data-table="pending-loan-applications"]');
+      if (pendingTbody) {
+        if (r.pending && r.pending.length) {
+          pendingTbody.innerHTML = r.pending.map(function (l) {
+            return '<tr>'
+              + '<td><div class="cell-name">' + esc(l.user_name || l.user_email) + '</div>'
+              + '<div class="cell-sub">' + esc(l.user_email) + '</div></td>'
+              + '<td><strong>$' + fmt(l.loan_amount) + '</strong></td>'
+              + '<td>' + (l.duration_months || '—') + ' mo</td>'
+              + '<td class="cell-muted">' + esc(l.purpose || '—') + '</td>'
+              + '<td class="cell-muted">' + fmtDate(l.created_at) + '</td>'
+              + '<td><div class="btn-actions">'
+              + '<button class="btn-action btn-action--success" data-loan-action="approve" data-id="' + l.id + '">Approve</button>'
+              + '<button class="btn-action btn-action--danger"  data-loan-action="reject"  data-id="' + l.id + '">Reject</button>'
+              + '</div></td>'
+              + '</tr>';
+          }).join('');
+        } else {
+          showEmpty(pendingTbody, 6, 'No pending loan applications');
+        }
+      }
+
+      // Active loans table
+      var activeTbody = qs('[data-table="admin-active-loans"]');
+      if (activeTbody) {
+        if (r.active && r.active.length) {
+          activeTbody.innerHTML = r.active.map(function (l) {
+            return '<tr>'
+              + '<td><div class="cell-name">' + esc(l.user_name || l.user_email) + '</div>'
+              + '<div class="cell-sub">' + esc(l.user_email) + '</div></td>'
+              + '<td><strong>$' + fmt(l.loan_amount) + '</strong></td>'
+              + '<td>$' + fmt(l.remaining_balance) + '</td>'
+              + '<td>$' + fmt(l.monthly_payment) + '</td>'
+              + '<td>' + (l.interest_rate || '—') + '<i class="ph ph-percent"></i></td>'
+              + '<td>' + badge(l.status) + '</td>'
+              + '<td><div class="btn-actions">'
+              + '<button class="btn-action btn-action--primary" data-loan-repay="' + l.id + '" data-loan-balance="' + l.remaining_balance + '">Repay</button>'
+              + '<button class="btn-action btn-action--warning" data-loan-action="close" data-id="' + l.id + '">Close</button>'
+              + '</div></td>'
+              + '</tr>';
+          }).join('');
+        } else {
+          showEmpty(activeTbody, 7, 'No active loans');
+        }
+      }
+
+      var pag = qs('[data-pagination="admin-active-loans"]');
+      if (r.pages > 1) {
+        renderPagination(pag, r.page, r.pages, r.total, 20, loadAdminLoans);
+      } else if (pag) {
+        pag.innerHTML = '';
+      }
+    } catch (e) {
+      console.error('loadAdminLoans:', e);
+    }
+  }
+
+  async function handleLoanAction(id, action) {
+    try {
+      var r = await apiFetch('/api/admin-dashboard/loans.php', {
+        method: 'POST',
+        body: JSON.stringify({ action: action, id: id })
+      });
+      if (r.success) {
+        showToast(r.message || 'Done');
+        loansAdminLoaded = false;
+        loadAdminLoans(loansAdminPage);
+        overviewLoaded = false;
+        if (currentSection === 'overview') loadOverview();
+      } else {
+        showToast(r.message || 'Action failed', true);
+      }
+    } catch (e) {
+      showToast('Network error', true);
+    }
+  }
+
+  /* ── Settings Section ─────────────────────────────────────────────── */
+
+  var settingsLoaded = false;
+
+  async function loadSettings() {
+    if (settingsLoaded) return;
+    settingsLoaded = true;
+    try {
+      var r = await apiFetch('/api/admin-dashboard/settings.php');
+      if (!r.success) return;
+
+      // System toggles
+      var togglesEl = document.getElementById('systemToggles');
+      if (togglesEl && r.settings) {
+        var s = r.settings;
+        var toggleItems = [
+          { key: 'deposits_enabled',    label: 'Deposits Enabled',    desc: 'Allow users to make new deposits' },
+          { key: 'withdrawals_enabled', label: 'Withdrawals Enabled', desc: 'Allow users to submit withdrawal requests' },
+          { key: 'maintenance_mode',    label: 'Maintenance Mode',    desc: 'Show site-wide maintenance banner to users' }
+        ];
+        var numberItems = [
+          { key: 'min_deposit',    label: 'Minimum Deposit (USD)' },
+          { key: 'min_withdrawal', label: 'Minimum Withdrawal (USD)' }
+        ];
+        togglesEl.innerHTML = toggleItems.map(function (item) {
+          var checked = (s[item.key] === '1' || s[item.key] === 1) ? 'checked' : '';
+          return '<label class="settings-toggle-row">'
+            + '<span class="settings-toggle-label">' + item.label
+            + '<small>' + item.desc + '</small></span>'
+            + '<input type="checkbox" class="toggle-input" data-setting-key="' + item.key + '" ' + checked + '>'
+            + '</label>';
+        }).join('')
+        + numberItems.map(function (item) {
+          var val = esc(s[item.key] || '10');
+          return '<label class="settings-toggle-row">'
+            + '<span class="settings-toggle-label">' + item.label + '</span>'
+            + '<input type="number" class="admin-input settings-number-input"'
+            + ' data-setting-key="' + item.key + '" value="' + val + '" min="0" step="1">'
+            + '</label>';
+        }).join('');
+      }
+
+      // Rates table
+      var ratesTbody = qs('[data-table="rates"]');
+      if (ratesTbody && r.rates) {
+        if (r.rates.length) {
+          ratesTbody.innerHTML = r.rates.map(function (rate) {
+            return '<tr>'
+              + '<td>' + esc(rate.product) + '</td>'
+              + '<td>' + esc(rate.label) + '</td>'
+              + '<td>' + (rate.duration_months || '—') + ' mo</td>'
+              + '<td>' + fmt(rate.rate) + '<i class="ph ph-percent"></i></td>'
+              + '<td>' + (rate.is_active ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-muted">No</span>') + '</td>'
+              + '<td><div class="btn-actions">'
+              + '<button class="btn-action btn-action--primary" data-rate-edit="' + rate.id + '"'
+              + ' data-rate-label="' + esc(rate.label) + '"'
+              + ' data-rate-duration="' + esc(rate.duration_months) + '"'
+              + ' data-rate-value="' + esc(rate.rate) + '"'
+              + ' data-rate-active="' + (rate.is_active ? '1' : '0') + '">Edit</button>'
+              + '<button class="btn-action btn-action--danger" data-rate-delete="' + rate.id + '">Delete</button>'
+              + '</div></td>'
+              + '</tr>';
+          }).join('');
+        } else {
+          showEmpty(ratesTbody, 6, 'No rates configured');
+        }
+      }
+    } catch (e) {
+      console.error('loadSettings:', e);
+    }
+  }
+
+  async function updateSetting(key, value) {
+    try {
+      var r = await apiFetch('/api/admin-dashboard/settings.php', {
+        method: 'POST',
+        body: JSON.stringify({ action: 'update_setting', key: key, value: value })
+      });
+      if (r.success) { showToast(r.message || 'Setting saved'); }
+      else { showToast(r.message || 'Failed', true); }
+    } catch (e) {
+      showToast('Network error', true);
+    }
+  }
+
+  async function deleteRate(id) {
+    try {
+      var r = await apiFetch('/api/admin-dashboard/settings.php', {
+        method: 'POST',
+        body: JSON.stringify({ action: 'delete_rate', id: parseInt(id, 10) })
+      });
+      if (r.success) {
+        showToast(r.message || 'Rate deleted');
+        settingsLoaded = false;
+        loadSettings();
+      } else {
+        showToast(r.message || 'Failed', true);
+      }
+    } catch (e) {
+      showToast('Network error', true);
     }
   }
 
@@ -706,7 +1028,6 @@
 
   window.loadPendingDeposits = async function () {
     var tbody = document.getElementById('pendingDepositsTable');
-    var msgEl = document.getElementById('pendingDepositsMsg');
     if (!tbody) return;
     tbody.innerHTML = '<tr><td colspan="5"><div class="loading-rows"><i class="ph ph-circle-notch ph-spin"></i> Loading…</div></td></tr>';
 
@@ -742,8 +1063,6 @@
   };
 
   async function resolveDeposit(id, action) {
-    var msgEl = document.getElementById('pendingDepositsMsg');
-    if (msgEl) { msgEl.textContent = ''; msgEl.className = 'admin-modal-msg'; }
     try {
       var r = await apiFetch('/api/admin-dashboard/resolve-deposit.php', {
         method: 'POST',
@@ -752,12 +1071,10 @@
       if (r.success) {
         showToast(r.message || 'Deposit resolved');
         window.loadPendingDeposits();
-        // Refresh overview
         overviewLoaded = false;
         if (currentSection === 'overview') loadOverview();
       } else {
         showToast(r.message || 'Action failed', true);
-        if (msgEl) { msgEl.textContent = r.message || 'Action failed'; msgEl.classList.add('error'); }
       }
     } catch (e) {
       showToast('Network error', true);
@@ -771,13 +1088,11 @@
   window.loadWithdrawalsModal = async function (status) {
     if (status !== undefined) wrModalStatus = status;
 
-    // Update modal filter buttons
     document.querySelectorAll('[data-wr-modal-filter]').forEach(function (btn) {
       btn.classList.toggle('active', btn.dataset.wrModalFilter === wrModalStatus);
     });
 
     var tbody = document.getElementById('withdrawalsModalTable');
-    var msgEl = document.getElementById('withdrawalModalMsg');
     if (!tbody) return;
     tbody.innerHTML = '<tr><td colspan="7"><div class="loading-rows"><i class="ph ph-circle-notch ph-spin"></i> Loading…</div></td></tr>';
 
@@ -833,7 +1148,6 @@
       if (r.success) {
         showToast(r.message || ('Withdrawal ' + action + 'd'));
         window.loadWithdrawalsModal(wrModalStatus);
-        // Refresh overview badge
         overviewLoaded = false;
         if (currentSection === 'overview') loadOverview();
       } else {
@@ -851,20 +1165,31 @@
   var sectionTitles = {
     overview:     'Overview',
     users:        'Users',
-    trades:       'Trades',
     transactions: 'Transactions',
-    referrals:    'Referrals'
+    savings:      'Savings Plans',
+    deposits:     'Fixed Deposits',
+    loans:        'Loans',
+    settings:     'Settings'
   };
 
   var sectionLoaders = {
     overview:     function () { loadOverview(); },
-    users:        function () { if (!usersLoaded)       loadUsers(1); },
-    trades:       function () { if (!tradesLoaded)      { loadTrades(1); loadInvestmentPlans(); } },
-    transactions: function () { if (!txLoaded)          loadTransactions(1); },
-    referrals:    function () { if (!referralsLoaded)   loadReferrals(1); }
+    users:        function () { if (!usersLoaded)        loadUsers(1); },
+    transactions: function () { if (!txLoaded)           loadTransactions(1); },
+    savings:      function () { if (!savingsLoaded)      loadAdminSavings(1); },
+    deposits:     function () { if (!depositsAdminLoaded) loadAdminDeposits(1); },
+    loans:        function () { if (!loansAdminLoaded)   loadAdminLoans(1); },
+    settings:     function () { loadSettings(); }
   };
 
-  function activateSection(name) {
+  function sectionFromAdminPath() {
+    var parts = location.pathname.split('/').filter(Boolean); // ['admin', 'users']
+    var seg   = parts[1] || ''; // 'users', 'transactions', etc.
+    if (!seg || seg === 'dashboard') return 'overview';
+    return sectionLoaders[seg] ? seg : 'overview';
+  }
+
+  function activateAdminSection(name, doPush) {
     if (!sectionLoaders[name]) name = 'overview';
     currentSection = name;
 
@@ -875,12 +1200,18 @@
       el.classList.toggle('active', el.dataset.nav === name);
     });
 
-    // Update sticky header page title
     var titleEl = document.getElementById('adminPageTitle');
     if (titleEl) titleEl.textContent = sectionTitles[name] || name;
 
+    if (doPush !== false && history.pushState) {
+      var url = (name === 'overview') ? '/admin/dashboard' : '/admin/' + name;
+      history.pushState({ section: name }, '', url);
+    }
+
     if (sectionLoaders[name]) sectionLoaders[name]();
   }
+
+  window.activateAdminSection = activateAdminSection;
 
   /* ── Init ─────────────────────────────────────────────────────────── */
 
@@ -890,9 +1221,7 @@
     document.querySelectorAll('[data-nav]').forEach(function (el) {
       el.addEventListener('click', function (e) {
         e.preventDefault();
-        var sec = this.dataset.nav;
-        activateSection(sec);
-        if (history.pushState) history.pushState(null, '', '#' + sec);
+        activateAdminSection(this.dataset.nav); // pushState handled inside
       });
     });
 
@@ -901,40 +1230,30 @@
 
       // ── Close modal button ─────────────────────────────────────────
       var closeBtn = e.target.closest('[data-close-modal]');
-      if (closeBtn) {
-        closeAdminModal(closeBtn.dataset.closeModal);
-        return;
-      }
+      if (closeBtn) { closeAdminModal(closeBtn.dataset.closeModal); return; }
 
-      // ── Modal overlay click (close on backdrop) ────────────────────
+      // ── Modal overlay click ────────────────────────────────────────
       if (e.target.classList.contains('admin-modal-overlay')) {
         var openOverlay = e.target.closest('.admin-modal-overlay.active');
         if (openOverlay) closeAdminModal(openOverlay.id);
         return;
       }
 
-      // ── Trade filter buttons ───────────────────────────────────────
-      var tradeFilter = e.target.closest('[data-trade-filter]');
-      if (tradeFilter) {
-        tradesLoaded = false;
-        loadTrades(1, tradeFilter.dataset.tradeFilter);
-        return;
-      }
-
       // ── Transaction type filter ────────────────────────────────────
       var txFilter = e.target.closest('[data-tx-type]');
-      if (txFilter) {
-        txLoaded = false;
-        loadTransactions(1, txFilter.dataset.txType);
-        return;
-      }
+      if (txFilter) { txLoaded = false; loadTransactions(1, txFilter.dataset.txType); return; }
+
+      // ── Savings filter ─────────────────────────────────────────────
+      var savingsFilterBtn = e.target.closest('[data-savings-filter]');
+      if (savingsFilterBtn) { savingsLoaded = false; loadAdminSavings(1, savingsFilterBtn.dataset.savingsFilter); return; }
+
+      // ── Fixed deposit filter ───────────────────────────────────────
+      var fxdFilterBtn = e.target.closest('[data-fxd-filter]');
+      if (fxdFilterBtn) { depositsAdminLoaded = false; loadAdminDeposits(1, fxdFilterBtn.dataset.fxdFilter); return; }
 
       // ── Withdrawal modal filter ────────────────────────────────────
       var wrModalFilter = e.target.closest('[data-wr-modal-filter]');
-      if (wrModalFilter) {
-        window.loadWithdrawalsModal(wrModalFilter.dataset.wrModalFilter);
-        return;
-      }
+      if (wrModalFilter) { window.loadWithdrawalsModal(wrModalFilter.dataset.wrModalFilter); return; }
 
       // ── User edit button ───────────────────────────────────────────
       var userEditBtn = e.target.closest('[data-user-edit]');
@@ -946,66 +1265,154 @@
         return;
       }
 
-      // ── User verify/unverify button ────────────────────────────────
+      // ── User verify/unverify/disable/delete buttons ─────────────────
       var userBtn = e.target.closest('[data-user-action]');
       if (userBtn) {
-        var uid    = parseInt(userBtn.dataset.id, 10);
-        var action = userBtn.dataset.userAction;
-        if (action === 'promote') {
-          if (!window.confirm('Promote this user to admin? They will gain full admin access.')) return;
-        }
-        updateUser(uid, action);
-        return;
-      }
-
-      // ── Investment edit button ─────────────────────────────────────
-      var invEditBtn = e.target.closest('[data-inv-edit]');
-      if (invEditBtn) {
-        try {
-          var invData = JSON.parse(invEditBtn.dataset.inv.replace(/&apos;/g, "'"));
-          window.openInvestmentModal(invData);
-        } catch (err) { console.error('parse inv data', err); }
-        return;
-      }
-
-      // ── Plan edit button ───────────────────────────────────────────
-      var planEditBtn = e.target.closest('[data-plan-edit]');
-      if (planEditBtn) {
-        try {
-          var planData = JSON.parse(planEditBtn.dataset.plan.replace(/&apos;/g, "'"));
-          window.openPlanModal(planData);
-        } catch (err) { console.error('parse plan data', err); }
-        return;
-      }
-
-      // ── Plan toggle button ─────────────────────────────────────────
-      var planToggleBtn = e.target.closest('[data-plan-toggle]');
-      if (planToggleBtn) {
-        togglePlan(planToggleBtn.dataset.planToggle);
+        var userAction = userBtn.dataset.userAction;
+        if (userAction === 'delete' && !window.confirm('Permanently delete this user? This cannot be undone.')) return;
+        updateUser(parseInt(userBtn.dataset.id, 10), userAction);
         return;
       }
 
       // ── Pending deposit actions ────────────────────────────────────
       var depBtn = e.target.closest('[data-dep-action]');
       if (depBtn) {
-        var depId  = parseInt(depBtn.dataset.id, 10);
         var depAct = depBtn.dataset.depAction;
-        var depMsg = depAct === 'complete' ? 'Mark this deposit as completed and credit the user\'s wallet?' : 'Mark this deposit as failed?';
-        if (!window.confirm(depMsg)) return;
-        resolveDeposit(depId, depAct);
+        if (!window.confirm(depAct === 'complete' ? 'Credit this deposit to the user wallet?' : 'Mark deposit as failed?')) return;
+        resolveDeposit(parseInt(depBtn.dataset.id, 10), depAct);
         return;
       }
 
-      // ── Withdrawal modal action buttons ────────────────────────────
+      // ── Withdrawal modal actions ───────────────────────────────────
       var wrBtn = e.target.closest('[data-wr-action]');
       if (wrBtn) {
-        var wrId  = parseInt(wrBtn.dataset.id, 10);
-        var wrAct = wrBtn.dataset.wrAction;
-        if (wrAct === 'approve') {
-          if (!window.confirm('Approve this withdrawal request?')) return;
-        }
-        handleWithdrawal(wrId, wrAct);
+        if (wrBtn.dataset.wrAction === 'approve' && !window.confirm('Approve this withdrawal?')) return;
+        handleWithdrawal(parseInt(wrBtn.dataset.id, 10), wrBtn.dataset.wrAction);
         return;
+      }
+
+      // ── Savings cancel ─────────────────────────────────────────────
+      var savingsCancelBtn = e.target.closest('[data-savings-cancel]');
+      if (savingsCancelBtn) {
+        if (!window.confirm('Cancel this savings plan?')) return;
+        apiFetch('/api/admin-dashboard/savings.php', {
+          method: 'POST',
+          body: JSON.stringify({ action: 'cancel', id: parseInt(savingsCancelBtn.dataset.savingsCancel, 10) })
+        }).then(function (r) {
+          showToast(r.success ? 'Plan cancelled' : (r.message || 'Failed'), !r.success);
+          if (r.success) { savingsLoaded = false; loadAdminSavings(savingsPage); }
+        });
+        return;
+      }
+
+      // ── Fixed deposit mature / cancel ──────────────────────────────
+      var fxdActionBtn = e.target.closest('[data-fxd-action]');
+      if (fxdActionBtn) {
+        var fxdAct = fxdActionBtn.dataset.fxdAction;
+        var fxdMsg = fxdAct === 'mature'
+          ? 'Mark as matured and credit expected return to user wallet?'
+          : 'Cancel this fixed deposit?';
+        if (!window.confirm(fxdMsg)) return;
+        apiFetch('/api/admin-dashboard/deposits.php', {
+          method: 'POST',
+          body: JSON.stringify({ action: fxdAct, id: parseInt(fxdActionBtn.dataset.id, 10) })
+        }).then(function (r) {
+          showToast(r.success ? r.message : (r.message || 'Failed'), !r.success);
+          if (r.success) { depositsAdminLoaded = false; loadAdminDeposits(depositsAdminPage); }
+        });
+        return;
+      }
+
+      // ── Loan approve / reject / close ──────────────────────────────
+      var loanActionBtn = e.target.closest('[data-loan-action]');
+      if (loanActionBtn) {
+        var lAct = loanActionBtn.dataset.loanAction;
+        var lMsg = lAct === 'approve' ? 'Approve and disburse this loan?' : lAct === 'reject' ? 'Reject this application?' : 'Close this loan?';
+        if (!window.confirm(lMsg)) return;
+        handleLoanAction(parseInt(loanActionBtn.dataset.id, 10), lAct);
+        return;
+      }
+
+      // ── Rate edit ──────────────────────────────────────────────────
+      var rateEditBtn = e.target.closest('[data-rate-edit]');
+      if (rateEditBtn) {
+        var d = rateEditBtn.dataset;
+        window.openEditRateModal(
+          parseInt(d.rateEdit, 10),
+          d.rateLabel,
+          d.rateDuration,
+          parseFloat(d.rateValue),
+          d.rateActive
+        );
+        return;
+      }
+
+      // ── Rate delete ────────────────────────────────────────────────
+      var rateDeleteBtn = e.target.closest('[data-rate-delete]');
+      if (rateDeleteBtn) {
+        if (!window.confirm('Delete this rate?')) return;
+        deleteRate(rateDeleteBtn.dataset.rateDelete);
+        return;
+      }
+
+      // ── Settings toggle ────────────────────────────────────────────
+      var settingToggle = e.target.closest('.toggle-input[data-setting-key]');
+      if (settingToggle) {
+        var key = settingToggle.dataset.settingKey;
+        var val = settingToggle.checked ? '1' : '0';
+        updateSetting(key, val);
+        return;
+      }
+
+      // ── Savings adjust balance ─────────────────────────────────────
+      var savingsAdjustBtn = e.target.closest('[data-savings-adjust]');
+      if (savingsAdjustBtn) {
+        var newAmt = parseFloat(window.prompt('Enter new saved amount (USD):'));
+        if (isNaN(newAmt) || newAmt < 0) return;
+        apiFetch('/api/admin-dashboard/savings.php', {
+          method: 'POST',
+          body: JSON.stringify({ action: 'adjust', id: parseInt(savingsAdjustBtn.dataset.savingsAdjust, 10), amount: newAmt })
+        }).then(function (r) {
+          showToast(r.success ? 'Balance adjusted' : (r.message || 'Failed'), !r.success);
+          if (r.success) { savingsLoaded = false; loadAdminSavings(savingsPage); }
+        });
+        return;
+      }
+
+      // ── User view profile ──────────────────────────────────────────
+      var userViewBtn = e.target.closest('[data-user-view]');
+      if (userViewBtn) {
+        window.openViewUserModal(parseInt(userViewBtn.dataset.userView, 10));
+        return;
+      }
+
+      // ── Loan repay ─────────────────────────────────────────────────
+      var loanRepayBtn = e.target.closest('[data-loan-repay]');
+      if (loanRepayBtn) {
+        var repayIdEl  = document.getElementById('repayLoanId');
+        var repayInfoEl = document.getElementById('repayLoanInfo');
+        if (repayIdEl) repayIdEl.value = loanRepayBtn.dataset.loanRepay;
+        if (repayInfoEl) {
+          var bal = parseFloat(loanRepayBtn.dataset.loanBalance || 0);
+          repayInfoEl.textContent = 'Remaining balance: $' + fmt(bal);
+        }
+        var repayAmtEl = document.getElementById('repayAmount');
+        if (repayAmtEl) repayAmtEl.value = '';
+        var repayMsgEl = document.getElementById('repayMsg');
+        if (repayMsgEl) { repayMsgEl.style.display = 'none'; repayMsgEl.textContent = ''; }
+        openAdminModal('modal-record-repayment');
+        return;
+      }
+    });
+
+    // Settings number input change
+    document.addEventListener('change', function (e) {
+      var numInput = e.target.closest('.settings-number-input[data-setting-key]');
+      if (numInput) {
+        var numVal = parseFloat(numInput.value);
+        if (!isNaN(numVal) && numVal >= 0) {
+          updateSetting(numInput.dataset.settingKey, String(numVal));
+        }
       }
     });
 
@@ -1016,14 +1423,13 @@
       if (openModal) closeAdminModal(openModal.id);
     });
 
-    // Initial section from hash
-    var hash = location.hash.replace('#', '');
-    activateSection(sectionLoaders[hash] ? hash : 'overview');
+    // Initial section from URL path
+    activateAdminSection(sectionFromAdminPath(), false); // false = don't re-push on load
 
     // Handle browser back/forward
-    window.addEventListener('popstate', function () {
-      var h = location.hash.replace('#', '');
-      activateSection(sectionLoaders[h] ? h : 'overview');
+    window.addEventListener('popstate', function (e) {
+      var sec = (e.state && e.state.section) ? e.state.section : sectionFromAdminPath();
+      activateAdminSection(sec, false); // false = already in history, don't re-push
     });
   });
 

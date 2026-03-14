@@ -1,5 +1,5 @@
 /**
- * ArqoraCapital — Contact form handler
+ * CrestVale Bank — Contact form handler
  */
 
 document.addEventListener('DOMContentLoaded', () => {

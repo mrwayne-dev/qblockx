@@ -1,9 +1,7 @@
 <?php
 /**
- * Project: arqoracapital
- * Created by: Wayne
- * Generated: 2026-03-09
- * 
+ * Project: crestvalebank
+ * API: admin-dashboard/dashboard.php — Overview stats
  */
 
 require_once '../../config/database.php';
@@ -15,19 +13,20 @@ requireAdmin();
 try {
     $db = Database::getInstance()->getConnection();
 
-    $totalUsers           = $db->query("SELECT COUNT(*) FROM users WHERE role = 'user'")->fetchColumn();
-    $newToday             = $db->query("SELECT COUNT(*) FROM users WHERE DATE(created_at) = CURDATE() AND role = 'user'")->fetchColumn();
-    $totalDeposits        = $db->query("SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE type = 'deposit' AND status = 'completed'")->fetchColumn();
-    $activeInvestments    = $db->query("SELECT COUNT(*) FROM investments WHERE status = 'active'")->fetchColumn();
-    $pendingWithdrawals   = $db->query("SELECT COUNT(*) FROM withdrawal_requests WHERE status = 'pending'")->fetchColumn();
-    $profitDistributed    = $db->query("SELECT COALESCE(SUM(amount), 0) FROM earnings")->fetchColumn();
-    $totalInvested        = $db->query("SELECT COALESCE(SUM(amount), 0) FROM investments")->fetchColumn();
-    $totalTrades          = $db->query("SELECT COUNT(*) FROM investments")->fetchColumn();
-    $pendingDeposits      = $db->query("SELECT COUNT(*) FROM transactions WHERE type = 'deposit' AND status = 'pending'")->fetchColumn();
+    $totalUsers          = $db->query("SELECT COUNT(*) FROM users WHERE role = 'user'")->fetchColumn();
+    $newToday            = $db->query("SELECT COUNT(*) FROM users WHERE DATE(created_at) = CURDATE() AND role = 'user'")->fetchColumn();
+    $totalDeposits       = $db->query("SELECT COALESCE(SUM(amount), 0) FROM transactions WHERE type = 'deposit' AND status = 'completed'")->fetchColumn();
+    $pendingDeposits     = $db->query("SELECT COUNT(*) FROM transactions WHERE type = 'deposit' AND status = 'pending'")->fetchColumn();
+    $activeSavings       = $db->query("SELECT COUNT(*) FROM savings_plans WHERE status = 'active'")->fetchColumn();
+    $activeFixedDeposits = $db->query("SELECT COUNT(*) FROM fixed_deposits WHERE status = 'active'")->fetchColumn();
+    $fixedDepositsValue  = $db->query("SELECT COALESCE(SUM(amount), 0) FROM fixed_deposits WHERE status = 'active'")->fetchColumn();
+    $activeLoans         = $db->query("SELECT COUNT(*) FROM loans WHERE status = 'active'")->fetchColumn();
+    $pendingLoans        = $db->query("SELECT COUNT(*) FROM loans WHERE status = 'pending'")->fetchColumn();
+    $pendingWithdrawals  = $db->query("SELECT COUNT(*) FROM withdrawal_requests WHERE status = 'pending'")->fetchColumn();
 
     // Last 5 transactions for overview
     $recentStmt = $db->query(
-        "SELECT t.id, t.type, t.amount, t.currency, t.status, t.created_at,
+        "SELECT t.type, t.amount, t.status, t.created_at,
                 u.full_name AS user_name, u.email AS user_email
          FROM transactions t
          JOIN users u ON u.id = t.user_id
@@ -39,16 +38,17 @@ try {
     echo json_encode([
         'success' => true,
         'data'    => [
-            'total_users'            => (int) $totalUsers,
-            'new_today'              => (int) $newToday,
-            'total_deposits'         => number_format((float) $totalDeposits, 2, '.', ''),
-            'active_investments'     => (int) $activeInvestments,
-            'pending_withdrawals'    => (int) $pendingWithdrawals,
-            'profit_distributed'     => number_format((float) $profitDistributed, 2, '.', ''),
-            'total_invested'         => number_format((float) $totalInvested, 2, '.', ''),
-            'total_trades'           => (int) $totalTrades,
-            'pending_deposits_count' => (int) $pendingDeposits,
-            'recent_transactions'    => $recentTransactions,
+            'total_users'             => (int) $totalUsers,
+            'new_today'               => (int) $newToday,
+            'total_deposits'          => number_format((float) $totalDeposits, 2, '.', ''),
+            'pending_deposits'        => (int) $pendingDeposits,
+            'active_savings'          => (int) $activeSavings,
+            'active_fixed_deposits'   => (int) $activeFixedDeposits,
+            'fixed_deposits_value'    => number_format((float) $fixedDepositsValue, 2, '.', ''),
+            'active_loans'            => (int) $activeLoans,
+            'pending_loans'           => (int) $pendingLoans,
+            'pending_withdrawals'     => (int) $pendingWithdrawals,
+            'recent_transactions'     => $recentTransactions,
         ]
     ]);
 } catch (PDOException $e) {

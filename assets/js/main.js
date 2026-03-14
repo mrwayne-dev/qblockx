@@ -1,5 +1,5 @@
 /**
- * Project: arqoracapital
+ * Project: crestvalebank
  * File: assets/js/main.js
  * Public-facing JS: nav pill, ticker, crypto prices, scroll animations
  */
@@ -111,8 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
       'ripple':      'xrp',
       'tether':      'tether'
     };
-    var capIds = Object.values(coinMap).filter(function (v, i, a) { return a.indexOf(v) === i; });
-    var url = 'https://api.coincap.io/v2/assets?ids=' + capIds.join(',');
+    var url = '/api/utilities/crypto-prices.php';
 
     try {
       var res = await fetch(url);
@@ -147,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
       syncTickerDuplicates();
 
     } catch (err) {
-      console.warn('[ArqoraCapital] Crypto price fetch failed:', err);
+      console.warn('[CrestVale Bank] Crypto price fetch failed:', err);
     }
   }
 
@@ -200,45 +199,42 @@ document.addEventListener('DOMContentLoaded', function () {
     var section  = document.getElementById('heroCarousel');
     if (!section) return;
 
-    var slides   = section.querySelectorAll('.hero-slide');
     var contents = section.querySelectorAll('.hero-content');
-    var dots     = section.querySelectorAll('.hero-dot');
-    if (!slides.length || slides.length < 2) return;
+    var widgets  = section.querySelectorAll('.hero-widget');
+    var steps    = section.querySelectorAll('.hero-step');
+    if (!contents.length || contents.length < 2) return;
 
-    var current  = 0;
-    var total    = slides.length;
+    var current = 0;
+    var total   = contents.length;
     var timer;
 
     function goTo(index) {
       /* deactivate current */
-      slides[current].classList.remove('active');
-      if (contents[current]) contents[current].classList.remove('active');
-      if (dots[current])     dots[current].classList.remove('active');
-      if (dots[current])     dots[current].setAttribute('aria-selected', 'false');
+      contents[current].classList.remove('active');
+      if (widgets[current]) widgets[current].classList.remove('active');
+      if (steps[current]) {
+        steps[current].classList.remove('active');
+        steps[current].setAttribute('aria-selected', 'false');
+      }
 
-      /* advance index */
       current = (index + total) % total;
 
-      /* activate new */
-      slides[current].classList.add('active');
-      if (contents[current]) contents[current].classList.add('active');
-      if (dots[current])     dots[current].classList.add('active');
-      if (dots[current])     dots[current].setAttribute('aria-selected', 'true');
+      /* activate new — re-adding .active restarts all CSS animations */
+      contents[current].classList.add('active');
+      if (widgets[current]) widgets[current].classList.add('active');
+      if (steps[current]) {
+        steps[current].classList.add('active');
+        steps[current].setAttribute('aria-selected', 'true');
+      }
     }
 
     function next() { goTo(current + 1); }
+    function startAutoplay() { timer = setInterval(next, 6000); }
+    function stopAutoplay()  { clearInterval(timer); }
 
-    function startAutoplay() {
-      timer = setInterval(next, 6000);
-    }
-
-    function stopAutoplay() {
-      clearInterval(timer);
-    }
-
-    /* Dot click — jump to slide, restart timer */
-    dots.forEach(function (dot, i) {
-      dot.addEventListener('click', function () {
+    /* Step click — jump to that slide, restart timer */
+    steps.forEach(function (step, i) {
+      step.addEventListener('click', function () {
         stopAutoplay();
         goTo(i);
         startAutoplay();
@@ -416,12 +412,10 @@ document.addEventListener('DOMContentLoaded', function () {
       text.style.display    = 'none';
       spinner.style.display = '';
 
-      var refEl = document.getElementById('ref_code');
       var data  = {
         email:     document.getElementById('email').value.trim(),
         password:  password,
-        full_name: document.getElementById('full_name').value.trim(),
-        ref_code:  refEl ? refEl.value.trim() : ''
+        full_name: document.getElementById('full_name').value.trim()
       };
 
       try {
@@ -433,7 +427,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var result = await res.json();
 
         if (result.success) {
-          showAuthMsg('authMsg', 'Account created! Check your email for a verification link…', false);
+          showAuthMsg('authMsg', 'Account created! We\'ve sent a 6-digit code to your email.', false);
           try { sessionStorage.setItem('pendingVerifyEmail', data.email); } catch (ignore) {}
           setTimeout(function () {
             window.location.href = '/verify-email';
@@ -555,55 +549,40 @@ document.addEventListener('DOMContentLoaded', function () {
     var panel = document.getElementById('verifyPanel');
     if (!panel) return;
 
-    var token = panel.dataset.token || '';
+    var email     = '';
+    var subtext   = document.getElementById('verifySubtext');
+    var msgEl     = document.getElementById('verifyMsg');
+    var resendMsg = document.getElementById('resendMsg');
 
-    if (token) {
-      // Token mode — call API immediately on page load
-      (async function () {
-        var heading = document.getElementById('verifyHeading');
-        var subtext = document.getElementById('verifySubtext');
-        var msgEl   = document.getElementById('verifyMsg');
-        var actions = document.getElementById('verifyActions');
-        var spinner = document.getElementById('verifySpinIcon');
+    try { email = sessionStorage.getItem('pendingVerifyEmail') || ''; } catch (ignore) {}
 
-        function showResult(success, message) {
-          if (spinner) {
-            spinner.className   = success ? 'ph ph-check-circle auth-page-icon' : 'ph ph-x-circle auth-page-icon';
-            spinner.style.color = success ? 'var(--color-success)' : 'var(--color-error)';
-          }
-          if (heading) heading.textContent = success ? 'Email verified!' : 'Verification failed';
-          if (subtext) subtext.textContent = '';
+    // Show the email address in the subtext if we have it
+    if (email && subtext) {
+      subtext.textContent = 'We sent a 6-digit code to ' + email + '. It expires in 15 minutes.';
+    }
+
+    // ── Code form submission ──────────────────────────────────
+    var form = document.getElementById('verifyCodeForm');
+    if (form) {
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var btn     = document.getElementById('verifyBtn');
+        var text    = btn ? btn.querySelector('.btn-text')    : null;
+        var spinner = btn ? btn.querySelector('.btn-spinner') : null;
+        var code    = (document.getElementById('verifyCode') || {}).value || '';
+        code = code.trim();
+
+        // Reset message
+        if (msgEl) { msgEl.style.display = 'none'; msgEl.textContent = ''; }
+
+        if (!/^\d{6}$/.test(code)) {
           if (msgEl) {
-            msgEl.textContent   = message;
-            msgEl.className     = 'auth-msg ' + (success ? 'auth-msg--success' : 'auth-msg--error');
+            msgEl.textContent   = 'Please enter a valid 6-digit code.';
+            msgEl.className     = 'auth-msg auth-msg--error';
             msgEl.style.display = '';
           }
-          if (success && actions) actions.style.display = '';
+          return;
         }
-
-        try {
-          var res    = await fetch('/api/auth/user-verify-email.php?token=' + encodeURIComponent(token));
-          var result = await res.json();
-          showResult(result.success, result.message);
-          if (result.success) {
-            setTimeout(function () {
-              window.location.href = '/login';
-            }, 3000);
-          }
-        } catch (err) {
-          showResult(false, 'A network error occurred. Please try again.');
-        }
-      })();
-
-    } else {
-      // Inbox mode — wire up the resend link
-      var resendLink = document.getElementById('resendLink');
-      if (!resendLink) return;
-
-      resendLink.addEventListener('click', async function (e) {
-        e.preventDefault();
-        var msgEl = document.getElementById('resendMsg');
-        var email = sessionStorage.getItem('pendingVerifyEmail') || '';
 
         if (!email) {
           if (msgEl) {
@@ -614,7 +593,66 @@ document.addEventListener('DOMContentLoaded', function () {
           return;
         }
 
-        resendLink.textContent       = 'Sending…';
+        if (btn)     btn.disabled          = true;
+        if (text)    text.style.display    = 'none';
+        if (spinner) spinner.style.display = '';
+
+        try {
+          var res    = await fetch('/api/auth/user-verify-email.php', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ email: email, code: code })
+          });
+          var result = await res.json();
+
+          if (result.success) {
+            try { sessionStorage.removeItem('pendingVerifyEmail'); } catch (ignore) {}
+            if (msgEl) {
+              msgEl.textContent   = result.message || 'Email verified! Redirecting…';
+              msgEl.className     = 'auth-msg auth-msg--success';
+              msgEl.style.display = '';
+            }
+            setTimeout(function () { window.location.href = '/login'; }, 2000);
+          } else {
+            if (msgEl) {
+              msgEl.textContent   = result.message || 'Verification failed. Please try again.';
+              msgEl.className     = 'auth-msg auth-msg--error';
+              msgEl.style.display = '';
+            }
+            if (btn)     btn.disabled          = false;
+            if (text)    text.style.display    = '';
+            if (spinner) spinner.style.display = 'none';
+          }
+        } catch (err) {
+          if (msgEl) {
+            msgEl.textContent   = 'A network error occurred. Please try again.';
+            msgEl.className     = 'auth-msg auth-msg--error';
+            msgEl.style.display = '';
+          }
+          if (btn)     btn.disabled          = false;
+          if (text)    text.style.display    = '';
+          if (spinner) spinner.style.display = 'none';
+        }
+      });
+    }
+
+    // ── Resend link ───────────────────────────────────────────
+    var resendLink = document.getElementById('resendLink');
+    if (resendLink) {
+      resendLink.addEventListener('click', async function (e) {
+        e.preventDefault();
+        if (resendMsg) { resendMsg.style.display = 'none'; resendMsg.textContent = ''; }
+
+        if (!email) {
+          if (resendMsg) {
+            resendMsg.textContent   = 'Session expired. Please register again.';
+            resendMsg.className     = 'auth-msg auth-msg--error';
+            resendMsg.style.display = '';
+          }
+          return;
+        }
+
+        resendLink.textContent        = 'Sending…';
         resendLink.style.pointerEvents = 'none';
 
         try {
@@ -624,20 +662,20 @@ document.addEventListener('DOMContentLoaded', function () {
             body:    JSON.stringify({ email: email })
           });
           var result = await res.json();
-          if (msgEl) {
-            msgEl.textContent   = result.message;
-            msgEl.className     = 'auth-msg ' + (result.success ? 'auth-msg--success' : 'auth-msg--error');
-            msgEl.style.display = '';
+          if (resendMsg) {
+            resendMsg.textContent   = result.message;
+            resendMsg.className     = 'auth-msg ' + (result.success ? 'auth-msg--success' : 'auth-msg--error');
+            resendMsg.style.display = '';
           }
         } catch (err) {
-          if (msgEl) {
-            msgEl.textContent   = 'Network error. Please try again.';
-            msgEl.className     = 'auth-msg auth-msg--error';
-            msgEl.style.display = '';
+          if (resendMsg) {
+            resendMsg.textContent   = 'Network error. Please try again.';
+            resendMsg.className     = 'auth-msg auth-msg--error';
+            resendMsg.style.display = '';
           }
         }
 
-        resendLink.textContent       = 'resend verification email';
+        resendLink.textContent        = 'Resend code';
         resendLink.style.pointerEvents = '';
       });
     }

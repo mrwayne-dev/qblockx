@@ -1,4 +1,4 @@
-# arqoracapital - Apache Config
+# crestvalebank - Apache Config
 Options -Indexes
 RewriteEngine On
 RewriteBase /
@@ -33,25 +33,34 @@ RewriteRule ^contact/?$                /pages/public/contact.php            [L]
 RewriteRule ^about/?$                  /pages/public/about.php              [L]
 RewriteRule ^company/?$                /pages/public/company.php            [L]
 RewriteRule ^solutions/?$              /pages/public/solutions.php          [L]
+RewriteRule ^products/?$               /pages/public/solutions.php          [L]
 RewriteRule ^learnmore/?$              /pages/public/learnmore.php          [L]
+RewriteRule ^help/?$                   /pages/public/learnmore.php          [L]
+RewriteRule ^security/?$               /pages/public/security.php           [L]
 RewriteRule ^terms/?$                  /pages/public/terms.php              [L]
 RewriteRule ^privacy/?$                /pages/public/privacy.php            [L]
 RewriteRule ^risk/?$                   /pages/public/risk.php               [L]
 
-# User dashboard
+# User dashboard — all section paths served by the SPA (dashboard.php)
 RewriteRule ^dashboard/?$              /pages/user/dashboard.php            [L]
 RewriteRule ^wallet/?$                 /pages/user/dashboard.php            [L]
-RewriteRule ^deposit/?$                /pages/user/dashboard.php            [L]
+RewriteRule ^savings/?$                /pages/user/dashboard.php            [L]
+RewriteRule ^deposits/?$               /pages/user/dashboard.php            [L]
+RewriteRule ^loans/?$                  /pages/user/dashboard.php            [L]
+RewriteRule ^profile/?$                /pages/user/dashboard.php            [L]
 
 # Admin panel
 RewriteRule ^admin/login/?$            /pages/admin/login.php               [L]
+RewriteRule ^admin/register/?$            /pages/admin/register.php               [L]
 RewriteRule ^admin/forgot-password/?$  /pages/admin/forgot-password.php     [L]
 RewriteRule ^admin/reset-password/?$   /pages/admin/reset-password.php      [QSA,L]
 RewriteRule ^admin/dashboard/?$        /pages/admin/dashboard.php           [L]
 RewriteRule ^admin/users/?$            /pages/admin/dashboard.php           [L]
-RewriteRule ^admin/trades/?$           /pages/admin/dashboard.php           [L]
 RewriteRule ^admin/transactions/?$     /pages/admin/dashboard.php           [L]
-RewriteRule ^admin/referrals/?$        /pages/admin/dashboard.php           [L]
+RewriteRule ^admin/savings/?$          /pages/admin/dashboard.php           [L]
+RewriteRule ^admin/deposits/?$         /pages/admin/dashboard.php           [L]
+RewriteRule ^admin/loans/?$            /pages/admin/dashboard.php           [L]
+RewriteRule ^admin/settings/?$         /pages/admin/dashboard.php           [L]
 
 # ── Remove .php extension (file-based extensionless URLs) ────
 RewriteCond %{REQUEST_FILENAME} !-d

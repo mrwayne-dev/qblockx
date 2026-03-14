@@ -1,17 +1,12 @@
 <?php
 /**
- * Project: arqoracapital
+ * Project: crestvalebank
  * Page: User Dashboard — Single-Page Application
  *
- * All five sections (overview / wallet / trade / referral / profile) live
- * here as [data-section] divs.  Section navigation is handled entirely by
- * assets/js/user/user-dashboard.js via hash-based routing.
- *
- * data-nav targets: overview | wallet | trade | referral | profile
+ * Sections: overview | wallet | savings | deposits | loans | profile
+ * Navigation handled by assets/js/user/user-dashboard.js via path-based routing.
  */
 
-// Auth guard MUST run before any HTML output so session_start() and
-// header() redirects work correctly.
 require_once '../../includes/auth-guard.php';
 
 $pageTitle        = 'Dashboard';
@@ -34,7 +29,10 @@ require_once '../../includes/head.php';
 <!-- ── Modals ────────────────────────────────────────────────── -->
 <?php require_once '../../includes/modals/deposit-modal.php'; ?>
 <?php require_once '../../includes/modals/withdraw-modal.php'; ?>
-<?php require_once '../../includes/modals/trade-modal.php'; ?>
+<?php require_once '../../includes/modals/transfer-modal.php'; ?>
+<?php require_once '../../includes/modals/create-savings-modal.php'; ?>
+<?php require_once '../../includes/modals/fixed-deposit-modal.php'; ?>
+<?php require_once '../../includes/modals/loan-modal.php'; ?>
 <?php require_once '../../includes/modals/delete-account-modal.php'; ?>
 
 <!-- ── App Shell ─────────────────────────────────────────────── -->
@@ -46,7 +44,7 @@ require_once '../../includes/head.php';
 
     <!-- ── Sticky Header ──────────────────────────────────────── -->
     <header class="dashboard-header">
-      <h1 class="dashboard-page-title" id="pageTitle">Overview</h1>
+      <h1 class="dashboard-page-title" id="pageTitle">Dashboard</h1>
       <div class="dashboard-header-right">
         <div class="header-user">
           <span class="header-username" data-user="name"></span>
@@ -59,36 +57,36 @@ require_once '../../includes/head.php';
     </header>
 
     <!-- ════════════════════════════════════════════════════════
-         SECTION 1 — Overview
+         SECTION 1 — Overview / Dashboard
          ════════════════════════════════════════════════════════ -->
     <section data-section="overview" class="dashboard-section">
 
       <!-- Stats: 4 cards -->
       <div class="stats-row stats-row--4">
         <div class="stat-card">
-          <span class="stat-label">Balance</span>
+          <span class="stat-label">Wallet Balance</span>
           <span class="stat-value" data-stat="balance">$0.00</span>
-          <span class="stat-sub">Available to withdraw</span>
+          <span class="stat-sub">Available to use</span>
         </div>
         <div class="stat-card">
-          <span class="stat-label">Total Earned</span>
-          <span class="stat-value" data-stat="total-earned">$0.00</span>
-          <span class="stat-sub">Lifetime profits</span>
+          <span class="stat-label">Savings Balance</span>
+          <span class="stat-value" data-stat="savings-balance">$0.00</span>
+          <span class="stat-sub">Total saved across plans</span>
         </div>
         <div class="stat-card">
-          <span class="stat-label">Active Investments</span>
-          <span class="stat-value" data-stat="active-investments">0</span>
-          <span class="stat-sub">Running contracts</span>
+          <span class="stat-label">Deposits Balance</span>
+          <span class="stat-value" data-stat="deposits-balance">$0.00</span>
+          <span class="stat-sub">Total in fixed deposits</span>
         </div>
         <div class="stat-card">
-          <span class="stat-label">Total Invested</span>
-          <span class="stat-value" data-stat="total-invested">$0.00</span>
-          <span class="stat-sub">Across all contracts</span>
+          <span class="stat-label">Loan Balance</span>
+          <span class="stat-value" data-stat="loan-balance">$0.00</span>
+          <span class="stat-sub">Outstanding loan amount</span>
         </div>
       </div>
 
-      <!-- Quick Actions -->
-      <div class="quick-actions-row">
+      <!-- Quick Actions: 6 cards -->
+      <div class="quick-actions-row quick-actions-row--6">
         <button class="action-card" type="button" onclick="openModal('modal-deposit')" aria-label="Deposit funds">
           <i class="ph ph-arrow-circle-down" aria-hidden="true"></i>
           <span class="action-card-label">Deposit</span>
@@ -97,23 +95,65 @@ require_once '../../includes/head.php';
           <i class="ph ph-arrow-circle-up" aria-hidden="true"></i>
           <span class="action-card-label">Withdraw</span>
         </button>
-        <button class="action-card action-card--accent" type="button" onclick="openModal('modal-trade')" aria-label="Start investment">
-          <i class="ph ph-chart-bar" aria-hidden="true"></i>
-          <span class="action-card-label">Invest</span>
+        <button class="action-card" type="button" onclick="openModal('modal-transfer')" aria-label="Transfer funds">
+          <i class="ph ph-arrows-left-right" aria-hidden="true"></i>
+          <span class="action-card-label">Transfer</span>
+        </button>
+        <button class="action-card" type="button" onclick="openModal('modal-create-savings')" aria-label="Create savings plan">
+          <i class="ph ph-piggy-bank" aria-hidden="true"></i>
+          <span class="action-card-label">Savings</span>
+        </button>
+        <button class="action-card" type="button" onclick="openModal('modal-fixed-deposit')" aria-label="Open fixed deposit">
+          <i class="ph ph-vault" aria-hidden="true"></i>
+          <span class="action-card-label">Fixed Deposit</span>
+        </button>
+        <button class="action-card" type="button" onclick="openModal('modal-loan')" aria-label="Apply for loan">
+          <i class="ph ph-hand-coins" aria-hidden="true"></i>
+          <span class="action-card-label">Loans</span>
         </button>
       </div>
 
-      <!-- Market Prices / Active Stocks -->
+      <!-- Products & Rates -->
+      <div class="table-card" id="ratesCard">
+        <div class="table-card-header">
+          <h3>Products &amp; Rates</h3>
+          <span class="badge badge-info">CrestVale Bank </span>
+        </div>
+        <div class="rates-tabs" id="ratesTabs">
+          <button class="rates-tab active" data-rates-filter="savings" type="button">Savings</button>
+          <button class="rates-tab" data-rates-filter="fixed_deposit" type="button">Fixed Deposits</button>
+          <button class="rates-tab" data-rates-filter="loan" type="button">Loans</button>
+        </div>
+        <div class="rates-grid" id="ratesGrid">
+          <p class="empty-text">Loading…</p>
+        </div>
+      </div>
+
+      <!-- Savings Progress -->
       <div class="table-card">
         <div class="table-card-header">
-          <h3>Market Prices</h3>
-          <span class="stocks-updated text-muted" id="stocksUpdated"></span>
+          <h3>Active Savings Plans</h3>
+          <button type="button" class="btn-sm btn-outline"
+                  onclick="document.querySelector('[data-nav=savings]').click()">
+            View All
+          </button>
         </div>
-        <div class="stocks-grid" id="stocksGrid">
-          <div class="stock-card skeleton">—</div>
-          <div class="stock-card skeleton">—</div>
-          <div class="stock-card skeleton">—</div>
-          <div class="stock-card skeleton">—</div>
+        <div class="table-scroll">
+          <table class="db-table">
+            <thead>
+              <tr>
+                <th>Plan Name</th>
+                <th>Target</th>
+                <th>Saved</th>
+                <th>Rate</th>
+                <th>Progress</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody data-table="savings-overview">
+              <tr><td colspan="6" class="empty-row">Loading…</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -121,6 +161,10 @@ require_once '../../includes/head.php';
       <div class="table-card">
         <div class="table-card-header">
           <h3>Recent Transactions</h3>
+          <button type="button" class="btn-sm btn-outline"
+                  onclick="document.querySelector('[data-nav=wallet]').click()">
+            View All
+          </button>
         </div>
         <div class="table-scroll">
           <table class="db-table">
@@ -128,15 +172,24 @@ require_once '../../includes/head.php';
               <tr>
                 <th>Type</th>
                 <th>Amount</th>
-                <th>Currency</th>
                 <th>Status</th>
                 <th>Date</th>
               </tr>
             </thead>
             <tbody data-table="recent-transactions">
-              <tr><td colspan="5" class="empty-row">Loading…</td></tr>
+              <tr><td colspan="4" class="empty-row">Loading…</td></tr>
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- Upcoming Loan Payments -->
+      <div class="table-card">
+        <div class="table-card-header">
+          <h3>Upcoming Loan Payments</h3>
+        </div>
+        <div data-list="upcoming-payments">
+          <p class="empty-text">Loading…</p>
         </div>
       </div>
 
@@ -169,6 +222,26 @@ require_once '../../includes/head.php';
         </div>
       </div>
 
+      <!-- Quick Product Actions -->
+      <div class="wallet-actions-grid">
+        <button class="wallet-action-card" type="button" onclick="openModal('modal-transfer')" aria-label="Transfer funds">
+          <i class="ph ph-arrows-left-right" aria-hidden="true"></i>
+          <span>Transfer</span>
+        </button>
+        <button class="wallet-action-card" type="button" onclick="openModal('modal-create-savings')" aria-label="Create savings plan">
+          <i class="ph ph-piggy-bank" aria-hidden="true"></i>
+          <span>Savings</span>
+        </button>
+        <button class="wallet-action-card" type="button" onclick="openModal('modal-fixed-deposit')" aria-label="Open fixed deposit">
+          <i class="ph ph-vault" aria-hidden="true"></i>
+          <span>Fixed Deposit</span>
+        </button>
+        <button class="wallet-action-card" type="button" onclick="openModal('modal-loan')" aria-label="Apply for loan">
+          <i class="ph ph-hand-coins" aria-hidden="true"></i>
+          <span>Loans</span>
+        </button>
+      </div>
+
       <!-- Transaction History -->
       <div class="table-card">
         <div class="table-card-header">
@@ -180,14 +253,13 @@ require_once '../../includes/head.php';
               <tr>
                 <th>Type</th>
                 <th>Amount</th>
-                <th>Currency</th>
                 <th>Status</th>
-                <th>Notes</th>
+                <th>Description</th>
                 <th>Date</th>
               </tr>
             </thead>
             <tbody data-table="wallet-transactions">
-              <tr><td colspan="6" class="empty-row">Loading…</td></tr>
+              <tr><td colspan="5" class="empty-row">Loading…</td></tr>
             </tbody>
           </table>
         </div>
@@ -207,180 +279,208 @@ require_once '../../includes/head.php';
 
 
     <!-- ════════════════════════════════════════════════════════
-         SECTION 3 — Trade / Invest
+         SECTION 3 — Savings Plans
          ════════════════════════════════════════════════════════ -->
-    <section data-section="trade" class="dashboard-section">
+    <section data-section="savings" class="dashboard-section">
 
-      <!-- Stats: active count + total profits -->
+      <!-- Stats -->
       <div class="stats-row stats-row--2">
         <div class="stat-card">
-          <span class="stat-label">Active Contracts</span>
-          <span class="stat-value" data-stat="active-count">0</span>
-          <span class="stat-sub">Currently running</span>
+          <span class="stat-label">Total Saved</span>
+          <span class="stat-value" data-stat="total-saved">$0.00</span>
+          <span class="stat-sub">Across all active plans</span>
         </div>
         <div class="stat-card">
-          <span class="stat-label">Total Profits Made</span>
-          <span class="stat-value" data-stat="total-profit">$0.00</span>
-          <span class="stat-sub">Sum of all earnings</span>
+          <span class="stat-label">Active Plans</span>
+          <span class="stat-value" data-stat="savings-count">0</span>
+          <span class="stat-sub">Currently running</span>
         </div>
       </div>
 
-      <!-- Plan Cards -->
+      <!-- Create Plan CTA -->
       <div class="section-heading-row">
-        <h2 class="section-heading">Choose an Investment Plan</h2>
-        <p class="section-sub">Earn daily returns over a 5-day contract cycle. Funds go directly into your wallet each day.</p>
+        <div>
+          <h2 class="section-heading">My Savings Plans</h2>
+          <p class="section-sub">Set a savings goal and earn up to 7<i class="ph ph-percent"></i>&thinsp;p.a. interest. Funds are contributed from your wallet.</p>
+        </div>
+        <button class="btn-primary" type="button" onclick="openModal('modal-create-savings')" aria-label="Create new savings plan">
+          <i class="ph ph-plus" aria-hidden="true"></i>
+          Create Plan
+        </button>
       </div>
 
-      <div class="plan-cards-grid">
-
-        <div class="plan-card">
-          <div class="plan-card-header">
-            <h3 class="plan-name">Starter</h3>
-            <span class="plan-rate-badge">2% / day</span>
-          </div>
-          <div class="plan-range">$100 — $499</div>
-          <div class="plan-duration">5-day contract · Earn up to 10%</div>
-          <button class="btn-primary full-width" type="button" onclick="openTradeModal('starter')">
-            Invest Now
-          </button>
-        </div>
-
-        <div class="plan-card">
-          <div class="plan-card-header">
-            <h3 class="plan-name">Bronze</h3>
-            <span class="plan-rate-badge">4% / day</span>
-          </div>
-          <div class="plan-range">$500 — $2,999</div>
-          <div class="plan-duration">5-day contract · Earn up to 20%</div>
-          <button class="btn-primary full-width" type="button" onclick="openTradeModal('bronze')">
-            Invest Now
-          </button>
-        </div>
-
-        <div class="plan-card">
-          <div class="plan-card-header">
-            <h3 class="plan-name">Silver</h3>
-            <span class="plan-rate-badge">6% / day</span>
-          </div>
-          <div class="plan-range">$3,000 — $4,999</div>
-          <div class="plan-duration">5-day contract · Earn up to 30%</div>
-          <button class="btn-primary full-width" type="button" onclick="openTradeModal('silver')">
-            Invest Now
-          </button>
-        </div>
-
-        <div class="plan-card">
-          <div class="plan-card-header">
-            <h3 class="plan-name">Platinum</h3>
-            <span class="plan-rate-badge">8% / day</span>
-          </div>
-          <div class="plan-range">$5,000+</div>
-          <div class="plan-duration">5-day contract · Earn up to 40%</div>
-          <button class="btn-primary full-width" type="button" onclick="openTradeModal('platinum')">
-            Invest Now
-          </button>
-        </div>
-
-      </div>
-
-      <!-- Investment History -->
+      <!-- Savings Plans Table -->
       <div class="table-card">
         <div class="table-card-header">
-          <h3>My Investments</h3>
+          <h3>Savings Plans</h3>
         </div>
         <div class="table-scroll">
           <table class="db-table">
             <thead>
               <tr>
-                <th>Plan</th>
-                <th>Amount</th>
-                <th>Daily Rate</th>
-                <th>Earned</th>
+                <th>Plan Name</th>
+                <th>Target</th>
+                <th>Saved</th>
+                <th>Rate</th>
+                <th>Progress</th>
+                <th>Duration</th>
                 <th>Status</th>
-                <th>Ends</th>
+                <th>Actions</th>
               </tr>
             </thead>
-            <tbody data-table="investments">
-              <tr><td colspan="6" class="empty-row">Loading…</td></tr>
+            <tbody data-table="savings-plans">
+              <tr><td colspan="8" class="empty-row">Loading…</td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
-    </section><!-- /trade -->
+    </section><!-- /savings -->
 
 
     <!-- ════════════════════════════════════════════════════════
-         SECTION 4 — Referral
+         SECTION 4 — Fixed Deposits
          ════════════════════════════════════════════════════════ -->
-    <section data-section="referral" class="dashboard-section">
+    <section data-section="deposits" class="dashboard-section">
 
-      <!-- Referral Stats -->
+      <!-- Stats -->
       <div class="stats-row stats-row--2">
         <div class="stat-card">
-          <span class="stat-label">Total Referrals</span>
-          <span class="stat-value" data-referral="uses">0</span>
-          <span class="stat-sub">People you've referred</span>
+          <span class="stat-label">Total Invested</span>
+          <span class="stat-value" data-stat="total-deposited">$0.00</span>
+          <span class="stat-sub">Across all deposits</span>
         </div>
         <div class="stat-card">
-          <span class="stat-label">Commission Earned</span>
-          <span class="stat-value" data-referral="commission">$0.00</span>
-          <span class="stat-sub">5% of each referral's deposit</span>
+          <span class="stat-label">Expected Returns</span>
+          <span class="stat-value" data-stat="total-expected-return">$0.00</span>
+          <span class="stat-sub">Principal + interest at maturity</span>
         </div>
       </div>
 
-      <!-- Referral Code & Link Card -->
-      <div class="table-card referral-card">
-        <div class="table-card-header">
-          <h3>Your Referral Code</h3>
+      <!-- Open Deposit CTA -->
+      <div class="section-heading-row">
+        <div>
+          <h2 class="section-heading">My Fixed Deposits</h2>
+          <p class="section-sub">Lock funds for 6–24 months and earn up to 16<i class="ph ph-percent"></i>&thinsp;p.a. Principal and interest are returned at maturity.</p>
         </div>
-        <div class="referral-card-body">
-          <div class="referral-code-row">
-            <span class="referral-code" data-referral="code">—</span>
-            <button type="button" class="btn-copy" data-copy="referral-code" aria-label="Copy referral code">
-              Copy Code
-            </button>
-          </div>
-          <div class="referral-link-row">
-            <label class="form-label-sm">Share your referral link</label>
-            <div class="copy-field">
-              <input type="text" class="copy-input" data-referral="link" readonly
-                     placeholder="Referral link will appear here" aria-label="Referral link">
-              <button type="button" class="btn-copy" data-copy="referral-link" aria-label="Copy referral link">
-                Copy Link
-              </button>
-            </div>
-          </div>
-        </div>
+        <button class="btn-primary" type="button" onclick="openModal('modal-fixed-deposit')" aria-label="Open new fixed deposit">
+          <i class="ph ph-plus" aria-hidden="true"></i>
+          Open Deposit
+        </button>
       </div>
 
-      <!-- Referred Users Table -->
+
+      <!-- Deposits Table -->
       <div class="table-card">
         <div class="table-card-header">
-          <h3>Referred Users</h3>
+          <h3>Fixed Deposits</h3>
         </div>
         <div class="table-scroll">
           <table class="db-table">
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Commission</th>
-                <th>Joined</th>
+                <th>Amount</th>
+                <th>Rate</th>
+                <th>Duration</th>
+                <th>Start Date</th>
+                <th>Maturity Date</th>
+                <th>Expected Return</th>
+                <th>Status</th>
               </tr>
             </thead>
-            <tbody data-table="referred-users">
+            <tbody data-table="fixed-deposits">
+              <tr><td colspan="7" class="empty-row">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section><!-- /deposits -->
+
+
+    <!-- ════════════════════════════════════════════════════════
+         SECTION 5 — Loans
+         ════════════════════════════════════════════════════════ -->
+    <section data-section="loans" class="dashboard-section">
+
+      <!-- Stats -->
+      <div class="stats-row stats-row--2">
+        <div class="stat-card">
+          <span class="stat-label">Total Borrowed</span>
+          <span class="stat-value" data-stat="total-borrowed">$0.00</span>
+          <span class="stat-sub">Sum of all active loans</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Remaining Balance</span>
+          <span class="stat-value" data-stat="remaining-balance">$0.00</span>
+          <span class="stat-sub">Still outstanding</span>
+        </div>
+      </div>
+
+      <!-- Apply for Loan CTA -->
+      <div class="section-heading-row">
+        <div>
+          <h2 class="section-heading">My Loans</h2>
+          <p class="section-sub">Apply for a loan, track repayments, and manage your outstanding balance.</p>
+        </div>
+        <button class="btn-primary" type="button" onclick="openModal('modal-loan')" aria-label="Apply for a loan">
+          <i class="ph ph-plus" aria-hidden="true"></i>
+          Apply for Loan
+        </button>
+      </div>
+
+      <!-- Active Loans Table -->
+      <div class="table-card">
+        <div class="table-card-header">
+          <h3>Active Loans</h3>
+        </div>
+        <div class="table-scroll">
+          <table class="db-table">
+            <thead>
+              <tr>
+                <th>Loan Amount</th>
+                <th>Remaining</th>
+                <th>Monthly Payment</th>
+                <th>Rate</th>
+                <th>Duration</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody data-table="active-loans">
+              <tr><td colspan="7" class="empty-row">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pending Applications Table -->
+      <div class="table-card">
+        <div class="table-card-header">
+          <h3>Pending Applications</h3>
+        </div>
+        <div class="table-scroll">
+          <table class="db-table">
+            <thead>
+              <tr>
+                <th>Amount</th>
+                <th>Duration</th>
+                <th>Applied</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody data-table="pending-loans">
               <tr><td colspan="4" class="empty-row">Loading…</td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
-    </section><!-- /referral -->
+    </section><!-- /loans -->
 
 
     <!-- ════════════════════════════════════════════════════════
-         SECTION 5 — Profile
+         SECTION 6 — Profile
          ════════════════════════════════════════════════════════ -->
     <section data-section="profile" class="dashboard-section">
 

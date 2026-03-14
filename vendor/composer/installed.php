@@ -1,6 +1,6 @@
 <?php return array(
     'root' => array(
-        'name' => 'arqoracapital/arqoracapital',
+        'name' => 'crestvalebank/crestvalebank',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
         'reference' => '496ff98c279d35fdd105d3de7bedcaec5eec726f',
@@ -10,7 +10,7 @@
         'dev' => true,
     ),
     'versions' => array(
-        'arqoracapital/arqoracapital' => array(
+        'crestvalebank/crestvalebank' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
             'reference' => '496ff98c279d35fdd105d3de7bedcaec5eec726f',

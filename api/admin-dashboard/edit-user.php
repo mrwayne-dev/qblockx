@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: arqoracapital
+ * Project: crestvalebank
  * Admin: Edit User — update personal info, balance, referral commission
  */
 
@@ -78,23 +78,14 @@ try {
         )->execute(['uid' => $id, 'amt' => $newBalance]);
     }
 
-    // ── Referral commission override ────────────────────────────────
-    if (isset($input['referral_commission_override']) && is_numeric($input['referral_commission_override'])) {
-        $newComm = max(0, (float) $input['referral_commission_override']);
-        $db->prepare("UPDATE referrals SET total_earned = :comm WHERE referrer_id = :uid")
-           ->execute(['comm' => $newComm, 'uid' => $id]);
-    }
-
     $db->commit();
 
     // Return updated user info
     $updated = $db->prepare(
         "SELECT u.id, u.email, u.full_name, u.is_verified, u.role, u.created_at,
-                COALESCE(w.balance, 0) AS balance,
-                COALESCE(r.total_earned, 0) AS referral_earned
+                COALESCE(w.balance, 0) AS balance
          FROM users u
          LEFT JOIN wallets w ON w.user_id = u.id
-         LEFT JOIN referrals r ON r.referrer_id = u.id
          WHERE u.id = :id LIMIT 1"
     );
     $updated->execute(['id' => $id]);

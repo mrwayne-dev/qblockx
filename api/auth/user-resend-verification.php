@@ -1,7 +1,8 @@
 <?php
 /**
- * Project: arqoracapital
- * API: Resend email verification link
+ * Project: crestvalebank
+ * API: Resend email verification code
+ * Method: POST  { email }
  */
 ob_start();
 
@@ -35,26 +36,25 @@ try {
     // Return success regardless to prevent enumeration
     if (!$user || (bool) $user['is_verified']) {
         ob_end_clean();
-        echo json_encode(['success' => true, 'message' => 'If your account exists and is unverified, a new link has been sent']);
+        echo json_encode(['success' => true, 'message' => 'If your account exists and is unverified, a new code has been sent.']);
         exit;
     }
 
-    $user_id = (int) $user['id'];
+    $uid = (int) $user['id'];
 
-    // Remove old tokens for this user
+    // Remove any existing code for this user
     $db->prepare("DELETE FROM email_verifications WHERE user_id = :uid")
-       ->execute(['uid' => $user_id]);
+       ->execute(['uid' => $uid]);
 
-    $token      = bin2hex(random_bytes(32));
-    $expires_at = date('Y-m-d H:i:s', strtotime('+24 hours'));
+    // Generate new 6-digit code (15-minute expiry)
+    $code       = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+    $expires_at = date('Y-m-d H:i:s', strtotime('+15 minutes'));
 
     $db->prepare(
         "INSERT INTO email_verifications (user_id, token, expires_at) VALUES (:uid, :token, :expires_at)"
-    )->execute(['uid' => $user_id, 'token' => $token, 'expires_at' => $expires_at]);
+    )->execute(['uid' => $uid, 'token' => $code, 'expires_at' => $expires_at]);
 
-    $verifyLink = getenv('APP_URL') . '/pages/public/verify-email.php?token=' . $token;
-
-    $emailSent = Mailer::sendVerification($email, $user['full_name'] ?? '', $verifyLink);
+    $emailSent = Mailer::sendVerification($email, $user['full_name'] ?? '', $code);
 
     if (!$emailSent) {
         ob_end_clean();
@@ -63,7 +63,7 @@ try {
     }
 
     ob_end_clean();
-    echo json_encode(['success' => true, 'message' => 'If your account exists and is unverified, a new link has been sent']);
+    echo json_encode(['success' => true, 'message' => 'A new verification code has been sent to your email.']);
 
 } catch (\Throwable $e) {
     ob_end_clean();
