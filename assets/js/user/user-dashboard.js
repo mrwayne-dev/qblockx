@@ -497,6 +497,7 @@
 
   // Banks by country for bank transfer modal
   var _banksByCountry = {
+    "United States":  ["JPMorgan Chase Bank","Bank of America","Wells Fargo","Citibank","U.S. Bank","Truist Bank","PNC Bank","Capital One","TD Bank","Goldman Sachs Bank USA","Morgan Stanley Bank","BMO Harris Bank","Fifth Third Bank","Citizens Bank","Ally Bank"],
     "Germany":        ["Deutsche Bank","Commerzbank","Postbank","HypoVereinsbank (UniCredit Bank AG)","DZ Bank","KfW (Kreditanstalt für Wiederaufbau)","Sparkasse","Volksbanken und Raiffeisenbanken","Berenberg Bank","Bankhaus Lampe"],
     "France":         ["BNP Paribas","Crédit Agricole","Société Générale","BPCE (Banque Populaire and Caisse d'Epargne)","Crédit Mutuel","La Banque Postale","HSBC France","CIC (Crédit Industriel et Commercial)"],
     "United Kingdom": ["HSBC","Barclays","Lloyds Banking Group","NatWest Group","Standard Chartered","Santander UK","Nationwide Building Society","TSB Bank"],
@@ -532,13 +533,9 @@
       if (methodInput) methodInput.value = method;
     }
 
-    // Toggle tab styles
+    // Toggle tab active class (CSS handles all styling)
     document.querySelectorAll('[data-withdraw-tab]').forEach(function (t) {
-      var isActive = t.dataset.withdrawTab === method;
-      t.classList.toggle('active', isActive);
-      t.style.background   = isActive ? 'var(--accent)' : 'transparent';
-      t.style.color        = isActive ? '#fff'           : 'var(--text-muted)';
-      t.style.borderColor  = isActive ? 'var(--accent)'  : 'var(--border)';
+      t.classList.toggle('active', t.dataset.withdrawTab === method);
     });
 
     // Show/hide sections
@@ -745,11 +742,7 @@
         form.reset();
         // Reset tabs back to crypto
         document.querySelectorAll('[data-withdraw-tab]').forEach(function (t) {
-          var isActive = t.dataset.withdrawTab === 'crypto';
-          t.classList.toggle('active', isActive);
-          t.style.background  = isActive ? 'var(--accent)' : 'transparent';
-          t.style.color       = isActive ? '#fff'          : 'var(--text-muted)';
-          t.style.borderColor = isActive ? 'var(--accent)' : 'var(--border)';
+          t.classList.toggle('active', t.dataset.withdrawTab === 'crypto');
         });
         var cryptoSection = document.getElementById('withdrawCryptoSection');
         var bankSection   = document.getElementById('withdrawBankSection');

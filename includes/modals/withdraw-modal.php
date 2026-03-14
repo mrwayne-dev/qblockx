@@ -30,13 +30,27 @@
       </div>
 
       <!-- Method Tabs -->
-      <div class="withdraw-tabs" style="display:flex;gap:.5rem;margin-bottom:1.25rem;">
-        <button type="button" class="withdraw-tab active" data-withdraw-tab="crypto"
-                style="flex:1;padding:.6rem;border-radius:8px;border:1.5px solid var(--accent);background:var(--accent);color:#fff;font-weight:600;cursor:pointer;font-size:.9rem;">
+      <style>
+        .withdraw-tabs { display:flex; gap:.5rem; margin-bottom:1.25rem; }
+        .withdraw-tab {
+          flex:1; padding:.65rem .5rem; border-radius:8px; font-weight:600;
+          cursor:pointer; font-size:.88rem; border:1.5px solid var(--border);
+          background:transparent; color:var(--text-muted);
+          transition:background .18s, color .18s, border-color .18s;
+          display:flex; align-items:center; justify-content:center; gap:.4rem;
+        }
+        .withdraw-tab:hover { border-color:var(--accent); color:var(--accent); }
+        .withdraw-tab.active {
+          background:var(--accent); border-color:var(--accent);
+          color:#fff; box-shadow:0 2px 12px rgba(63,224,161,.25);
+        }
+        .withdraw-tab .ph { font-size:1rem; }
+      </style>
+      <div class="withdraw-tabs">
+        <button type="button" class="withdraw-tab active" data-withdraw-tab="crypto">
           <i class="ph ph-currency-circle-dollar"></i> Crypto Wallet
         </button>
-        <button type="button" class="withdraw-tab" data-withdraw-tab="bank"
-                style="flex:1;padding:.6rem;border-radius:8px;border:1.5px solid var(--border);background:transparent;color:var(--text-muted);font-weight:600;cursor:pointer;font-size:.9rem;">
+        <button type="button" class="withdraw-tab" data-withdraw-tab="bank">
           <i class="ph ph-bank"></i> Bank Transfer
         </button>
       </div>
@@ -87,6 +101,7 @@
             <label for="withdrawBankCountry">Country</label>
             <select id="withdrawBankCountry" name="bank_country">
               <option value="">Select Country</option>
+              <option>United States</option>
               <option>Germany</option>
               <option>France</option>
               <option>United Kingdom</option>
