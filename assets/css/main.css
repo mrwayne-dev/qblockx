@@ -2691,6 +2691,33 @@ tbody td:first-child {
   border: 1px solid var(--color-border);
 }
 
+/* ── Transaction type badges ────────────────────────────────── */
+.badge-tx-deposit,
+.badge-tx-deposit_return,
+.badge-tx-interest_credit {
+  background: rgba(63, 224, 161, 0.12);
+  color: #3FE0A1;
+  border: 1px solid rgba(63, 224, 161, 0.22);
+}
+.badge-tx-withdrawal,
+.badge-tx-loan_repayment,
+.badge-tx-savings_withdrawal {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+.badge-tx-loan_disbursement,
+.badge-tx-transfer {
+  background: rgba(59, 130, 246, 0.1);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+.badge-tx-savings_contribution {
+  background: rgba(168, 85, 247, 0.1);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.2);
+}
+
 /* ── Toast ──────────────────────────────────────────────────── */
 .toast-container {
   position: fixed;

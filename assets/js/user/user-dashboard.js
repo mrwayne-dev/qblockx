@@ -20,6 +20,23 @@
     return new Date(dt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   }
 
+  var _txTypeLabels = {
+    deposit:              'Deposit',
+    withdrawal:           'Withdrawal',
+    transfer:             'Transfer',
+    savings_contribution: 'Savings',
+    savings_withdrawal:   'Savings Out',
+    deposit_return:       'Deposit Return',
+    loan_disbursement:    'Loan In',
+    loan_repayment:       'Loan Repayment',
+    interest_credit:      'Interest',
+  };
+
+  function txTypeBadge(type) {
+    var label = _txTypeLabels[type] || (type || '—').replace(/_/g, ' ');
+    return '<span class="badge badge-tx-' + (type || 'muted') + '">' + label + '</span>';
+  }
+
   // Works on HTTP (no secure context) and HTTPS
   function copyText(text, cb) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -178,7 +195,7 @@
         tbody.innerHTML = d.recent_transactions.length
           ? d.recent_transactions.map(function (tx) {
               return '<tr>'
-                + '<td>' + tx.type + '</td>'
+                + '<td>' + txTypeBadge(tx.type) + '</td>'
                 + '<td>$' + fmt(tx.amount) + '</td>'
                 + '<td>' + badge(tx.status) + '</td>'
                 + '<td>' + fmtDate(tx.created_at) + '</td>'
@@ -252,7 +269,7 @@
         if (d.recent_transactions && d.recent_transactions.length) {
           tbody.innerHTML = d.recent_transactions.map(function (tx) {
             return '<tr>'
-              + '<td>' + tx.type + '</td>'
+              + '<td>' + txTypeBadge(tx.type) + '</td>'
               + '<td>$' + fmt(tx.amount) + '</td>'
               + '<td>' + badge(tx.status) + '</td>'
               + '<td>' + fmtDate(tx.created_at) + '</td>'
@@ -607,7 +624,7 @@
         if (d.transactions && d.transactions.length) {
           tbody.innerHTML = d.transactions.map(function (tx) {
             return '<tr>'
-              + '<td>' + tx.type + '</td>'
+              + '<td>' + txTypeBadge(tx.type) + '</td>'
               + '<td>$' + fmt(tx.amount) + '</td>'
               + '<td>' + badge(tx.status) + '</td>'
               + '<td>' + (tx.notes || '--') + '</td>'

@@ -44,6 +44,17 @@
     return '<span class="' + cls + '">' + esc(status) + '</span>';
   }
 
+  var _txTypeLabels = {
+    deposit: 'Deposit', withdrawal: 'Withdrawal', transfer: 'Transfer',
+    savings_contribution: 'Savings', savings_withdrawal: 'Savings Out',
+    deposit_return: 'Deposit Return', loan_disbursement: 'Loan In',
+    loan_repayment: 'Loan Repayment', interest_credit: 'Interest'
+  };
+  function txTypeBadge(type) {
+    var label = _txTypeLabels[type] || (type || '—').replace(/_/g, ' ');
+    return '<span class="badge badge-tx-' + (type || 'muted') + '">' + label + '</span>';
+  }
+
   function verifiedBadge(v) {
     var is = (v == 1 || v === true || v === '1');
     return is
@@ -61,6 +72,22 @@
   }
 
   function setText(sel, val) { var el = qs(sel); if (el) el.textContent = val; }
+
+  /* ── Busy / Double-click protection ──────────────────────────────── */
+
+  var _adminBusy = false;
+
+  function setBusy(btnEl, busy) {
+    _adminBusy = busy;
+    if (!btnEl) return;
+    btnEl.disabled = busy;
+    if (busy) {
+      btnEl._origHtml = btnEl.innerHTML;
+      btnEl.innerHTML = '<i class="ph ph-circle-notch ph-spin"></i>';
+    } else if (btnEl._origHtml !== undefined) {
+      btnEl.innerHTML = btnEl._origHtml;
+    }
+  }
 
   /* ── Toast Notifications ──────────────────────────────────────────── */
 
@@ -230,7 +257,7 @@
             return '<tr>'
               + '<td><div class="cell-name">' + esc(tx.user_name || tx.user_email) + '</div>'
               + '<div class="cell-sub">' + esc(tx.user_email) + '</div></td>'
-              + '<td>' + badge(tx.type) + '</td>'
+              + '<td>' + txTypeBadge(tx.type) + '</td>'
               + '<td><strong>$' + fmt(tx.amount) + '</strong></td>'
               + '<td>' + badge(tx.status) + '</td>'
               + '<td class="cell-muted">' + fmtDate(tx.created_at) + '</td>'
@@ -342,8 +369,10 @@
   };
 
   window.saveUser = async function () {
+    if (_adminBusy) return;
     var id      = document.getElementById('editUserId').value;
     var msgEl   = document.getElementById('editUserMsg');
+    var btnEl   = document.getElementById('editUserSaveBtn');
     msgEl.textContent = '';
     msgEl.className   = 'admin-modal-msg';
 
@@ -357,6 +386,7 @@
     var bal = document.getElementById('editUserBalance').value.trim();
     if (bal !== '') payload.balance_override = parseFloat(bal);
 
+    setBusy(btnEl, true);
     try {
       var r = await apiFetch('/api/admin-dashboard/edit-user.php', {
         method: 'POST',
@@ -376,12 +406,15 @@
     } catch (e) {
       msgEl.textContent = 'Network error';
       msgEl.classList.add('error');
+    } finally {
+      setBusy(btnEl, false);
     }
   };
 
   /* ── Add Rate ─────────────────────────────────────────────────────── */
 
   window.saveNewRate = async function () {
+    if (_adminBusy) return;
     var product  = document.getElementById('addRateProduct').value;
     var label    = document.getElementById('addRateLabel').value.trim();
     var duration = parseInt(document.getElementById('addRateDuration').value, 10);
@@ -395,6 +428,7 @@
     if (!duration || duration < 1) { msgEl.textContent = 'Invalid duration.';    msgEl.style.display = ''; return; }
     if (isNaN(rate) || rate < 0)   { msgEl.textContent = 'Invalid rate value.';  msgEl.style.display = ''; return; }
 
+    setBusy(null, true);
     try {
       var r = await apiFetch('/api/admin-dashboard/settings.php', {
         method: 'POST',
@@ -417,6 +451,8 @@
       msgEl.textContent   = 'Network error.';
       msgEl.style.display = '';
       msgEl.classList.add('error');
+    } finally {
+      setBusy(null, false);
     }
   };
 
@@ -435,6 +471,7 @@
   };
 
   window.saveEditRate = async function () {
+    if (_adminBusy) return;
     var id     = parseInt(document.getElementById('editRateId').value, 10);
     var rate   = parseFloat(document.getElementById('editRateValue').value);
     var active = document.getElementById('editRateActive').checked ? 1 : 0;
@@ -445,6 +482,7 @@
 
     if (isNaN(rate) || rate < 0) { msgEl.textContent = 'Enter a valid rate.'; msgEl.style.display = ''; return; }
 
+    setBusy(null, true);
     try {
       var r = await apiFetch('/api/admin-dashboard/settings.php', {
         method: 'POST',
@@ -464,17 +502,21 @@
       msgEl.textContent   = 'Network error.';
       msgEl.style.display = '';
       msgEl.classList.add('error');
+    } finally {
+      setBusy(null, false);
     }
   };
 
   /* ── Credit / Debit User ──────────────────────────────────────────── */
 
   window.submitCreditDebit = async function () {
+    if (_adminBusy) return;
     var email  = document.getElementById('cdUserEmail').value.trim();
     var amount = parseFloat(document.getElementById('cdAmount').value);
     var type   = document.getElementById('cdType').value;
     var notes  = document.getElementById('cdNotes').value.trim();
     var msgEl  = document.getElementById('cdMsg');
+    var btnEl  = document.getElementById('cdSubmitBtn');
     msgEl.style.display = 'none';
     msgEl.textContent   = '';
     msgEl.className     = 'admin-modal-msg';
@@ -482,6 +524,7 @@
     if (!email)              { msgEl.textContent = 'Email is required.';         msgEl.style.display = ''; return; }
     if (isNaN(amount) || amount <= 0) { msgEl.textContent = 'Enter a valid amount.'; msgEl.style.display = ''; return; }
 
+    setBusy(btnEl, true);
     try {
       var r = await apiFetch('/api/admin-dashboard/credit-debit.php', {
         method: 'POST',
@@ -506,6 +549,8 @@
       msgEl.textContent   = 'Network error.';
       msgEl.style.display = '';
       msgEl.classList.add('error');
+    } finally {
+      setBusy(btnEl, false);
     }
   };
 
@@ -616,7 +661,7 @@
           + '</tr></thead><tbody>'
           + txns.map(function (tx) {
             return '<tr>'
-              + '<td>' + badge(tx.type) + '</td>'
+              + '<td>' + txTypeBadge(tx.type) + '</td>'
               + '<td>$' + fmt(tx.amount) + '</td>'
               + '<td>' + badge(tx.status) + '</td>'
               + '<td class="cell-muted">' + fmtDateTime(tx.created_at) + '</td>'
@@ -637,9 +682,11 @@
   /* ── Record Loan Repayment ────────────────────────────────────────── */
 
   window.submitAdminRepayment = async function () {
+    if (_adminBusy) return;
     var loanId = document.getElementById('repayLoanId').value;
     var amount = parseFloat(document.getElementById('repayAmount').value);
     var msgEl  = document.getElementById('repayMsg');
+    var btnEl  = document.getElementById('repaySubmitBtn');
     msgEl.style.display = 'none';
     msgEl.textContent   = '';
     msgEl.className     = 'admin-modal-msg';
@@ -650,6 +697,7 @@
       return;
     }
 
+    setBusy(btnEl, true);
     try {
       var r = await apiFetch('/api/admin-dashboard/loans.php', {
         method: 'POST',
@@ -672,6 +720,8 @@
       msgEl.textContent   = 'Network error.';
       msgEl.style.display = '';
       msgEl.classList.add('error');
+    } finally {
+      setBusy(btnEl, false);
     }
   };
 
@@ -715,7 +765,7 @@
           return '<tr>'
             + '<td><div class="cell-name">' + esc(tx.user_name || tx.user_email) + '</div>'
             + '<div class="cell-sub">' + esc(tx.user_email) + '</div></td>'
-            + '<td>' + badge(tx.type) + '</td>'
+            + '<td>' + txTypeBadge(tx.type) + '</td>'
             + '<td><strong>$' + fmt(tx.amount) + '</strong></td>'
             + '<td>' + badge(tx.status) + '</td>'
             + '<td class="cell-muted" style="max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'
