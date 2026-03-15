@@ -179,35 +179,49 @@ BEGIN
   END IF;
 
   -- ── 5. withdrawal_requests — bank transfer columns ────────────────────────
-  IF NOT EXISTS (
-    SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+  -- Guard: only attempt ALTER if the table itself exists (safe on fresh installs
+  -- where _cv_migrate runs before CREATE TABLE withdrawal_requests).
+  IF EXISTS (
+    SELECT 1 FROM INFORMATION_SCHEMA.TABLES
     WHERE TABLE_SCHEMA = DATABASE()
       AND TABLE_NAME   = 'withdrawal_requests'
-      AND COLUMN_NAME  = 'withdrawal_method'
   ) THEN
-    ALTER TABLE `withdrawal_requests`
-      MODIFY COLUMN `wallet_address`     VARCHAR(255)          NULL DEFAULT NULL,
-      ADD COLUMN `withdrawal_method`     ENUM('crypto','bank')  NOT NULL DEFAULT 'crypto' AFTER `currency`,
-      ADD COLUMN `fee`                   DECIMAL(18,8)          DEFAULT NULL AFTER `withdrawal_method`,
-      ADD COLUMN `bank_country`          VARCHAR(100)           DEFAULT NULL,
-      ADD COLUMN `bank_name`             VARCHAR(255)           DEFAULT NULL,
-      ADD COLUMN `account_holder_name`   VARCHAR(255)           DEFAULT NULL,
-      ADD COLUMN `iban`                  VARCHAR(50)            DEFAULT NULL,
-      ADD COLUMN `bic_swift`             VARCHAR(20)            DEFAULT NULL,
-      ADD COLUMN `sort_code`             VARCHAR(20)            DEFAULT NULL,
-      ADD COLUMN `bank_currency`         VARCHAR(10)            DEFAULT NULL,
-      ADD COLUMN `transaction_reference` VARCHAR(255)           DEFAULT NULL;
+    IF NOT EXISTS (
+      SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+      WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_NAME   = 'withdrawal_requests'
+        AND COLUMN_NAME  = 'withdrawal_method'
+    ) THEN
+      ALTER TABLE `withdrawal_requests`
+        MODIFY COLUMN `wallet_address`     VARCHAR(255)          NULL DEFAULT NULL,
+        ADD COLUMN `withdrawal_method`     ENUM('crypto','bank')  NOT NULL DEFAULT 'crypto' AFTER `currency`,
+        ADD COLUMN `fee`                   DECIMAL(18,8)          DEFAULT NULL AFTER `withdrawal_method`,
+        ADD COLUMN `bank_country`          VARCHAR(100)           DEFAULT NULL,
+        ADD COLUMN `bank_name`             VARCHAR(255)           DEFAULT NULL,
+        ADD COLUMN `account_holder_name`   VARCHAR(255)           DEFAULT NULL,
+        ADD COLUMN `iban`                  VARCHAR(50)            DEFAULT NULL,
+        ADD COLUMN `bic_swift`             VARCHAR(20)            DEFAULT NULL,
+        ADD COLUMN `sort_code`             VARCHAR(20)            DEFAULT NULL,
+        ADD COLUMN `bank_currency`         VARCHAR(10)            DEFAULT NULL,
+        ADD COLUMN `transaction_reference` VARCHAR(255)           DEFAULT NULL;
+    END IF;
   END IF;
 
   -- ── 6. withdrawal_requests.tx_hash — used when admin approves ────────────
-  IF NOT EXISTS (
-    SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+  IF EXISTS (
+    SELECT 1 FROM INFORMATION_SCHEMA.TABLES
     WHERE TABLE_SCHEMA = DATABASE()
       AND TABLE_NAME   = 'withdrawal_requests'
-      AND COLUMN_NAME  = 'tx_hash'
   ) THEN
-    ALTER TABLE `withdrawal_requests`
-      ADD COLUMN `tx_hash` VARCHAR(255) DEFAULT NULL;
+    IF NOT EXISTS (
+      SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+      WHERE TABLE_SCHEMA = DATABASE()
+        AND TABLE_NAME   = 'withdrawal_requests'
+        AND COLUMN_NAME  = 'tx_hash'
+    ) THEN
+      ALTER TABLE `withdrawal_requests`
+        ADD COLUMN `tx_hash` VARCHAR(255) DEFAULT NULL;
+    END IF;
   END IF;
 
   -- ── 7. cron_logs.status — add 'partial' to ENUM ──────────────────────────

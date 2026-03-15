@@ -1341,13 +1341,16 @@
       if (upcomingEl) {
         if (d.active_loans && d.active_loans.length) {
           upcomingEl.innerHTML = d.active_loans.map(function (l) {
-            return '<div class="upcoming-payment">'
-              + '<span>Monthly payment: <strong>$' + fmt(l.monthly_payment) + '</strong></span>'
-              + '<span class="badge badge-warning">Due monthly</span>'
-              + '</div>';
+            return '<tr>'
+              + '<td>' + (l.purpose || '—') + '</td>'
+              + '<td><strong>$' + fmt(l.monthly_payment) + '</strong></td>'
+              + '<td>$' + fmt(l.remaining_balance) + '</td>'
+              + '<td>' + (l.duration_months || '—') + ' mo</td>'
+              + '<td>' + badge(l.status) + '</td>'
+              + '</tr>';
           }).join('');
         } else {
-          upcomingEl.innerHTML = '<p class="empty-text">No upcoming loan payments.</p>';
+          upcomingEl.innerHTML = '<tr><td colspan="5" class="empty-row">No upcoming loan payments.</td></tr>';
         }
       }
     } catch (e) {

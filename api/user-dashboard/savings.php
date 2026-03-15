@@ -70,16 +70,47 @@ try {
             }
             $interest_rate = (float) $rateRow['rate'];
 
+            // Deduct target_amount from wallet and lock it in the savings plan immediately
+            $db->beginTransaction();
+
+            $walletStmt = $db->prepare("SELECT balance FROM wallets WHERE user_id = :uid FOR UPDATE");
+            $walletStmt->execute(['uid' => $uid]);
+            $wallet = $walletStmt->fetch();
+
+            if (!$wallet || (float) $wallet['balance'] < $target_amount) {
+                $db->rollBack();
+                echo json_encode(['success' => false, 'message' => 'Insufficient wallet balance to start this savings plan']);
+                exit;
+            }
+
+            // Debit wallet
+            $db->prepare("UPDATE wallets SET balance = balance - :amount WHERE user_id = :uid")
+               ->execute(['amount' => $target_amount, 'uid' => $uid]);
+
+            // Create savings plan with current_amount already set to target_amount
             $db->prepare(
-                "INSERT INTO savings_plans (user_id, plan_name, target_amount, interest_rate, duration_months)
-                 VALUES (:uid, :name, :target, :rate, :duration)"
+                "INSERT INTO savings_plans (user_id, plan_name, target_amount, current_amount, interest_rate, duration_months)
+                 VALUES (:uid, :name, :target, :current, :rate, :duration)"
             )->execute([
                 'uid'      => $uid,
                 'name'     => $plan_name,
                 'target'   => $target_amount,
+                'current'  => $target_amount,
                 'rate'     => $interest_rate,
                 'duration' => $duration_months,
             ]);
+
+            // Log the deduction as a savings_contribution transaction
+            $db->prepare(
+                "INSERT INTO transactions (user_id, type, amount, status, notes)
+                 VALUES (:uid, 'savings_contribution', :amount, 'completed', :notes)"
+            )->execute([
+                'uid'    => $uid,
+                'amount' => $target_amount,
+                'notes'  => 'Savings plan created: ' . $plan_name,
+            ]);
+
+            $db->commit();
 
             // Send confirmation email (non-fatal)
             try {

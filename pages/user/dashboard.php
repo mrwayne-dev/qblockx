@@ -190,8 +190,21 @@ require_once '../../includes/head.php';
         <div class="table-card-header">
           <h3>Upcoming Loan Payments</h3>
         </div>
-        <div data-list="upcoming-payments">
-          <p class="empty-text">Loading…</p>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Purpose</th>
+                <th>Monthly Payment</th>
+                <th>Outstanding Balance</th>
+                <th>Duration</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody data-list="upcoming-payments">
+              <tr><td colspan="5" class="empty-row">Loading…</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
