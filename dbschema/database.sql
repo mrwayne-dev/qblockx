@@ -227,8 +227,8 @@ END$$
 
 DELIMITER ;
 
-CALL `_cv_migrate`();
-DROP PROCEDURE IF EXISTS `_cv_migrate`;
+-- NOTE: _cv_migrate is called AFTER all CREATE TABLE statements below
+-- so that it never tries to ALTER a table that doesn't exist yet on fresh installs.
 
 -- ============================================================
 -- SAVINGS PLANS
@@ -387,5 +387,6 @@ INSERT IGNORE INTO `system_settings` (`key`, `value`) VALUES
   ('min_withdrawal',      '10'),
   ('withdrawal_fee',      '0');
 
--- Note: withdrawal_requests bank columns, tx_hash, and cron_logs partial status
--- are all handled idempotently inside the _cv_migrate procedure above.
+-- Run migrations now that all tables are guaranteed to exist
+CALL `_cv_migrate`();
+DROP PROCEDURE IF EXISTS `_cv_migrate`;
