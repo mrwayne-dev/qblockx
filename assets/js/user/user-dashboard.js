@@ -1032,55 +1032,125 @@
 
   // ── Add Funds to Savings Plan ─────────────────────────────────────────────────
 
-  async function addFunds(planId) {
-    var amount = parseFloat(window.prompt('Enter amount to add to this savings plan (USD):'));
-    if (isNaN(amount) || amount <= 0) return;
+  function addFunds(planId, planName) {
+    var idEl    = document.getElementById('addFundsPlanId');
+    var labelEl = document.getElementById('addFundsPlanLabel');
+    var amtEl   = document.getElementById('addFundsAmount');
+    var msgEl   = document.getElementById('addFundsMsg');
+    if (idEl)    idEl.value      = planId;
+    if (labelEl) labelEl.textContent = 'Plan: ' + (planName || '—');
+    if (amtEl)   amtEl.value     = '';
+    if (msgEl)   { msgEl.style.display = 'none'; msgEl.textContent = ''; }
+    var btn = document.getElementById('addFundsBtn');
+    if (btn) { btn.disabled = false; btn.querySelector('.btn-text').style.display = ''; btn.querySelector('.btn-spinner').style.display = 'none'; }
+    openModal('modal-add-funds');
+  }
+
+  async function submitAddFunds() {
+    var planId = document.getElementById('addFundsPlanId').value;
+    var amount = parseFloat(document.getElementById('addFundsAmount').value);
+    var msgEl  = document.getElementById('addFundsMsg');
+    var btn    = document.getElementById('addFundsBtn');
+
+    if (!planId || isNaN(amount) || amount <= 0) {
+      msgEl.textContent = 'Please enter a valid amount.';
+      msgEl.style.display = '';
+      return;
+    }
+    btn.disabled = true;
+    btn.querySelector('.btn-text').style.display = 'none';
+    btn.querySelector('.btn-spinner').style.display = '';
 
     try {
       var r = await apiFetch('/api/user-dashboard/savings.php', {
         method: 'POST',
-        body: JSON.stringify({ action: 'add_funds', plan_id: planId, amount: amount })
+        body: JSON.stringify({ action: 'add_funds', plan_id: parseInt(planId, 10), amount: amount })
       });
-
       if (r.success) {
-        showToast('Funds added to savings plan!', 'success');
+        closeModal('modal-add-funds');
+        showToast('Funds added to savings plan!');
         loadSavings();
         loadWallet();
       } else {
-        showToast(r.message || 'Failed to add funds.', 'error');
+        msgEl.textContent = r.message || 'Failed to add funds.';
+        msgEl.style.display = '';
+        btn.disabled = false;
+        btn.querySelector('.btn-text').style.display = '';
+        btn.querySelector('.btn-spinner').style.display = 'none';
       }
     } catch (e) {
-      showToast('Network error. Please try again.', 'error');
+      msgEl.textContent = 'Network error. Please try again.';
+      msgEl.style.display = '';
+      btn.disabled = false;
+      btn.querySelector('.btn-text').style.display = '';
+      btn.querySelector('.btn-spinner').style.display = 'none';
     }
   }
 
   // ── Repay Loan ────────────────────────────────────────────────────────────────
 
-  async function repayLoan(loanId) {
-    var amount = parseFloat(window.prompt('Enter repayment amount (USD):'));
-    if (isNaN(amount) || amount <= 0) return;
+  function repayLoan(loanId, outstanding, monthly) {
+    var idEl  = document.getElementById('repayLoanId');
+    var outEl = document.getElementById('repayOutstanding');
+    var monEl = document.getElementById('repayMonthly');
+    var amtEl = document.getElementById('repayAmount');
+    var msgEl = document.getElementById('repayLoanMsg');
+    if (idEl)  idEl.value        = loanId;
+    if (outEl) outEl.textContent = '$' + fmt(outstanding || 0);
+    if (monEl) monEl.textContent = '$' + fmt(monthly || 0);
+    if (amtEl) amtEl.value       = '';
+    if (msgEl) { msgEl.style.display = 'none'; msgEl.textContent = ''; }
+    var btn = document.getElementById('repayLoanBtn');
+    if (btn) { btn.disabled = false; btn.querySelector('.btn-text').style.display = ''; btn.querySelector('.btn-spinner').style.display = 'none'; }
+    openModal('modal-repay-loan');
+  }
+
+  async function submitRepayLoan() {
+    var loanId = document.getElementById('repayLoanId').value;
+    var amount = parseFloat(document.getElementById('repayAmount').value);
+    var msgEl  = document.getElementById('repayLoanMsg');
+    var btn    = document.getElementById('repayLoanBtn');
+
+    if (!loanId || isNaN(amount) || amount <= 0) {
+      msgEl.textContent = 'Please enter a valid repayment amount.';
+      msgEl.style.display = '';
+      return;
+    }
+    btn.disabled = true;
+    btn.querySelector('.btn-text').style.display = 'none';
+    btn.querySelector('.btn-spinner').style.display = '';
 
     try {
       var r = await apiFetch('/api/user-dashboard/loans.php', {
         method: 'POST',
-        body: JSON.stringify({ action: 'repay', loan_id: loanId, amount: amount })
+        body: JSON.stringify({ action: 'repay', loan_id: parseInt(loanId, 10), amount: amount })
       });
-
       if (r.success) {
-        showToast('Loan repayment submitted!', 'success');
+        closeModal('modal-repay-loan');
+        showToast('Repayment submitted successfully!');
         loadLoans();
         loadWallet();
       } else {
-        showToast(r.message || 'Repayment failed.', 'error');
+        msgEl.textContent = r.message || 'Repayment failed.';
+        msgEl.style.display = '';
+        btn.disabled = false;
+        btn.querySelector('.btn-text').style.display = '';
+        btn.querySelector('.btn-spinner').style.display = 'none';
       }
     } catch (e) {
-      showToast('Network error. Please try again.', 'error');
+      msgEl.textContent = 'Network error. Please try again.';
+      msgEl.style.display = '';
+      btn.disabled = false;
+      btn.querySelector('.btn-text').style.display = '';
+      btn.querySelector('.btn-spinner').style.display = 'none';
     }
   }
 
   // Expose for inline onclick handlers in table rows
-  window.addFunds  = addFunds;
-  window.repayLoan = repayLoan;
+  window.addFunds       = addFunds;
+  window.submitAddFunds = submitAddFunds;
+  window.repayLoan      = repayLoan;
+  window.submitRepayLoan = submitRepayLoan;
 
   // ── Delete Account ────────────────────────────────────────────────────────────
 
@@ -1137,7 +1207,7 @@
               + '<td><div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div> ' + pct + '<i class="ph ph-percent"></i></td>'
               + '<td>' + (p.duration_months || '—') + ' mo</td>'
               + '<td>' + badge(p.status) + '</td>'
-              + '<td><button class="btn-xs btn-outline" onclick="addFunds(' + p.id + ')">Add Funds</button></td>'
+              + '<td><button class="btn-xs btn-outline" onclick="addFunds(' + p.id + ',\'' + (p.plan_name || '').replace(/'/g, "\\'") + '\')">Add Funds</button></td>'
               + '</tr>';
           }).join('');
         } else {
@@ -1225,7 +1295,7 @@
               + '<td>' + (l.interest_rate || '—') + '<i class="ph ph-percent"></i>&thinsp;p.a.</td>'
               + '<td>' + (l.duration_months || '—') + ' mo</td>'
               + '<td>' + badge(l.status) + '</td>'
-              + '<td><button class="btn-xs btn-primary" onclick="repayLoan(' + l.id + ')">Repay</button></td>'
+              + '<td><button class="btn-xs btn-primary" onclick="repayLoan(' + l.id + ',' + l.remaining_balance + ',' + l.monthly_payment + ')">Repay</button></td>'
               + '</tr>';
           }).join('');
         } else {

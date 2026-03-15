@@ -5,9 +5,9 @@
 
 /* ── Font Faces ─────────────────────────────────────────────── */
 @font-face {
-  font-family: 'Recoleta DEMO';
-  src: url('../fonts/Recoleta-RegularDEMO.woff2') format('woff2'),
-       url('../fonts/Recoleta-RegularDEMO.woff') format('woff');
+  font-family: 'DM Sans';
+  src: url('../fonts/DMSans-Regular.woff2') format('woff2'),
+       url('../fonts/DMSans-Regular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -38,8 +38,8 @@
   --gradient-card-hover: linear-gradient(135deg, rgba(63,224,161,0.06), rgba(43,201,138,0.03));
 
   /* Typography */
-  --font-display: 'Recoleta DEMO', Georgia, serif;
-  --font-body:    'Recoleta DEMO', Georgia, serif;
+  --font-display: 'DM Sans', Georgia, serif;
+  --font-body:    'DM Sans', Georgia, serif;
   --font-mono:    'Courier New', 'Lucida Console', monospace;
 
   /* Letter Spacing */

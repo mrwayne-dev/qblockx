@@ -591,6 +591,7 @@ $admin = getAuthUser();
 <?php include '../../includes/admin-modals/view-user-modal.php'; ?>
 <?php include '../../includes/admin-modals/credit-debit-modal.php'; ?>
 <?php include '../../includes/admin-modals/record-repayment-modal.php'; ?>
+<?php include '../../includes/admin-modals/confirm-modal.php'; ?>
 
 <!-- Admin JS -->
 <script src="/assets/js/admin/admin-dashboard.js" defer></script>

@@ -50,7 +50,7 @@ require_once '../../includes/head.php';
           </h1>
           <p class="hero-subtext">
             Set a goal and watch interest accumulate automatically. Competitive
-            rates up to 6.5<i class="ph ph-percent"></i> p.a. — no lock-in, full flexibility.
+            rates up to 6.5%p.a. — no lock-in, full flexibility.
           </p>
           <div class="hero-actions">
             <a href="/register" class="btn-hero-outline">Start Saving <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
@@ -67,7 +67,7 @@ require_once '../../includes/head.php';
             <span class="hero-line">returns.</span>
           </h1>
           <p class="hero-subtext">
-            Lock in your money for a fixed term and earn up to 15<i class="ph ph-percent"></i> p.a.
+            Lock in your money for a fixed term and earn up to 15%p.a.
             Principal and interest returned in full at maturity.
           </p>
           <div class="hero-actions">
@@ -85,7 +85,7 @@ require_once '../../includes/head.php';
             <span class="hero-line">anytime.</span>
           </h1>
           <p class="hero-subtext">
-            Personal and business loans from 8<i class="ph ph-percent"></i> p.a. Fast approval, simple
+            Personal and business loans from 8%p.a. Fast approval, simple
             monthly repayments, and funds credited directly to your wallet.
           </p>
           <div class="hero-actions">
@@ -145,12 +145,12 @@ require_once '../../includes/head.php';
               <div class="hw-progress-bar">
                 <div class="hw-progress-fill" style="width:82%"></div>
               </div>
-              <span class="hw-progress-label">82<i class="ph ph-percent"></i> complete</span>
+              <span class="hw-progress-label">82%complete</span>
             </div>
             <div class="hw-rows">
               <div class="hw-row">
                 <span class="hw-row-label">Interest rate</span>
-                <span class="hw-row-value">5.5<i class="ph ph-percent"></i> p.a.</span>
+                <span class="hw-row-value">5.5%p.a.</span>
               </div>
               <div class="hw-row">
                 <span class="hw-row-label">Monthly gain</span>
@@ -173,7 +173,7 @@ require_once '../../includes/head.php';
             <div class="hw-rows">
               <div class="hw-row">
                 <span class="hw-row-label">Interest rate</span>
-                <span class="hw-row-value">12.0<i class="ph ph-percent"></i> p.a.</span>
+                <span class="hw-row-value">12.0%p.a.</span>
               </div>
               <div class="hw-row">
                 <span class="hw-row-label">Expected return</span>
@@ -210,7 +210,7 @@ require_once '../../includes/head.php';
               </div>
               <div class="hw-row">
                 <span class="hw-row-label">Interest rate</span>
-                <span class="hw-row-value">10.0<i class="ph ph-percent"></i> p.a.</span>
+                <span class="hw-row-value">10.0%p.a.</span>
               </div>
             </div>
             <a href="/register" class="hw-cta">Apply for a Loan <i class="ph ph-arrow-right"></i></a>
@@ -268,14 +268,14 @@ require_once '../../includes/head.php';
 
         <div class="bento-card bento-card--sm" data-appear>
           <p class="bento-eyebrow">Max Annual Rate</p>
-          <p class="bento-stat-value" data-counter="12" data-counter-suffix="<i class="ph ph-percent"></i>">0</p>
+          <p class="bento-stat-value" data-counter="12" data-counter-suffix="%">0</p>
           <p class="bento-stat-label">On fixed deposits</p>
         </div>
 
         <!-- Bottom-right row -->
         <div class="bento-card bento-card--sm" data-appear>
           <p class="bento-eyebrow">Uptime</p>
-          <p class="bento-stat-value" data-counter="99.9" data-counter-suffix="<i class="ph ph-percent"></i>">0</p>
+          <p class="bento-stat-value" data-counter="99.9" data-counter-suffix="%">0</p>
           <p class="bento-stat-label">Platform reliability</p>
         </div>
 
@@ -322,7 +322,7 @@ require_once '../../includes/head.php';
         <p class="feature-description">
           Fixed deposits offer competitive rates for customers willing to commit
           for a set duration. Choose from 3, 6, or 12-month terms and earn up to
-          12<i class="ph ph-percent"></i> per annum. Your principal and interest are returned at maturity.
+          12% per annum. Your principal and interest are returned at maturity.
         </p>
         <a href="/products#deposits" class="btn-learn-more" aria-label="Learn more about fixed deposits">
           View Deposit Rates <i class="ph ph-arrow-right" aria-hidden="true"></i>
@@ -504,7 +504,7 @@ require_once '../../includes/head.php';
         <div class="pricing-card glass">
           <p class="pricing-subtitle">Build your financial future.</p>
           <h3 class="pricing-plan">Savings Plans</h3>
-          <p class="pricing-price">5.5<i class="ph ph-percent"></i> <span class="pricing-rate">p.a.</span></p>
+          <p class="pricing-price">5.5%<span class="pricing-rate">p.a.</span></p>
           <ul class="pricing-features">
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Goal-based savings</li>
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Flexible contributions</li>
@@ -520,7 +520,7 @@ require_once '../../includes/head.php';
         <div class="pricing-card glass">
           <p class="pricing-subtitle">Lock in higher guaranteed returns.</p>
           <h3 class="pricing-plan">Fixed Deposits</h3>
-          <p class="pricing-price">16<i class="ph ph-percent"></i> <span class="pricing-rate">p.a.</span></p>
+          <p class="pricing-price">16%<span class="pricing-rate">p.a.</span></p>
           <ul class="pricing-features">
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> 6 or 24-month terms</li>
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Higher rates than savings</li>
@@ -536,7 +536,7 @@ require_once '../../includes/head.php';
         <div class="pricing-card glass">
           <p class="pricing-subtitle">Access capital when you need it.</p>
           <h3 class="pricing-plan">Loans</h3>
-          <p class="pricing-price">12<i class="ph ph-percent"></i> <span class="pricing-rate">p.a.</span></p>
+          <p class="pricing-price">12%<span class="pricing-rate">p.a.</span></p>
           <ul class="pricing-features">
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Flexible loan amounts</li>
             <li><i class="ph ph-check-circle" aria-hidden="true"></i> Simple monthly repayments</li>

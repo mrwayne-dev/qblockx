@@ -102,13 +102,16 @@ try {
                 $monthly_payment = round($loan_amount / $duration_months, 2);
             }
 
+            // Total repayable = full amortized cost (principal + interest over term)
+            $total_repayable = round($monthly_payment * $duration_months, 2);
+
             $db->prepare(
                 "INSERT INTO loans (user_id, loan_amount, remaining_balance, interest_rate, duration_months, monthly_payment, purpose)
                  VALUES (:uid, :loan_amount, :remaining_balance, :rate, :dur, :monthly, :purpose)"
             )->execute([
                 'uid'               => $uid,
                 'loan_amount'       => $loan_amount,
-                'remaining_balance' => $loan_amount,
+                'remaining_balance' => $total_repayable,
                 'rate'              => $interest_rate,
                 'dur'               => $duration_months,
                 'monthly'           => $monthly_payment,

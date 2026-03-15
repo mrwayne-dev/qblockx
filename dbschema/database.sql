@@ -178,6 +178,51 @@ BEGIN
       ADD COLUMN `is_active` TINYINT(1) NOT NULL DEFAULT 1 AFTER `is_verified`;
   END IF;
 
+  -- ── 5. withdrawal_requests — bank transfer columns ────────────────────────
+  IF NOT EXISTS (
+    SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME   = 'withdrawal_requests'
+      AND COLUMN_NAME  = 'withdrawal_method'
+  ) THEN
+    ALTER TABLE `withdrawal_requests`
+      MODIFY COLUMN `wallet_address`     VARCHAR(255)          NULL DEFAULT NULL,
+      ADD COLUMN `withdrawal_method`     ENUM('crypto','bank')  NOT NULL DEFAULT 'crypto' AFTER `currency`,
+      ADD COLUMN `fee`                   DECIMAL(18,8)          DEFAULT NULL AFTER `withdrawal_method`,
+      ADD COLUMN `bank_country`          VARCHAR(100)           DEFAULT NULL,
+      ADD COLUMN `bank_name`             VARCHAR(255)           DEFAULT NULL,
+      ADD COLUMN `account_holder_name`   VARCHAR(255)           DEFAULT NULL,
+      ADD COLUMN `iban`                  VARCHAR(50)            DEFAULT NULL,
+      ADD COLUMN `bic_swift`             VARCHAR(20)            DEFAULT NULL,
+      ADD COLUMN `sort_code`             VARCHAR(20)            DEFAULT NULL,
+      ADD COLUMN `bank_currency`         VARCHAR(10)            DEFAULT NULL,
+      ADD COLUMN `transaction_reference` VARCHAR(255)           DEFAULT NULL;
+  END IF;
+
+  -- ── 6. withdrawal_requests.tx_hash — used when admin approves ────────────
+  IF NOT EXISTS (
+    SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME   = 'withdrawal_requests'
+      AND COLUMN_NAME  = 'tx_hash'
+  ) THEN
+    ALTER TABLE `withdrawal_requests`
+      ADD COLUMN `tx_hash` VARCHAR(255) DEFAULT NULL;
+  END IF;
+
+  -- ── 7. cron_logs.status — add 'partial' to ENUM ──────────────────────────
+  -- deposit-maturity cron uses 'partial' when some deposits succeed and some fail.
+  IF NOT EXISTS (
+    SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA    = DATABASE()
+      AND TABLE_NAME      = 'cron_logs'
+      AND COLUMN_NAME     = 'status'
+      AND COLUMN_TYPE LIKE '%partial%'
+  ) THEN
+    ALTER TABLE `cron_logs`
+      MODIFY COLUMN `status` ENUM('success','partial','failed') NOT NULL;
+  END IF;
+
 END$$
 
 DELIMITER ;
@@ -342,20 +387,5 @@ INSERT IGNORE INTO `system_settings` (`key`, `value`) VALUES
   ('min_withdrawal',      '10'),
   ('withdrawal_fee',      '0');
 
--- ============================================================
--- MIGRATION: Withdrawal requests — bank transfer support
--- Run once on existing databases
--- ============================================================
-
-ALTER TABLE `withdrawal_requests`
-  MODIFY COLUMN `wallet_address`      VARCHAR(255)  NULL DEFAULT NULL,
-  ADD COLUMN `withdrawal_method`      ENUM('crypto','bank') NOT NULL DEFAULT 'crypto' AFTER `currency`,
-  ADD COLUMN `fee`                    DECIMAL(18,8) DEFAULT NULL AFTER `withdrawal_method`,
-  ADD COLUMN `bank_country`           VARCHAR(100)  DEFAULT NULL,
-  ADD COLUMN `bank_name`              VARCHAR(255)  DEFAULT NULL,
-  ADD COLUMN `account_holder_name`    VARCHAR(255)  DEFAULT NULL,
-  ADD COLUMN `iban`                   VARCHAR(50)   DEFAULT NULL,
-  ADD COLUMN `bic_swift`              VARCHAR(20)   DEFAULT NULL,
-  ADD COLUMN `sort_code`              VARCHAR(20)   DEFAULT NULL,
-  ADD COLUMN `bank_currency`          VARCHAR(10)   DEFAULT NULL,
-  ADD COLUMN `transaction_reference`  VARCHAR(255)  DEFAULT NULL;
+-- Note: withdrawal_requests bank columns, tx_hash, and cron_logs partial status
+-- are all handled idempotently inside the _cv_migrate procedure above.

@@ -33,6 +33,8 @@ require_once '../../includes/head.php';
 <?php require_once '../../includes/modals/create-savings-modal.php'; ?>
 <?php require_once '../../includes/modals/fixed-deposit-modal.php'; ?>
 <?php require_once '../../includes/modals/loan-modal.php'; ?>
+<?php require_once '../../includes/modals/add-funds-modal.php'; ?>
+<?php require_once '../../includes/modals/repay-loan-modal.php'; ?>
 <?php require_once '../../includes/modals/delete-account-modal.php'; ?>
 
 <!-- ── App Shell ─────────────────────────────────────────────── -->
@@ -413,12 +415,12 @@ require_once '../../includes/head.php';
         <div class="stat-card">
           <span class="stat-label">Total Borrowed</span>
           <span class="stat-value" data-stat="total-borrowed">$0.00</span>
-          <span class="stat-sub">Sum of all active loans</span>
+          <span class="stat-sub">Principal amount disbursed</span>
         </div>
         <div class="stat-card">
-          <span class="stat-label">Remaining Balance</span>
+          <span class="stat-label">Total Outstanding</span>
           <span class="stat-value" data-stat="remaining-balance">$0.00</span>
-          <span class="stat-sub">Still outstanding</span>
+          <span class="stat-sub">Principal + interest still owed</span>
         </div>
       </div>
 

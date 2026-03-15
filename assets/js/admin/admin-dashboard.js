@@ -85,6 +85,51 @@
     setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 3500);
   }
 
+  /* ── Admin Confirm / Prompt Modal ────────────────────────────────────── */
+
+  function adminConfirm(message, onConfirm, title) {
+    var modal    = document.getElementById('modal-admin-confirm');
+    var titleEl  = document.getElementById('adminConfirmTitleText');
+    var msgEl    = document.getElementById('adminConfirmMessage');
+    var inputGrp = document.getElementById('adminConfirmInputGroup');
+    var btn      = document.getElementById('adminConfirmBtn');
+    if (!modal) return;
+    if (titleEl)  titleEl.textContent  = title || 'Confirm Action';
+    if (msgEl)    msgEl.textContent    = message;
+    if (inputGrp) inputGrp.style.display = 'none';
+    var newBtn = btn.cloneNode(true);
+    btn.parentNode.replaceChild(newBtn, btn);
+    newBtn.addEventListener('click', function () {
+      closeAdminModal('modal-admin-confirm');
+      onConfirm();
+    });
+    openAdminModal('modal-admin-confirm');
+  }
+
+  function adminPrompt(message, inputLabel, onConfirm, title) {
+    var modal    = document.getElementById('modal-admin-confirm');
+    var titleEl  = document.getElementById('adminConfirmTitleText');
+    var msgEl    = document.getElementById('adminConfirmMessage');
+    var inputGrp = document.getElementById('adminConfirmInputGroup');
+    var labelEl  = document.getElementById('adminConfirmInputLabel');
+    var inputEl  = document.getElementById('adminConfirmInput');
+    var btn      = document.getElementById('adminConfirmBtn');
+    if (!modal) return;
+    if (titleEl)  titleEl.textContent  = title || 'Enter Details';
+    if (msgEl)    msgEl.textContent    = message;
+    if (labelEl)  labelEl.textContent  = inputLabel || 'Value';
+    if (inputEl)  inputEl.value        = '';
+    if (inputGrp) inputGrp.style.display = '';
+    var newBtn = btn.cloneNode(true);
+    btn.parentNode.replaceChild(newBtn, btn);
+    newBtn.addEventListener('click', function () {
+      var val = inputEl ? inputEl.value : '';
+      closeAdminModal('modal-admin-confirm');
+      onConfirm(val);
+    });
+    openAdminModal('modal-admin-confirm');
+  }
+
   /* ── Pagination ───────────────────────────────────────────────────── */
 
   function renderPagination(container, current, totalPages, totalItems, limit, loadFn) {
@@ -1160,11 +1205,8 @@
     }
   };
 
-  async function handleWithdrawal(id, action) {
-    var notes = '';
-    if (action === 'reject') {
-      notes = window.prompt('Rejection reason (optional):') || '';
-    }
+  async function handleWithdrawal(id, action, notes) {
+    notes = notes || '';
     try {
       var r = await apiFetch('/api/admin-dashboard/approve-withdrawal.php', {
         method: 'POST',
@@ -1294,8 +1336,14 @@
       var userBtn = e.target.closest('[data-user-action]');
       if (userBtn) {
         var userAction = userBtn.dataset.userAction;
-        if (userAction === 'delete' && !window.confirm('Permanently delete this user? This cannot be undone.')) return;
-        updateUser(parseInt(userBtn.dataset.id, 10), userAction);
+        var userId = parseInt(userBtn.dataset.id, 10);
+        if (userAction === 'delete') {
+          adminConfirm('Permanently delete this user? All their data will be removed. This cannot be undone.', function () {
+            updateUser(userId, userAction);
+          }, 'Delete User');
+        } else {
+          updateUser(userId, userAction);
+        }
         return;
       }
 
@@ -1303,30 +1351,45 @@
       var depBtn = e.target.closest('[data-dep-action]');
       if (depBtn) {
         var depAct = depBtn.dataset.depAction;
-        if (!window.confirm(depAct === 'complete' ? 'Credit this deposit to the user wallet?' : 'Mark deposit as failed?')) return;
-        resolveDeposit(parseInt(depBtn.dataset.id, 10), depAct);
+        var depId  = parseInt(depBtn.dataset.id, 10);
+        var depMsg = depAct === 'complete'
+          ? 'Credit this deposit to the user\'s wallet balance?'
+          : 'Mark this deposit as failed? The user will be notified.';
+        adminConfirm(depMsg, function () {
+          resolveDeposit(depId, depAct);
+        }, depAct === 'complete' ? 'Confirm Deposit' : 'Fail Deposit');
         return;
       }
 
       // ── Withdrawal modal actions ───────────────────────────────────
       var wrBtn = e.target.closest('[data-wr-action]');
       if (wrBtn) {
-        if (wrBtn.dataset.wrAction === 'approve' && !window.confirm('Approve this withdrawal?')) return;
-        handleWithdrawal(parseInt(wrBtn.dataset.id, 10), wrBtn.dataset.wrAction);
+        var wrId = parseInt(wrBtn.dataset.id, 10);
+        if (wrBtn.dataset.wrAction === 'approve') {
+          adminConfirm('Approve this withdrawal request and mark it as processed?', function () {
+            handleWithdrawal(wrId, 'approve');
+          }, 'Approve Withdrawal');
+        } else {
+          adminPrompt('Provide a reason for rejection (optional).', 'Rejection Reason', function (notes) {
+            handleWithdrawal(wrId, 'reject', notes);
+          }, 'Reject Withdrawal');
+        }
         return;
       }
 
       // ── Savings cancel ─────────────────────────────────────────────
       var savingsCancelBtn = e.target.closest('[data-savings-cancel]');
       if (savingsCancelBtn) {
-        if (!window.confirm('Cancel this savings plan?')) return;
-        apiFetch('/api/admin-dashboard/savings.php', {
-          method: 'POST',
-          body: JSON.stringify({ action: 'cancel', id: parseInt(savingsCancelBtn.dataset.savingsCancel, 10) })
-        }).then(function (r) {
-          showToast(r.success ? 'Plan cancelled' : (r.message || 'Failed'), !r.success);
-          if (r.success) { savingsLoaded = false; loadAdminSavings(savingsPage); }
-        });
+        var savCancelId = parseInt(savingsCancelBtn.dataset.savingsCancel, 10);
+        adminConfirm('Cancel this savings plan? The user\'s current balance will be returned to their wallet.', function () {
+          apiFetch('/api/admin-dashboard/savings.php', {
+            method: 'POST',
+            body: JSON.stringify({ action: 'cancel', id: savCancelId })
+          }).then(function (r) {
+            showToast(r.success ? 'Plan cancelled' : (r.message || 'Failed'), !r.success);
+            if (r.success) { savingsLoaded = false; loadAdminSavings(savingsPage); }
+          });
+        }, 'Cancel Savings Plan');
         return;
       }
 
@@ -1334,17 +1397,19 @@
       var fxdActionBtn = e.target.closest('[data-fxd-action]');
       if (fxdActionBtn) {
         var fxdAct = fxdActionBtn.dataset.fxdAction;
+        var fxdId  = parseInt(fxdActionBtn.dataset.id, 10);
         var fxdMsg = fxdAct === 'mature'
-          ? 'Mark as matured and credit expected return to user wallet?'
-          : 'Cancel this fixed deposit?';
-        if (!window.confirm(fxdMsg)) return;
-        apiFetch('/api/admin-dashboard/deposits.php', {
-          method: 'POST',
-          body: JSON.stringify({ action: fxdAct, id: parseInt(fxdActionBtn.dataset.id, 10) })
-        }).then(function (r) {
-          showToast(r.success ? r.message : (r.message || 'Failed'), !r.success);
-          if (r.success) { depositsAdminLoaded = false; loadAdminDeposits(depositsAdminPage); }
-        });
+          ? 'Mark as matured and credit the expected return to the user\'s wallet?'
+          : 'Cancel this fixed deposit and return the principal to the user\'s wallet?';
+        adminConfirm(fxdMsg, function () {
+          apiFetch('/api/admin-dashboard/deposits.php', {
+            method: 'POST',
+            body: JSON.stringify({ action: fxdAct, id: fxdId })
+          }).then(function (r) {
+            showToast(r.success ? r.message : (r.message || 'Failed'), !r.success);
+            if (r.success) { depositsAdminLoaded = false; loadAdminDeposits(depositsAdminPage); }
+          });
+        }, fxdAct === 'mature' ? 'Mature Deposit' : 'Cancel Deposit');
         return;
       }
 
@@ -1352,9 +1417,15 @@
       var loanActionBtn = e.target.closest('[data-loan-action]');
       if (loanActionBtn) {
         var lAct = loanActionBtn.dataset.loanAction;
-        var lMsg = lAct === 'approve' ? 'Approve and disburse this loan?' : lAct === 'reject' ? 'Reject this application?' : 'Close this loan?';
-        if (!window.confirm(lMsg)) return;
-        handleLoanAction(parseInt(loanActionBtn.dataset.id, 10), lAct);
+        var lId  = parseInt(loanActionBtn.dataset.id, 10);
+        var lMsg = lAct === 'approve'
+          ? 'Approve this loan application and disburse funds to the user\'s wallet?'
+          : lAct === 'reject' ? 'Reject this loan application?'
+          : 'Close this loan and mark it as fully settled?';
+        var lTitle = lAct === 'approve' ? 'Approve Loan' : lAct === 'reject' ? 'Reject Loan' : 'Close Loan';
+        adminConfirm(lMsg, function () {
+          handleLoanAction(lId, lAct);
+        }, lTitle);
         return;
       }
 
@@ -1375,8 +1446,10 @@
       // ── Rate delete ────────────────────────────────────────────────
       var rateDeleteBtn = e.target.closest('[data-rate-delete]');
       if (rateDeleteBtn) {
-        if (!window.confirm('Delete this rate?')) return;
-        deleteRate(rateDeleteBtn.dataset.rateDelete);
+        var rateId = rateDeleteBtn.dataset.rateDelete;
+        adminConfirm('Delete this interest rate? This cannot be undone.', function () {
+          deleteRate(rateId);
+        }, 'Delete Rate');
         return;
       }
 
@@ -1392,15 +1465,18 @@
       // ── Savings adjust balance ─────────────────────────────────────
       var savingsAdjustBtn = e.target.closest('[data-savings-adjust]');
       if (savingsAdjustBtn) {
-        var newAmt = parseFloat(window.prompt('Enter new saved amount (USD):'));
-        if (isNaN(newAmt) || newAmt < 0) return;
-        apiFetch('/api/admin-dashboard/savings.php', {
-          method: 'POST',
-          body: JSON.stringify({ action: 'adjust', id: parseInt(savingsAdjustBtn.dataset.savingsAdjust, 10), amount: newAmt })
-        }).then(function (r) {
-          showToast(r.success ? 'Balance adjusted' : (r.message || 'Failed'), !r.success);
-          if (r.success) { savingsLoaded = false; loadAdminSavings(savingsPage); }
-        });
+        var adjId = parseInt(savingsAdjustBtn.dataset.savingsAdjust, 10);
+        adminPrompt('Enter the new saved balance (USD) for this plan.', 'New Balance (USD)', function (val) {
+          var newAmt = parseFloat(val);
+          if (isNaN(newAmt) || newAmt < 0) { showToast('Invalid amount', true); return; }
+          apiFetch('/api/admin-dashboard/savings.php', {
+            method: 'POST',
+            body: JSON.stringify({ action: 'adjust', id: adjId, amount: newAmt })
+          }).then(function (r) {
+            showToast(r.success ? 'Balance adjusted' : (r.message || 'Failed'), !r.success);
+            if (r.success) { savingsLoaded = false; loadAdminSavings(savingsPage); }
+          });
+        }, 'Adjust Savings Balance');
         return;
       }
 
