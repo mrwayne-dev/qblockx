@@ -284,11 +284,16 @@ require_once '../../includes/head.php';
     <section data-section="savings" class="dashboard-section">
 
       <!-- Stats -->
-      <div class="stats-row stats-row--2">
+      <div class="stats-row stats-row--3">
         <div class="stat-card">
           <span class="stat-label">Total Saved</span>
           <span class="stat-value" data-stat="total-saved">$0.00</span>
           <span class="stat-sub">Across all active plans</span>
+        </div>
+        <div class="stat-card stat-card--locked">
+          <span class="stat-label"><i class="ph ph-lock-simple" style="vertical-align:middle;margin-right:.25rem;"></i>Locked in Savings</span>
+          <span class="stat-value" data-stat="locked-in-savings">$0.00</span>
+          <span class="stat-sub">Deducted from your wallet balance</span>
         </div>
         <div class="stat-card">
           <span class="stat-label">Active Plans</span>

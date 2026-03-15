@@ -1168,7 +1168,7 @@
     try {
       var r = await apiFetch('/api/admin-dashboard/approve-withdrawal.php', {
         method: 'POST',
-        body:   JSON.stringify({ request_id: id, action: action, notes: notes })
+        body:   JSON.stringify({ id: id, action: action, notes: notes })
       });
       if (r.success) {
         showToast(r.message || ('Withdrawal ' + action + 'd'));

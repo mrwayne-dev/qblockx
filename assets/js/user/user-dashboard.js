@@ -1118,8 +1118,9 @@
       var d = await apiFetch('/api/user-dashboard/savings.php');
       if (!d || d.error) return;
 
-      setText('[data-stat="total-saved"]',   '$' + fmt(d.total_saved || 0));
-      setText('[data-stat="savings-count"]', d.active_count || 0);
+      setText('[data-stat="total-saved"]',       '$' + fmt(d.total_saved || 0));
+      setText('[data-stat="locked-in-savings"]', '$' + fmt(d.total_saved || 0));
+      setText('[data-stat="savings-count"]',      d.active_count || 0);
 
       var tbody = qs('[data-table="savings-plans"]');
       if (tbody) {
