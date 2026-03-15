@@ -29,7 +29,17 @@
       "Bash(find /c/mrwayne/web_dev/crestvalebank/pages/admin -type f -name *.php)",
       "Bash(find /c/mrwayne/web_dev/crestvalebank/includes/admin-modals -name *.php)",
       "Bash(find /c/mrwayne/web_dev/crestvalebank/includes -name *settings* -o -name *admin*section*)",
-      "Bash(find /c/mrwayne/web_dev/crestvalebank/includes -name *admin* -type f)"
+      "Bash(find /c/mrwayne/web_dev/crestvalebank/includes -name *admin* -type f)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(grep -r \"min_withdrawal\\\\|withdrawal.*fee\\\\|withdrawal.*charge\" /c/mrwayne/web_dev/crestvalebank/api/ --include=*.php)",
+      "Bash(grep -r \"withdrawal.*fee\\\\|deductible\\\\|charge\" /c/mrwayne/web_dev/crestvalebank --include=*.php --include=*.js)",
+      "Bash(find C:mrwayneweb_devcrestvalebank -type f \\\\\\(-name *.php -o -name *.js -o -name *.html \\\\\\))",
+      "Bash(git reset:*)",
+      "Bash(grep -n \"id=\"\".*Btn\\\\|id=\"\".*Submit\\\\|id=\"\".*Save\\\\|id=\"\".*btn\" C:mrwayneweb_devcrestvalebankincludesadmin-modals*.php)",
+      "Bash(grep -rn \"welcome.html\\\\|sendWelcome\" C:/mrwayne/web_dev/crestvalebank/ --include=*.php)",
+      "Bash(find /c/mrwayne/web_dev/crestvalebank -name Mailer* -o -name mailer*)"
     ]
   }
 }
