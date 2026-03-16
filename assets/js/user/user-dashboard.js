@@ -1,6 +1,48 @@
 (function () {
   'use strict';
 
+  // ── Currency ──────────────────────────────────────────────────────────────────
+
+  var _currencySymbols = {
+    // Major Global
+    USD:'$',    EUR:'€',    GBP:'£',    JPY:'¥',    CHF:'Fr',
+    // Americas
+    AUD:'A$',   CAD:'C$',   NZD:'NZ$',  BRL:'R$',   MXN:'MX$',
+    COP:'Col$', ARS:'AR$',  CLP:'CL$',  PEN:'S/',   UYU:'$U',
+    DOP:'RD$',  TTD:'TT$',  JMD:'J$',
+    // Europe
+    SEK:'kr',   NOK:'kr',   DKK:'kr',   PLN:'zł',   CZK:'Kč',
+    HUF:'Ft',   RON:'lei',  BGN:'лв',   HRK:'kn',   RSD:'din',
+    UAH:'₴',    RUB:'₽',    TRY:'₺',    ISK:'kr',
+    // Asia & Pacific
+    CNY:'¥',    INR:'₹',    SGD:'S$',   HKD:'HK$',  KRW:'₩',
+    TWD:'NT$',  IDR:'Rp',   PHP:'₱',    THB:'฿',    MYR:'RM',
+    VND:'₫',    BDT:'৳',    PKR:'₨',    LKR:'₨',    NPR:'₨',
+    MMK:'K',    KHR:'៛',
+    // Middle East
+    AED:'د.إ',  SAR:'﷼',    QAR:'﷼',    KWD:'KD',   BHD:'BD',
+    OMR:'﷼',    JOD:'JD',   ILS:'₪',    IQD:'ع.د',  IRR:'﷼',
+    // Africa
+    NGN:'₦',    ZAR:'R',    KES:'KSh',  GHS:'₵',    EGP:'£E',
+    MAD:'MAD',  TZS:'TSh',  UGX:'USh',  ETB:'Br',   DZD:'دج',
+    TND:'DT',   XOF:'CFA',  XAF:'FCFA', RWF:'RF',   ZMW:'ZK',
+    MZN:'MT',   BWP:'P'
+  };
+  var _currencySymbol = '$';
+  var _currencyCode   = 'USD';
+
+  function initCurrency(code) {
+    _currencyCode   = (code || 'USD').toUpperCase();
+    _currencySymbol = _currencySymbols[_currencyCode] || (_currencyCode + '\u00a0');
+    try { localStorage.setItem('cv_currency', _currencyCode); } catch(e) {}
+    document.querySelectorAll('.js-currency-code').forEach(function(el) {
+      el.textContent = _currencyCode;
+    });
+    document.querySelectorAll('.js-currency-sym').forEach(function(el) {
+      el.textContent = _currencySymbol;
+    });
+  }
+
   // ── Helpers ──────────────────────────────────────────────────────────────────
 
   async function apiFetch(url, opts) {
@@ -178,16 +220,17 @@
       var d = r.data;
 
       // Balance (overview stat card + wallet hero)
-      var balStr = '$' + fmt(d.balance);
+      if (d.currency) initCurrency(d.currency);
+      var balStr = _currencySymbol + fmt(d.balance);
       setText('[data-stat="balance"]',          balStr);
       setText('[data-wallet="balance"]',        balStr);
       _lastBalance = parseFloat(d.balance || 0);
       applyBalanceHidden(localStorage.getItem('balanceHidden') === '1');
 
       // Other overview stat cards
-      setText('[data-stat="savings-balance"]',  '$' + fmt(d.savings_balance  || 0));
-      setText('[data-stat="deposits-balance"]', '$' + fmt(d.deposits_balance || 0));
-      setText('[data-stat="loan-balance"]',     '$' + fmt(d.loan_balance     || 0));
+      setText('[data-stat="savings-balance"]',  _currencySymbol + fmt(d.savings_balance  || 0));
+      setText('[data-stat="deposits-balance"]', _currencySymbol + fmt(d.deposits_balance || 0));
+      setText('[data-stat="loan-balance"]',     _currencySymbol + fmt(d.loan_balance     || 0));
 
       // Recent transactions (overview table only — not wallet history)
       var tbody = qs('[data-table="recent-transactions"]');
@@ -196,7 +239,7 @@
           ? d.recent_transactions.map(function (tx) {
               return '<tr>'
                 + '<td>' + txTypeBadge(tx.type) + '</td>'
-                + '<td>$' + fmt(tx.amount) + '</td>'
+                + '<td>' + _currencySymbol + fmt(tx.amount) + '</td>'
                 + '<td>' + badge(tx.status) + '</td>'
                 + '<td>' + fmtDate(tx.created_at) + '</td>'
                 + '</tr>';
@@ -240,10 +283,11 @@
       if (!r.success) return;
       var d = r.data;
 
-      setText('[data-stat="balance"]',           '$' + fmt(d.balance));
-      setText('[data-stat="savings-balance"]',   '$' + fmt(d.savings_balance || 0));
-      setText('[data-stat="deposits-balance"]',  '$' + fmt(d.deposits_balance || 0));
-      setText('[data-stat="loan-balance"]',      '$' + fmt(d.loan_balance || 0));
+      if (d.currency) initCurrency(d.currency);
+      setText('[data-stat="balance"]',           _currencySymbol + fmt(d.balance));
+      setText('[data-stat="savings-balance"]',   _currencySymbol + fmt(d.savings_balance || 0));
+      setText('[data-stat="deposits-balance"]',  _currencySymbol + fmt(d.deposits_balance || 0));
+      setText('[data-stat="loan-balance"]',      _currencySymbol + fmt(d.loan_balance || 0));
 
       if (d.user) {
         var displayName = d.user.full_name || d.user.email || '';
@@ -270,7 +314,7 @@
           tbody.innerHTML = d.recent_transactions.map(function (tx) {
             return '<tr>'
               + '<td>' + txTypeBadge(tx.type) + '</td>'
-              + '<td>$' + fmt(tx.amount) + '</td>'
+              + '<td>' + _currencySymbol + fmt(tx.amount) + '</td>'
               + '<td>' + badge(tx.status) + '</td>'
               + '<td>' + fmtDate(tx.created_at) + '</td>'
               + '</tr>';
@@ -406,11 +450,11 @@
     var interest = amount * (plan.rate / 100) * (plan.months / 12);
     var total    = amount + interest;
     preview.style.display = 'block';
-    setText('#savingsCalcPrincipal', '$' + fmt(amount));
+    setText('#savingsCalcPrincipal', _currencySymbol + fmt(amount));
     setHTML('#savingsCalcRate',      parseFloat(plan.rate).toFixed(2) + pctIcon + '&thinsp;p.a.');
     setText('#savingsCalcDuration',  plan.months + ' months');
-    setText('#savingsCalcInterest',  '+$' + fmt(interest));
-    setText('#savingsCalcTotal',     '$' + fmt(total));
+    setText('#savingsCalcInterest',  '+' + _currencySymbol + fmt(interest));
+    setText('#savingsCalcTotal',     _currencySymbol + fmt(total));
   }
 
   function updateFdCalc() {
@@ -423,11 +467,11 @@
     var interest = amount * (plan.rate / 100) * (plan.months / 12);
     var total    = amount + interest;
     preview.style.display = 'block';
-    setText('#fdCalcPrincipal', '$' + fmt(amount));
-    setText('#fdCalcInterest',  '+$' + fmt(interest));
+    setText('#fdCalcPrincipal', _currencySymbol + fmt(amount));
+    setText('#fdCalcInterest',  '+' + _currencySymbol + fmt(interest));
     setText('#fdCalcDuration',  plan.months + ' months');
     setHTML('#fdCalcRate',      parseFloat(plan.rate).toFixed(2) + pctIcon + '&thinsp;p.a.');
-    setText('#fdCalcTotal',     '$' + fmt(total));
+    setText('#fdCalcTotal',     _currencySymbol + fmt(total));
     setText('#fdCalcMaturity',  addMonths(new Date(), plan.months));
   }
 
@@ -451,12 +495,12 @@
       totalInterest  = totalRepayable - principal;
     }
     preview.style.display = 'block';
-    setText('#loanCalcPrincipal', '$' + fmt(principal));
-    setText('#loanCalcMonthly',   '$' + fmt(monthly));
+    setText('#loanCalcPrincipal', _currencySymbol + fmt(principal));
+    setText('#loanCalcMonthly',   _currencySymbol + fmt(monthly));
     setText('#loanCalcDuration',  n + ' months');
     setHTML('#loanCalcRate',      parseFloat(plan.rate).toFixed(2) + pctIcon + '&thinsp;p.a.');
-    setText('#loanCalcInterest',  '$' + fmt(totalInterest));
-    setText('#loanCalcTotal',     '$' + fmt(totalRepayable));
+    setText('#loanCalcInterest',  _currencySymbol + fmt(totalInterest));
+    setText('#loanCalcTotal',     _currencySymbol + fmt(totalRepayable));
   }
 
   // ── NOWPayments Auto-Verify ───────────────────────────────────────────────────
@@ -612,10 +656,11 @@
       if (!r.success) return;
       var d = r.data;
 
+      if (d.currency) initCurrency(d.currency);
       _lastBalance    = parseFloat(d.balance || 0);
       _withdrawalFee  = parseFloat(d.withdrawal_fee || 0);
 
-      setText('[data-wallet="balance"]', '$' + fmt(_lastBalance));
+      setText('[data-wallet="balance"]', _currencySymbol + fmt(_lastBalance));
       // Restore hidden-balance state from localStorage
       applyBalanceHidden(localStorage.getItem('balanceHidden') === '1');
 
@@ -625,7 +670,7 @@
           tbody.innerHTML = d.transactions.map(function (tx) {
             return '<tr>'
               + '<td>' + txTypeBadge(tx.type) + '</td>'
-              + '<td>$' + fmt(tx.amount) + '</td>'
+              + '<td>' + _currencySymbol + fmt(tx.amount) + '</td>'
               + '<td>' + badge(tx.status) + '</td>'
               + '<td>' + (tx.notes || '--') + '</td>'
               + '<td>' + fmtDate(tx.created_at) + '</td>'
@@ -641,7 +686,7 @@
         if (d.withdrawals && d.withdrawals.length) {
           wdList.innerHTML = d.withdrawals.map(function (w) {
             return '<div class="withdrawal-item">'
-              + '<span>$' + fmt(w.amount) + '</span>'
+              + '<span>' + _currencySymbol + fmt(w.amount) + '</span>'
               + badge(w.status)
               + '<span>' + fmtDate(w.created_at) + '</span>'
               + '</div>';
@@ -658,7 +703,7 @@
   function applyBalanceHidden(hidden) {
     var el   = qs('[data-wallet="balance"]');
     var icon = document.getElementById('balanceToggleIcon');
-    if (el)   el.textContent = hidden ? '••••••' : ('$' + fmt(_lastBalance));
+    if (el)   el.textContent = hidden ? '••••••' : (_currencySymbol + fmt(_lastBalance));
     if (icon) icon.className = hidden ? 'ph ph-eye-slash' : 'ph ph-eye';
   }
 
@@ -879,8 +924,8 @@
         form.reset();
         loadWallet();
         // Also refresh overview balance
-        setText('[data-stat="balance"]', '$' + fmt(r.new_balance || 0));
-        setText('[data-wallet="balance"]', '$' + fmt(r.new_balance || 0));
+        setText('[data-stat="balance"]', _currencySymbol + fmt(r.new_balance || 0));
+        setText('[data-wallet="balance"]', _currencySymbol + fmt(r.new_balance || 0));
       } else {
         showMsg(msgEl, r.message || 'Transfer failed. Please try again.', true);
       }
@@ -1113,8 +1158,8 @@
     var amtEl = document.getElementById('repayAmount');
     var msgEl = document.getElementById('repayLoanMsg');
     if (idEl)  idEl.value        = loanId;
-    if (outEl) outEl.textContent = '$' + fmt(outstanding || 0);
-    if (monEl) monEl.textContent = '$' + fmt(monthly || 0);
+    if (outEl) outEl.textContent = _currencySymbol + fmt(outstanding || 0);
+    if (monEl) monEl.textContent = _currencySymbol + fmt(monthly || 0);
     if (amtEl) amtEl.value       = '';
     if (msgEl) { msgEl.style.display = 'none'; msgEl.textContent = ''; }
     var btn = document.getElementById('repayLoanBtn');
@@ -1205,8 +1250,8 @@
       var d = await apiFetch('/api/user-dashboard/savings.php');
       if (!d || d.error) return;
 
-      setText('[data-stat="total-saved"]',       '$' + fmt(d.total_saved || 0));
-      setText('[data-stat="locked-in-savings"]', '$' + fmt(d.total_saved || 0));
+      setText('[data-stat="total-saved"]',       _currencySymbol + fmt(d.total_saved || 0));
+      setText('[data-stat="locked-in-savings"]', _currencySymbol + fmt(d.total_saved || 0));
       setText('[data-stat="savings-count"]',      d.active_count || 0);
 
       var tbody = qs('[data-table="savings-plans"]');
@@ -1218,8 +1263,8 @@
               : 0;
             return '<tr>'
               + '<td>' + p.plan_name + '</td>'
-              + '<td>$' + fmt(p.target_amount) + '</td>'
-              + '<td>$' + fmt(p.current_amount) + '</td>'
+              + '<td>' + _currencySymbol + fmt(p.target_amount) + '</td>'
+              + '<td>' + _currencySymbol + fmt(p.current_amount) + '</td>'
               + '<td>' + (p.interest_rate || '—') + '<i class="ph ph-percent"></i>&thinsp;p.a.</td>'
               + '<td><div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div> ' + pct + '<i class="ph ph-percent"></i></td>'
               + '<td>' + (p.duration_months || '—') + ' mo</td>'
@@ -1242,8 +1287,8 @@
               : 0;
             return '<tr>'
               + '<td>' + p.plan_name + '</td>'
-              + '<td>$' + fmt(p.target_amount) + '</td>'
-              + '<td>$' + fmt(p.current_amount) + '</td>'
+              + '<td>' + _currencySymbol + fmt(p.target_amount) + '</td>'
+              + '<td>' + _currencySymbol + fmt(p.current_amount) + '</td>'
               + '<td>' + (p.interest_rate || '—') + '<i class="ph ph-percent"></i>&thinsp;p.a.</td>'
               + '<td><div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div> ' + pct + '<i class="ph ph-percent"></i></td>'
               + '<td>' + badge(p.status) + '</td>'
@@ -1265,20 +1310,20 @@
       var d = await apiFetch('/api/user-dashboard/deposits.php');
       if (!d || d.error) return;
 
-      setText('[data-stat="total-deposited"]',       '$' + fmt(d.total_deposited || 0));
-      setText('[data-stat="total-expected-return"]', '$' + fmt(d.total_expected_return || 0));
+      setText('[data-stat="total-deposited"]',       _currencySymbol + fmt(d.total_deposited || 0));
+      setText('[data-stat="total-expected-return"]', _currencySymbol + fmt(d.total_expected_return || 0));
 
       var tbody = qs('[data-table="fixed-deposits"]');
       if (tbody) {
         if (d.deposits && d.deposits.length) {
           tbody.innerHTML = d.deposits.map(function (dep) {
             return '<tr>'
-              + '<td>$' + fmt(dep.amount) + '</td>'
+              + '<td>' + _currencySymbol + fmt(dep.amount) + '</td>'
               + '<td>' + (dep.interest_rate || '—') + '<i class="ph ph-percent"></i>&thinsp;p.a.</td>'
               + '<td>' + (dep.duration_months || '—') + ' mo</td>'
               + '<td>' + fmtDate(dep.start_date) + '</td>'
               + '<td>' + fmtDate(dep.maturity_date) + '</td>'
-              + '<td>$' + fmt(dep.expected_return) + '</td>'
+              + '<td>' + _currencySymbol + fmt(dep.expected_return) + '</td>'
               + '<td>' + badge(dep.status) + '</td>'
               + '</tr>';
           }).join('');
@@ -1298,17 +1343,17 @@
       var d = await apiFetch('/api/user-dashboard/loans.php');
       if (!d || d.error) return;
 
-      setText('[data-stat="total-borrowed"]',    '$' + fmt(d.total_borrowed || 0));
-      setText('[data-stat="remaining-balance"]', '$' + fmt(d.remaining_balance || 0));
+      setText('[data-stat="total-borrowed"]',    _currencySymbol + fmt(d.total_borrowed || 0));
+      setText('[data-stat="remaining-balance"]', _currencySymbol + fmt(d.remaining_balance || 0));
 
       var activeTbody = qs('[data-table="active-loans"]');
       if (activeTbody) {
         if (d.active_loans && d.active_loans.length) {
           activeTbody.innerHTML = d.active_loans.map(function (l) {
             return '<tr>'
-              + '<td>$' + fmt(l.loan_amount) + '</td>'
-              + '<td>$' + fmt(l.remaining_balance) + '</td>'
-              + '<td>$' + fmt(l.monthly_payment) + '</td>'
+              + '<td>' + _currencySymbol + fmt(l.loan_amount) + '</td>'
+              + '<td>' + _currencySymbol + fmt(l.remaining_balance) + '</td>'
+              + '<td>' + _currencySymbol + fmt(l.monthly_payment) + '</td>'
               + '<td>' + (l.interest_rate || '—') + '<i class="ph ph-percent"></i>&thinsp;p.a.</td>'
               + '<td>' + (l.duration_months || '—') + ' mo</td>'
               + '<td>' + badge(l.status) + '</td>'
@@ -1325,7 +1370,7 @@
         if (d.pending_loans && d.pending_loans.length) {
           pendingTbody.innerHTML = d.pending_loans.map(function (l) {
             return '<tr>'
-              + '<td>$' + fmt(l.loan_amount) + '</td>'
+              + '<td>' + _currencySymbol + fmt(l.loan_amount) + '</td>'
               + '<td>' + (l.duration_months || '—') + ' mo</td>'
               + '<td>' + fmtDate(l.created_at) + '</td>'
               + '<td>' + badge(l.status) + '</td>'
@@ -1343,8 +1388,8 @@
           upcomingEl.innerHTML = d.active_loans.map(function (l) {
             return '<tr>'
               + '<td>' + (l.purpose || '—') + '</td>'
-              + '<td><strong>$' + fmt(l.monthly_payment) + '</strong></td>'
-              + '<td>$' + fmt(l.remaining_balance) + '</td>'
+              + '<td><strong>' + _currencySymbol + fmt(l.monthly_payment) + '</strong></td>'
+              + '<td>' + _currencySymbol + fmt(l.remaining_balance) + '</td>'
               + '<td>' + (l.duration_months || '—') + ' mo</td>'
               + '<td>' + badge(l.status) + '</td>'
               + '</tr>';
@@ -1521,6 +1566,12 @@
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') closeAllModals();
     });
+
+    // ── Seed currency from cache so symbol is correct before first fetch ──
+    try {
+      var _cachedCurrency = localStorage.getItem('cv_currency');
+      if (_cachedCurrency) initCurrency(_cachedCurrency);
+    } catch(e) {}
 
     // ── Load section from URL path, default to overview ───────────────────
     activateSection(sectionFromPath(), false); // false = path already correct, don't re-push

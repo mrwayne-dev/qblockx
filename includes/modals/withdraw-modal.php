@@ -60,7 +60,7 @@
 
         <!-- Amount — shared -->
         <div class="form-group">
-          <label for="withdrawAmount">Amount (USD)</label>
+          <label for="withdrawAmount">Amount (<span class="js-currency-code">USD</span>)</label>
           <input type="number" id="withdrawAmount" name="amount"
                  min="10" step="1" placeholder="e.g. 200"
                  inputmode="decimal" autocomplete="off">

@@ -37,9 +37,9 @@
         </div>
 
         <div class="form-group">
-          <label for="fdAmount">Deposit Amount (USD)</label>
+          <label for="fdAmount">Deposit Amount (<span class="js-currency-code">USD</span>)</label>
           <input type="number" id="fdAmount" name="amount"
-                 min="100" step="0.01" placeholder="Minimum $100"
+                 min="100" step="0.01" placeholder="Minimum 100"
                  inputmode="decimal" autocomplete="off" required>
         </div>
 
@@ -51,11 +51,11 @@
           </div>
           <div class="calc-row">
             <span>Principal</span>
-            <strong id="fdCalcPrincipal">$0.00</strong>
+            <strong id="fdCalcPrincipal">0.00</strong>
           </div>
           <div class="calc-row">
             <span>Interest Earned</span>
-            <strong id="fdCalcInterest" class="calc-positive">+$0.00</strong>
+            <strong id="fdCalcInterest" class="calc-positive">+0.00</strong>
           </div>
           <div class="calc-row">
             <span>Duration</span>
@@ -67,7 +67,7 @@
           </div>
           <div class="calc-row calc-row--total">
             <span>Total at Maturity</span>
-            <strong id="fdCalcTotal">$0.00</strong>
+            <strong id="fdCalcTotal">0.00</strong>
           </div>
           <div class="calc-row">
             <span>Maturity Date</span>

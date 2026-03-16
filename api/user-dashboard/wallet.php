@@ -16,10 +16,11 @@ try {
 
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         // Wallet balance
-        $walletStmt = $db->prepare("SELECT balance FROM wallets WHERE user_id = :uid");
+        $walletStmt = $db->prepare("SELECT balance, currency FROM wallets WHERE user_id = :uid");
         $walletStmt->execute(['uid' => $user['id']]);
         $wallet = $walletStmt->fetch();
-        $balance = $wallet ? (float) $wallet['balance'] : 0.0;
+        $balance  = $wallet ? (float) $wallet['balance'] : 0.0;
+        $currency = $wallet['currency'] ?? 'USD';
 
         // Recent transactions (last 10)
         $txStmt = $db->prepare(
@@ -51,6 +52,7 @@ try {
             'success' => true,
             'data'    => [
                 'balance'         => number_format($balance, 2, '.', ''),
+                'currency'        => $currency,
                 'transactions'    => $transactions,
                 'withdrawals'     => $withdrawals,
                 'withdrawal_fee'  => $withdrawal_fee,

@@ -67,22 +67,22 @@ require_once '../../includes/head.php';
       <div class="stats-row stats-row--4">
         <div class="stat-card">
           <span class="stat-label">Wallet Balance</span>
-          <span class="stat-value" data-stat="balance">$0.00</span>
+          <span class="stat-value" data-stat="balance">0.00</span>
           <span class="stat-sub">Available to use</span>
         </div>
         <div class="stat-card">
           <span class="stat-label">Savings Balance</span>
-          <span class="stat-value" data-stat="savings-balance">$0.00</span>
+          <span class="stat-value" data-stat="savings-balance">0.00</span>
           <span class="stat-sub">Total saved across plans</span>
         </div>
         <div class="stat-card">
           <span class="stat-label">Deposits Balance</span>
-          <span class="stat-value" data-stat="deposits-balance">$0.00</span>
+          <span class="stat-value" data-stat="deposits-balance">0.00</span>
           <span class="stat-sub">Total in fixed deposits</span>
         </div>
         <div class="stat-card">
           <span class="stat-label">Loan Balance</span>
-          <span class="stat-value" data-stat="loan-balance">$0.00</span>
+          <span class="stat-value" data-stat="loan-balance">0.00</span>
           <span class="stat-sub">Outstanding loan amount</span>
         </div>
       </div>
@@ -220,7 +220,7 @@ require_once '../../includes/head.php';
       <div class="balance-hero">
         <span class="balance-label">Available Balance</span>
         <div class="balance-display">
-          <span class="balance-value" data-wallet="balance">$0.00</span>
+          <span class="balance-value" data-wallet="balance">0.00</span>
           <button class="balance-toggle" id="balanceToggle" type="button" aria-label="Toggle balance visibility">
             <i class="ph ph-eye" id="balanceToggleIcon"></i>
           </button>
@@ -302,12 +302,12 @@ require_once '../../includes/head.php';
       <div class="stats-row stats-row--3">
         <div class="stat-card">
           <span class="stat-label">Total Saved</span>
-          <span class="stat-value" data-stat="total-saved">$0.00</span>
+          <span class="stat-value" data-stat="total-saved">0.00</span>
           <span class="stat-sub">Across all active plans</span>
         </div>
         <div class="stat-card stat-card--locked">
           <span class="stat-label"><i class="ph ph-lock-simple" style="vertical-align:middle;margin-right:.25rem;"></i>Locked in Savings</span>
-          <span class="stat-value" data-stat="locked-in-savings">$0.00</span>
+          <span class="stat-value" data-stat="locked-in-savings">0.00</span>
           <span class="stat-sub">Deducted from your wallet balance</span>
         </div>
         <div class="stat-card">
@@ -367,12 +367,12 @@ require_once '../../includes/head.php';
       <div class="stats-row stats-row--2">
         <div class="stat-card">
           <span class="stat-label">Total Invested</span>
-          <span class="stat-value" data-stat="total-deposited">$0.00</span>
+          <span class="stat-value" data-stat="total-deposited">0.00</span>
           <span class="stat-sub">Across all deposits</span>
         </div>
         <div class="stat-card">
           <span class="stat-label">Expected Returns</span>
-          <span class="stat-value" data-stat="total-expected-return">$0.00</span>
+          <span class="stat-value" data-stat="total-expected-return">0.00</span>
           <span class="stat-sub">Principal + interest at maturity</span>
         </div>
       </div>
@@ -427,12 +427,12 @@ require_once '../../includes/head.php';
       <div class="stats-row stats-row--2">
         <div class="stat-card">
           <span class="stat-label">Total Borrowed</span>
-          <span class="stat-value" data-stat="total-borrowed">$0.00</span>
+          <span class="stat-value" data-stat="total-borrowed">0.00</span>
           <span class="stat-sub">Principal amount disbursed</span>
         </div>
         <div class="stat-card">
           <span class="stat-label">Total Outstanding</span>
-          <span class="stat-value" data-stat="remaining-balance">$0.00</span>
+          <span class="stat-value" data-stat="remaining-balance">0.00</span>
           <span class="stat-sub">Principal + interest still owed</span>
         </div>
       </div>

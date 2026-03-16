@@ -237,6 +237,17 @@ BEGIN
       MODIFY COLUMN `status` ENUM('success','partial','failed') NOT NULL;
   END IF;
 
+  -- ── 8. wallets.currency — per-user currency preference ───────────────────
+  IF NOT EXISTS (
+    SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME   = 'wallets'
+      AND COLUMN_NAME  = 'currency'
+  ) THEN
+    ALTER TABLE `wallets`
+      ADD COLUMN `currency` VARCHAR(10) NOT NULL DEFAULT 'USD' AFTER `balance`;
+  END IF;
+
 END$$
 
 DELIMITER ;

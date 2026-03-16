@@ -31,7 +31,7 @@
       </p>
 
       <div class="form-group">
-        <label for="addFundsAmount">Amount to Add (USD)</label>
+        <label for="addFundsAmount">Amount to Add (<span class="js-currency-code">USD</span>)</label>
         <input type="number" id="addFundsAmount" min="1" step="1"
                placeholder="e.g. 100" inputmode="decimal" autocomplete="off">
       </div>

@@ -45,7 +45,7 @@
         </div>
 
         <div class="form-group">
-          <label for="savingsTargetAmount">Target Amount (USD)</label>
+          <label for="savingsTargetAmount">Target Amount (<span class="js-currency-code">USD</span>)</label>
           <input type="number" id="savingsTargetAmount" name="target_amount"
                  min="10" step="0.01" placeholder="0.00"
                  inputmode="decimal" autocomplete="off" required>
@@ -61,7 +61,7 @@
           </div>
           <div class="calc-row">
             <span>Target Amount</span>
-            <strong id="savingsCalcPrincipal">$0.00</strong>
+            <strong id="savingsCalcPrincipal">0.00</strong>
           </div>
           <div class="calc-row">
             <span>Interest Rate</span>
@@ -73,11 +73,11 @@
           </div>
           <div class="calc-row">
             <span>Interest Earned</span>
-            <strong id="savingsCalcInterest" class="calc-positive">+$0.00</strong>
+            <strong id="savingsCalcInterest" class="calc-positive">+0.00</strong>
           </div>
           <div class="calc-row calc-row--total">
             <span>Total at Maturity</span>
-            <strong id="savingsCalcTotal">$0.00</strong>
+            <strong id="savingsCalcTotal">0.00</strong>
           </div>
         </div>
 

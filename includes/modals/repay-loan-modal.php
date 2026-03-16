@@ -29,16 +29,16 @@
       <div class="calc-preview" style="margin-bottom:1.1rem;">
         <div class="calc-row">
           <span>Outstanding Balance</span>
-          <strong id="repayOutstanding">$0.00</strong>
+          <strong id="repayOutstanding">0.00</strong>
         </div>
         <div class="calc-row">
           <span>Monthly Payment</span>
-          <strong id="repayMonthly">$0.00</strong>
+          <strong id="repayMonthly">0.00</strong>
         </div>
       </div>
 
       <div class="form-group">
-        <label for="repayAmount">Repayment Amount (USD)</label>
+        <label for="repayAmount">Repayment Amount (<span class="js-currency-code">USD</span>)</label>
         <input type="number" id="repayAmount" min="1" step="0.01"
                placeholder="e.g. 250" inputmode="decimal" autocomplete="off">
       </div>

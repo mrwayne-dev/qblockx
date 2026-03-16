@@ -412,10 +412,12 @@ document.addEventListener('DOMContentLoaded', function () {
       text.style.display    = 'none';
       spinner.style.display = '';
 
+      var currencyEl = document.getElementById('currency');
       var data  = {
         email:     document.getElementById('email').value.trim(),
         password:  password,
-        full_name: document.getElementById('full_name').value.trim()
+        full_name: document.getElementById('full_name').value.trim(),
+        currency:  currencyEl ? currencyEl.value : 'USD'
       };
 
       try {

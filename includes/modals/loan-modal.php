@@ -37,9 +37,9 @@
         </div>
 
         <div class="form-group">
-          <label for="loanAmountInput">Loan Amount (USD)</label>
+          <label for="loanAmountInput">Loan Amount (<span class="js-currency-code">USD</span>)</label>
           <input type="number" id="loanAmountInput" name="loan_amount"
-                 min="100" step="0.01" placeholder="Minimum $100"
+                 min="100" step="0.01" placeholder="Minimum 100"
                  inputmode="decimal" autocomplete="off" required>
         </div>
 
@@ -58,11 +58,11 @@
           </div>
           <div class="calc-row">
             <span>Loan Amount</span>
-            <strong id="loanCalcPrincipal">$0.00</strong>
+            <strong id="loanCalcPrincipal">0.00</strong>
           </div>
           <div class="calc-row">
             <span>Monthly Payment</span>
-            <strong id="loanCalcMonthly" class="calc-highlight">$0.00</strong>
+            <strong id="loanCalcMonthly" class="calc-highlight">0.00</strong>
           </div>
           <div class="calc-row">
             <span>Duration</span>
@@ -74,11 +74,11 @@
           </div>
           <div class="calc-row">
             <span>Total Interest</span>
-            <strong id="loanCalcInterest" class="calc-warn">$0.00</strong>
+            <strong id="loanCalcInterest" class="calc-warn">0.00</strong>
           </div>
           <div class="calc-row calc-row--total">
             <span>Total Repayable</span>
-            <strong id="loanCalcTotal">$0.00</strong>
+            <strong id="loanCalcTotal">0.00</strong>
           </div>
         </div>
 

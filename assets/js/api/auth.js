@@ -13,11 +13,11 @@ const AuthAPI = (() => {
         return res.json();
     }
 
-    async function register(email, password, full_name, ref_code = '') {
+    async function register(email, password, full_name, ref_code = '', currency = 'USD') {
         const res = await fetch('/api/auth/user-register.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password, full_name, ref_code }),
+            body: JSON.stringify({ email, password, full_name, ref_code, currency }),
         });
         return res.json();
     }
@@ -73,18 +73,24 @@ const AuthAPI = (() => {
         if (registerForm) {
             registerForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const btn = registerForm.querySelector('button[type="submit"]');
-                const msg = document.getElementById('register-msg');
+                const btn     = registerForm.querySelector('button[type="submit"]');
+                const btnText = btn.querySelector('.btn-text');
+                const spinner = btn.querySelector('.btn-spinner');
+                const msg     = document.getElementById('authMsg');
                 const refCode = new URLSearchParams(window.location.search).get('ref') || '';
                 btn.disabled = true;
-                const data = Object.fromEntries(new FormData(registerForm));
-                const result = await register(data.email, data.password, data.full_name || '', refCode);
+                if (btnText) btnText.style.display = 'none';
+                if (spinner) spinner.style.display = '';
+                const data   = Object.fromEntries(new FormData(registerForm));
+                const result = await register(data.email, data.password, data.full_name || '', refCode, data.currency || 'USD');
                 btn.disabled = false;
+                if (btnText) btnText.style.display = '';
+                if (spinner) spinner.style.display = 'none';
                 if (result.success) {
                     window.location.href = '/login';
                 } else if (msg) {
-                    msg.textContent   = result.message;
-                    msg.className     = 'error';
+                    msg.textContent = result.message;
+                    msg.className   = 'auth-msg auth-msg--error';
                     msg.style.display = 'block';
                 }
             });

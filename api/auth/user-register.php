@@ -20,6 +20,8 @@ $input     = json_decode(file_get_contents('php://input'), true);
 $email     = trim($input['email'] ?? '');
 $password  = $input['password'] ?? '';
 $full_name = trim($input['full_name'] ?? '');
+$currency  = strtoupper(trim($input['currency'] ?? 'USD'));
+if (!preg_match('/^[A-Z]{3,5}$/', $currency)) $currency = 'USD';
 
 if (empty($email) || empty($password)) {
     ob_end_clean();
@@ -56,8 +58,8 @@ try {
     $new_user_id = (int) $db->lastInsertId();
 
     // Create wallet for new user
-    $db->prepare("INSERT INTO wallets (user_id) VALUES (:uid)")
-       ->execute(['uid' => $new_user_id]);
+    $db->prepare("INSERT INTO wallets (user_id, currency) VALUES (:uid, :currency)")
+       ->execute(['uid' => $new_user_id, 'currency' => $currency]);
 
     // Generate 6-digit verification code (15-minute expiry)
     $code       = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);

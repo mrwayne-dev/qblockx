@@ -15,11 +15,12 @@ try {
     $db  = Database::getInstance()->getConnection();
     $uid = $user['id'];
 
-    // Wallet balance
-    $walletStmt = $db->prepare("SELECT balance FROM wallets WHERE user_id = :uid");
+    // Wallet balance + currency
+    $walletStmt = $db->prepare("SELECT balance, currency FROM wallets WHERE user_id = :uid");
     $walletStmt->execute(['uid' => $uid]);
-    $wallet  = $walletStmt->fetch();
-    $balance = $wallet ? (float) $wallet['balance'] : 0.0;
+    $wallet   = $walletStmt->fetch();
+    $balance  = $wallet ? (float) $wallet['balance'] : 0.0;
+    $currency = $wallet['currency'] ?? 'USD';
 
     // Savings balance (sum of current_amount across active plans)
     $savingsStmt = $db->prepare(
@@ -80,6 +81,7 @@ try {
                 'full_name'    => $userInfo['full_name'],
                 'member_since' => $userInfo['created_at'],
             ],
+            'currency'            => $currency,
             'balance'             => number_format($balance,          2, '.', ''),
             'savings_balance'     => number_format($savings_balance,  2, '.', ''),
             'deposits_balance'    => number_format($deposits_balance, 2, '.', ''),

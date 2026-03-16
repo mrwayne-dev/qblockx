@@ -41,7 +41,7 @@
         </div>
 
         <div class="form-group">
-          <label for="transferAmount">Amount (USD)</label>
+          <label for="transferAmount">Amount (<span class="js-currency-code">USD</span>)</label>
           <input type="number" id="transferAmount" name="amount"
                  min="1" step="0.01" placeholder="0.00"
                  inputmode="decimal" autocomplete="off" required>
