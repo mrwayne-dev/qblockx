@@ -15,17 +15,14 @@
   .nav-links-desktop { display: none; }
   .nav-cta-btn { display: none; }
 
-  /* Hero — tablet: keep split but reduce right visual */
+  /* Hero — tablet: increase bottom padding for stats card bleed */
   .hero-split {
-    padding: 110px var(--space-8) 80px;
+    padding: 110px var(--space-8) 130px;
     gap: var(--space-6);
   }
-  .hero-right {
-    flex: 0 0 38%;
-    min-height: 300px;
-  }
   .hero-panel > .hero-stats-card {
-    left: var(--space-8);
+    right: var(--space-8);
+    left: auto;
     width: 340px;
   }
 
@@ -147,21 +144,29 @@
     min-height: auto;
   }
 
-  /* Split hero stacks vertically on mobile */
+  /* Split hero: single column, centered content on mobile */
   .hero-split {
     flex-direction: column;
     padding: 100px var(--space-5) var(--space-10);
     gap: var(--space-6);
     min-height: auto;
+    text-align: center;
   }
 
   .hero-left {
     max-width: 100%;
   }
 
-  /* Hide right visual placeholder on mobile */
-  .hero-right {
-    display: none;
+  .hero-subtext {
+    margin-inline: auto;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .hero-proof {
+    justify-content: center;
   }
 
   /* Sub-page centered hero */
@@ -170,9 +175,9 @@
   }
 
   .hero-h1 {
-    font-size: 26px;
-    line-height: 32.5px;
-    letter-spacing: -0.8px;
+    font-size: 30px;
+    line-height: 38px;
+    letter-spacing: -1px;
   }
 
   /* Stats card: return to flow on mobile (not absolute) */

@@ -630,11 +630,10 @@ h1, h2, h3, h4 {
 /* Panel — max ~1000px, centered, deep blue radial glow */
 .hero-panel {
   position: relative;
-  background: radial-gradient(
-    ellipse at 70% 50%,
-    rgba(34, 98, 255, 0.28) 0%,
-    transparent 65%
-  ), #030B1D;
+  background:
+    radial-gradient(ellipse 60% 70% at 78% 28%, rgba(34, 98, 255, 0.60) 0%, rgba(34, 98, 255, 0.22) 42%, transparent 70%),
+    radial-gradient(ellipse 40% 50% at 55% 72%, rgba(0, 18, 70, 0.55) 0%, transparent 58%),
+    #030B1D;
   border-radius: var(--radius-panel);
   overflow: visible;
   color: var(--color-text-on-dark);
@@ -664,7 +663,7 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   gap: 32px;
-  padding: 110px 40px 100px 40px;
+  padding: 110px 40px 150px 40px;
   min-height: 520px;
 }
 
@@ -739,10 +738,10 @@ h1, h2, h3, h4 {
 }
 
 .hero-h1 {
-  font-size: var(--text-h1);
+  font-size: 42px;
   font-weight: 700;
-  line-height: 42.5px;
-  letter-spacing: -1.2px;
+  line-height: 52px;
+  letter-spacing: -1.5px;
   color: #FFFFFF;
   margin-bottom: var(--space-5);
 }
@@ -819,11 +818,12 @@ h1, h2, h3, h4 {
   margin: var(--space-8) auto 0;
 }
 
-/* Split hero: absolutely positioned at bottom-left, overlapping bottom edge */
+/* Split hero: absolutely positioned at bottom-right, overlapping bottom edge */
 .hero-panel > .hero-stats-card {
   position: absolute;
   bottom: -40px;
-  left: 40px;
+  right: 40px;
+  left: auto;
   width: 380px;
   max-width: none;
   margin: 0;

@@ -66,10 +66,6 @@ require_once '../../includes/head.php';
 
         </div>
 
-        <!-- Right: visual placeholder (replace with 3D asset when ready) -->
-        <div class="hero-right" aria-hidden="true">
-          <span>[ Visual Coming ]</span>
-        </div>
 
       </div>
 
