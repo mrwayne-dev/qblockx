@@ -64,5 +64,7 @@ $pageKeywords    = $pageKeywords    ?? 'Qblockx, investment platform, investment
   <?php foreach ($extraHeadScripts ?? [] as $src): ?>
   <script src="<?= htmlspecialchars($src) ?>" defer></script>
   <?php endforeach; ?>
+  <!-- Strip URL hash on load so the page always starts at the top -->
+  <script>if(window.location.hash)history.replaceState(null,'',location.pathname+location.search);</script>
 </head>
 <body class="<?= htmlspecialchars($bodyClass ?? '') ?>">

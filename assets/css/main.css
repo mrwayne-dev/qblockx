@@ -621,9 +621,9 @@ h1, h2, h3, h4 {
 
 /* ── Hero ───────────────────────────────────────────────────── */
 
-/* Outer wrapper — constrains hero panel width, extra bottom for card bleed */
+/* Outer wrapper — constrains hero panel width */
 .hero-outer {
-  padding: 8px 16px 72px;
+  padding: 8px 16px 32px;
   background: var(--color-bg);
 }
 
@@ -635,7 +635,7 @@ h1, h2, h3, h4 {
     radial-gradient(ellipse 40% 50% at 55% 72%, rgba(0, 18, 70, 0.55) 0%, transparent 58%),
     #030B1D;
   border-radius: var(--radius-panel);
-  overflow: visible;
+  overflow: hidden;
   color: var(--color-text-on-dark);
   min-height: 520px;
   max-width: 1008px;
@@ -663,7 +663,7 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   gap: 32px;
-  padding: 110px 40px 150px 40px;
+  padding: 110px 40px 120px 40px;
   min-height: 520px;
 }
 
@@ -818,10 +818,10 @@ h1, h2, h3, h4 {
   margin: var(--space-8) auto 0;
 }
 
-/* Split hero: absolutely positioned at bottom-right, overlapping bottom edge */
+/* Split hero: absolutely positioned at bottom-right, inside the panel */
 .hero-panel > .hero-stats-card {
   position: absolute;
-  bottom: -40px;
+  bottom: 32px;
   right: 40px;
   left: auto;
   width: 380px;

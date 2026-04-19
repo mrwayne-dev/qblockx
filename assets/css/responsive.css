@@ -15,15 +15,16 @@
   .nav-links-desktop { display: none; }
   .nav-cta-btn { display: none; }
 
-  /* Hero — tablet: increase bottom padding for stats card bleed */
+  /* Hero — tablet: bottom padding keeps space for contained stats card */
   .hero-split {
-    padding: 110px var(--space-8) 130px;
+    padding: 110px var(--space-8) 120px;
     gap: var(--space-6);
   }
   .hero-panel > .hero-stats-card {
     right: var(--space-8);
     left: auto;
-    width: 340px;
+    bottom: 24px;
+    width: 320px;
   }
 
   /* Plan grid — 2 columns */
@@ -183,10 +184,9 @@
   /* Stats card: return to flow on mobile (not absolute) */
   .hero-panel > .hero-stats-card {
     position: static;
-    width: 100%;
-    max-width: 100%;
-    margin: var(--space-6) var(--space-5) 0;
     width: calc(100% - 40px);
+    max-width: 100%;
+    margin: 0 var(--space-5) var(--space-6);
     bottom: auto;
     right: auto;
   }
