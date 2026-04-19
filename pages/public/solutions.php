@@ -1,10 +1,11 @@
 <?php
 /**
- * Project: crestvalebank
- * Page: Products (solutions.php serves /products and /solutions)
+ * Project: Qblockx
+ * Page: Investment Products (solutions.php serves /products and /solutions)
  */
-$pageTitle       = 'Products';
-$pageDescription = 'Explore CrestVale Bank\'s products — goal-based savings plans, fixed deposits with up to 12% p.a., flexible loans, and instant wallet-to-wallet transfers.';
+$pageTitle       = 'Investment Products';
+$pageDescription = 'Explore Qblockx investment products — tiered investment plans from $1,000 to $10M, commodities, and fractional real estate. Transparent returns, structured durations.';
+$pageKeywords    = 'Qblockx products, investment plans, commodities investing, real estate, high yield';
 require_once '../../includes/head.php';
 ?>
 
@@ -12,251 +13,219 @@ require_once '../../includes/head.php';
 
 <main>
 
-  <!-- ── Hero ──────────────────────────────────────────────────── -->
-  <section class="hero hero--static" role="region" aria-label="Products hero">
-    <div class="hero-split">
-      <div class="hero-left">
-        <div class="hero-content active" data-slide="0">
-          <span class="hero-tag">Products</span>
-          <h1 class="hero-heading">
-            <span class="hero-line">Everything you need</span>
-            <span class="hero-line">to grow your money</span>
-          </h1>
-          <p class="hero-subtext">
-            CrestVale Bank offers a complete suite of banking products — savings plans,
-            fixed deposits, loans, and instant transfers — all connected through your
-            central wallet and managed in one place.
-          </p>
-          <div class="hero-actions">
-            <a href="/register" class="btn-hero-outline">
-              Open Account <i class="ph ph-arrow-right" aria-hidden="true"></i>
-            </a>
-            <a href="/contact" class="btn-hero-ghost">
-              Contact Us <i class="ph ph-arrow-right" aria-hidden="true"></i>
-            </a>
+  <!-- ── 1. Hero ──────────────────────────────────────────────────── -->
+  <div class="hero-outer">
+    <div class="hero-panel">
+      <div class="hero-content">
+
+        <div class="badge-outer">
+          <div class="badge-ring"></div>
+          <div class="badge-ring" style="animation-delay:-1s;"></div>
+          <div class="badge-ring" style="animation-delay:-2s;"></div>
+          <div class="badge-inner">
+            <i class="ph ph-briefcase" aria-hidden="true" style="margin-right:6px;"></i>
+            Investment Products
           </div>
         </div>
+
+        <h1 class="hero-h1">Every asset class,<br>one platform.</h1>
+
+        <p class="hero-subtext">
+          Qblockx gives you access to structured investment plans, commodity markets, and fractional real estate — all with transparent returns and clear terms.
+        </p>
+
+        <div class="hero-actions">
+          <a href="/register" class="btn-primary">
+            Start Investing <i class="ph ph-arrow-right" aria-hidden="true"></i>
+          </a>
+          <a href="#plans" class="btn-outline-white">
+            View Plans
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── 2. Investment Plans Feature ─────────────────────────────── -->
+  <section class="section" id="plans" role="region" aria-labelledby="plans-title">
+    <div class="container">
+
+      <div class="section-header" data-appear>
+        <span class="section-label">PRODUCT 01</span>
+        <h2 id="plans-title" class="section-title">
+          Tiered investment plans
+        </h2>
+        <p class="section-subtitle">
+          Eight structured plans across two tiers — Starter and Elite. Fixed durations, clear returns, zero ambiguity.
+        </p>
+      </div>
+
+      <div class="feature-outer" data-appear>
+        <div class="feature-inner">
+          <div class="feature-icon">
+            <i class="ph ph-chart-pie" aria-hidden="true"></i>
+          </div>
+          <h3 class="feature-title">Starter Plans — $1,000 to $49,999</h3>
+          <p class="feature-body">
+            Four entry-level plans for investors growing their portfolio. Returns range from 30% to 150% per cycle, with durations of 7 to 30 days. Simple structure, fast turnaround.
+          </p>
+          <a href="/#plans" class="feature-arrow" aria-label="View Starter Plans">
+            <i class="ph ph-arrow-right" aria-hidden="true"></i>
+          </a>
+        </div>
+        <div class="feature-image-side" aria-hidden="true"
+             style="background:linear-gradient(135deg,#050F26,#111C3A); display:flex; align-items:center; justify-content:center;">
+          <i class="ph ph-chart-bar" style="font-size:64px; color:rgba(34,98,255,0.40);"></i>
+        </div>
+      </div>
+
+      <div class="feature-outer" style="margin-top:20px;" data-appear>
+        <div class="feature-image-side" aria-hidden="true"
+             style="background:linear-gradient(135deg,#050F26,#111C3A); display:flex; align-items:center; justify-content:center;">
+          <i class="ph ph-crown" style="font-size:64px; color:rgba(34,98,255,0.40);"></i>
+        </div>
+        <div class="feature-inner">
+          <div class="feature-icon">
+            <i class="ph ph-crown" aria-hidden="true"></i>
+          </div>
+          <h3 class="feature-title">Elite Plans — $50,000 to $10,000,000</h3>
+          <p class="feature-body">
+            Four high-capital plans for serious investors. Returns from 200% up to 400%, with durations of 14 days to 365 days. Compounded returns on Gold and Platinum tiers.
+          </p>
+          <a href="/#plans" class="feature-arrow" aria-label="View Elite Plans">
+            <i class="ph ph-arrow-right" aria-hidden="true"></i>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ── 3. Commodities & Real Estate — dark panel ─────────────────── -->
+  <section style="background:var(--color-bg); padding:0 0 var(--space-8);"
+           id="assets" role="region" aria-labelledby="assets-title">
+    <div class="section-dark">
+      <div class="dark-section-inner">
+
+        <div style="text-align:center; margin-bottom:var(--space-12);" data-appear>
+          <span class="section-label" style="color:rgba(211,216,233,0.70);">PRODUCTS 02 & 03</span>
+          <h2 id="assets-title" class="section-title" style="color:#FFFFFF; margin-top:var(--space-3);">
+            Diversify your portfolio
+          </h2>
+          <p class="section-subtitle" style="color:rgba(255,255,255,0.55); max-width:520px; margin:var(--space-4) auto 0;">
+            Beyond investment plans, Qblockx gives you access to tangible asset classes that protect and grow your wealth.
+          </p>
+        </div>
+
+        <div class="asset-cards" data-appear>
+
+          <div class="asset-card">
+            <div class="asset-card-icon">
+              <i class="ph ph-coins" aria-hidden="true"></i>
+            </div>
+            <h3 class="asset-card-title">Commodities</h3>
+            <p class="asset-card-body">
+              Invest in precious metals (gold, silver), energy (oil, gas), and agricultural commodities. Hedge your portfolio against inflation with real-world assets that hold value long-term.
+            </p>
+            <a href="/register" class="asset-card-link">
+              Start Investing <i class="ph ph-arrow-right" aria-hidden="true"></i>
+            </a>
+          </div>
+
+          <div class="asset-card">
+            <div class="asset-card-icon">
+              <i class="ph ph-buildings" aria-hidden="true"></i>
+            </div>
+            <h3 class="asset-card-title">Real Estate</h3>
+            <p class="asset-card-body">
+              Access fractional real estate investments in global markets. Build a diversified property portfolio without the full capital outlay of direct ownership.
+            </p>
+            <a href="/register" class="asset-card-link">
+              Explore Properties <i class="ph ph-arrow-right" aria-hidden="true"></i>
+            </a>
+          </div>
+
+          <div class="asset-card">
+            <div class="asset-card-icon">
+              <i class="ph ph-wallet" aria-hidden="true"></i>
+            </div>
+            <h3 class="asset-card-title">Central Wallet</h3>
+            <p class="asset-card-body">
+              One wallet manages all your investments, deposits, returns, and withdrawals. Full transaction history, real-time balance, and instant access to your funds at maturity.
+            </p>
+            <a href="/register" class="asset-card-link">
+              Open Account <i class="ph ph-arrow-right" aria-hidden="true"></i>
+            </a>
+          </div>
+
+        </div>
+
       </div>
     </div>
   </section>
 
-  <!-- ── Savings Plans ──────────────────────────────────────────── -->
-  <section class="use-cases section" id="savings" role="region" aria-labelledby="savings-title">
-    <div class="use-cases-container container" data-appear>
-      <div class="use-cases-content">
-        <span class="section-label">PRODUCT 01 — SAVINGS PLANS</span>
-        <h2 id="savings-title" class="use-cases-title">Goal-Based Savings Accounts</h2>
-        <p>Set a savings target, choose a duration, and contribute regularly.
-           Interest accumulates over time using the formula:
-           <strong>Interest = Principal × Rate × Time</strong>.
-           Plans complete when the target is reached or the duration ends.</p>
+
+  <!-- ── 4. How It Works ──────────────────────────────────────────── -->
+  <section class="section" id="how-it-works" role="region" aria-labelledby="hiw-title">
+    <div class="container">
+
+      <div style="text-align:center; margin-bottom:var(--space-16);" data-appear>
+        <span class="section-label">HOW IT WORKS</span>
+        <h2 id="hiw-title" class="section-title" style="margin-top:var(--space-3);">
+          Three steps to your first return
+        </h2>
       </div>
-      <div class="use-cases-cards">
-        <div class="use-cases-card glass">
-          <i class="ph ph-target use-cases-icon" aria-hidden="true"></i>
-          <h3 class="use-cases-card-title">Goal-Based</h3>
-          <p class="use-cases-card-description">
-            Name your plan, set a target amount, and contribute at your own pace.
-            CrestVale tracks your progress every step of the way.
-          </p>
+
+      <div class="how-steps" data-appear>
+
+        <div class="how-step">
+          <div class="how-step-num" aria-hidden="true">01</div>
+          <h3 class="how-step-title">Create your account</h3>
+          <p class="how-step-body">Sign up in minutes. Verify your identity and fund your wallet to unlock access to all investment plans and asset classes.</p>
+          <a href="/register" class="how-step-link">Register Now <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
         </div>
-        <div class="use-cases-card glass">
-          <i class="ph ph-percent use-cases-icon" aria-hidden="true"></i>
-          <h3 class="use-cases-card-title">5.5<i class="ph ph-percent"></i> p.a. Interest</h3>
-          <p class="use-cases-card-description">
-            Earn competitive interest on your saved balance. Interest accumulates
-            monthly and is credited at plan completion or withdrawal.
-          </p>
+
+        <div class="how-step">
+          <div class="how-step-num" aria-hidden="true">02</div>
+          <h3 class="how-step-title">Choose your product</h3>
+          <p class="how-step-body">Select a Starter or Elite plan, or allocate to commodities and real estate. All products are available from your dashboard.</p>
+          <a href="/#plans" class="how-step-link">View Plans <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
         </div>
-        <div class="use-cases-card glass">
-          <i class="ph ph-arrows-in use-cases-icon" aria-hidden="true"></i>
-          <h3 class="use-cases-card-title">Flexible Contributions</h3>
-          <p class="use-cases-card-description">
-            Add funds from your wallet whenever you're ready — no fixed contribution
-            schedule required. Withdraw anytime (subject to terms).
-          </p>
+
+        <div class="how-step">
+          <div class="how-step-num" aria-hidden="true">03</div>
+          <h3 class="how-step-title">Earn and withdraw</h3>
+          <p class="how-step-body">At maturity, returns are credited automatically to your wallet. Withdraw anytime to your preferred payment method.</p>
+          <a href="/login" class="how-step-link">Go to Dashboard <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
         </div>
+
       </div>
+
     </div>
   </section>
 
-  <!-- ── Fixed Deposits ─────────────────────────────────────────── -->
-  <section class="use-cases section" id="deposits" role="region" aria-labelledby="deposits-title">
-    <div class="use-cases-container container" data-appear>
-      <div class="use-cases-content">
-        <span class="section-label">PRODUCT 02 — FIXED DEPOSITS</span>
-        <h2 id="deposits-title" class="use-cases-title">Locked Returns at Higher Rates</h2>
-        <p>Deposit a lump sum for a fixed term and earn higher interest than savings.
-           Funds remain locked until maturity. At maturity, you receive your
-           <strong>principal + interest</strong> in full.
-           Return = Principal + (Principal × Rate × Time).</p>
-      </div>
-      <div class="use-cases-cards">
-        <div class="use-cases-card glass">
-          <i class="ph ph-vault use-cases-icon" aria-hidden="true"></i>
-          <h3 class="use-cases-card-title">6-Month Term</h3>
-          <p class="use-cases-card-description">
-            Lock your funds for 6 months and earn 8<i class="ph ph-percent"></i>&thinsp;p.a. — a competitive rate
-            for medium-term wealth preservation.
-          </p>
-        </div>
-        <div class="use-cases-card glass">
-          <i class="ph ph-chart-line-up use-cases-icon" aria-hidden="true"></i>
-          <h3 class="use-cases-card-title">12-Month Term</h3>
-          <p class="use-cases-card-description">
-            Maximise your return with a 12-month deposit at 12<i class="ph ph-percent"></i>&thinsp;p.a. — ideal for
-            funds you won't need in the short term.
-          </p>
-        </div>
-        <div class="use-cases-card glass">
-          <i class="ph ph-calendar-check use-cases-icon" aria-hidden="true"></i>
-          <h3 class="use-cases-card-title">Maturity Payout</h3>
-          <p class="use-cases-card-description">
-            Your principal and all accumulated interest are automatically returned
-            to your wallet on the maturity date.
-          </p>
+
+  <!-- ── 5. CTA ────────────────────────────────────────────────────── -->
+  <section style="background:var(--color-bg); padding:0 0 var(--space-8);"
+           role="region" aria-labelledby="products-cta-title">
+    <div class="section-dark" style="padding:var(--space-20) var(--space-6); text-align:center;">
+      <div style="max-width:600px; margin:0 auto;" data-appear>
+        <h2 id="products-cta-title" class="section-title" style="color:#FFFFFF; margin-bottom:var(--space-5);">
+          Ready to put your capital to work?
+        </h2>
+        <p class="section-subtitle" style="color:rgba(255,255,255,0.55); margin-bottom:var(--space-10);">
+          Open a free account and start investing across all Qblockx asset classes today.
+        </p>
+        <div class="cta-actions">
+          <a href="/register" class="btn-primary">
+            Create Free Account <i class="ph ph-arrow-right" aria-hidden="true"></i>
+          </a>
+          <a href="/contact" class="btn-outline-white">Talk to Us</a>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- ── Loans ──────────────────────────────────────────────────── -->
-  <section class="use-cases section" id="loans" role="region" aria-labelledby="loans-title">
-    <div class="use-cases-container container" data-appear>
-      <div class="use-cases-content">
-        <span class="section-label">PRODUCT 03 — LOANS</span>
-        <h2 id="loans-title" class="use-cases-title">Flexible Borrowing Solutions</h2>
-        <p>Apply for a loan, receive approval from Crestvale Bank, and have funds credited directly
-           to your wallet. Repay monthly at a fixed rate.
-           <strong>Monthly Payment = Total Loan ÷ Duration (months)</strong>.</p>
-      </div>
-      <div class="use-cases-cards">
-        <div class="use-cases-card glass">
-          <i class="ph ph-hand-coins use-cases-icon" aria-hidden="true"></i>
-          <h3 class="use-cases-card-title">Apply Online</h3>
-          <p class="use-cases-card-description">
-            Submit a loan application directly from your dashboard. Specify the amount
-            and preferred repayment duration.
-          </p>
-        </div>
-        <div class="use-cases-card glass">
-          <i class="ph ph-clock use-cases-icon" aria-hidden="true"></i>
-          <h3 class="use-cases-card-title">Fast Approval</h3>
-          <p class="use-cases-card-description">
-            Crestvale Bank reviews applications promptly. Approved loans are credited
-            to your wallet and active immediately.
-          </p>
-        </div>
-        <div class="use-cases-card glass">
-          <i class="ph ph-calendar use-cases-icon" aria-hidden="true"></i>
-          <h3 class="use-cases-card-title">Monthly Repayments</h3>
-          <p class="use-cases-card-description">
-            Fixed monthly payments make budgeting simple. Track your remaining balance
-            and upcoming due dates from your loans dashboard.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Transfers ──────────────────────────────────────────────── -->
-  <section class="use-cases section" id="transfers" role="region" aria-labelledby="transfers-title">
-    <div class="use-cases-container container" data-appear>
-      <div class="use-cases-content">
-        <span class="section-label">PRODUCT 04 — TRANSFERS</span>
-        <h2 id="transfers-title" class="use-cases-title">Instant Wallet-to-Wallet Transfers</h2>
-        <p>Move money between CrestVale wallets instantly. No fees, no delays.
-           Every transfer is recorded in your transaction history for full transparency.</p>
-      </div>
-      <div class="use-cases-cards">
-        <div class="use-cases-card glass">
-          <i class="ph ph-lightning use-cases-icon" aria-hidden="true"></i>
-          <h3 class="use-cases-card-title">Instant Settlement</h3>
-          <p class="use-cases-card-description">
-            Funds are credited to the recipient's wallet immediately — no waiting
-            periods, no holds.
-          </p>
-        </div>
-        <div class="use-cases-card glass">
-          <i class="ph ph-receipt use-cases-icon" aria-hidden="true"></i>
-          <h3 class="use-cases-card-title">Full Audit Trail</h3>
-          <p class="use-cases-card-description">
-            Every transaction is logged with type, amount, date, and status.
-            Download your statement anytime from the wallet page.
-          </p>
-        </div>
-        <div class="use-cases-card glass">
-          <i class="ph ph-shield-check use-cases-icon" aria-hidden="true"></i>
-          <h3 class="use-cases-card-title">Secure by Design</h3>
-          <p class="use-cases-card-description">
-            Balance checks and session authentication protect every transfer.
-            You can only send funds you have available.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── Rates Table ────────────────────────────────────────────── -->
-  <section class="pricing section" role="region" aria-labelledby="rates-title" id="rates">
-    <div class="pricing-container container" data-appear>
-      <div class="section-header">
-        <span class="section-label">INTEREST RATES</span>
-        <h2 id="rates-title" class="pricing-header">Current Rates</h2>
-        <p class="section-subtitle">Rates are set by Crestvale Bank and may be updated periodically. Always check your dashboard for the latest applicable rates.</p>
-      </div>
-      <div class="pricing-cards">
-
-        <div class="pricing-card glass">
-          <p class="pricing-subtitle">Grow toward your goals.</p>
-          <h3 class="pricing-plan">Savings Plans</h3>
-          <p class="pricing-price">5.5<i class="ph ph-percent"></i> <span class="pricing-rate">p.a.</span></p>
-          <ul class="pricing-features">
-            <li><i class="ph ph-check-circle" aria-hidden="true"></i> Duration: 12 months</li>
-            <li><i class="ph ph-check-circle" aria-hidden="true"></i> Flexible contributions</li>
-            <li><i class="ph ph-check-circle" aria-hidden="true"></i> Monthly interest accrual</li>
-          </ul>
-          <a href="/register" class="btn-primary pricing-button">Start Saving</a>
-        </div>
-
-        <div class="pricing-card glass">
-          <p class="pricing-subtitle">Medium-term lump sum investment.</p>
-          <h3 class="pricing-plan">Fixed Deposit — 6M</h3>
-          <p class="pricing-price">8<i class="ph ph-percent"></i> <span class="pricing-rate">p.a.</span></p>
-          <ul class="pricing-features">
-            <li><i class="ph ph-check-circle" aria-hidden="true"></i> Duration: 6 months</li>
-            <li><i class="ph ph-check-circle" aria-hidden="true"></i> Funds locked at term</li>
-            <li><i class="ph ph-check-circle" aria-hidden="true"></i> Principal + interest at maturity</li>
-          </ul>
-          <a href="/register" class="btn-primary pricing-button">Open Deposit</a>
-        </div>
-
-        <div class="pricing-card glass">
-          <p class="pricing-subtitle">Maximise your returns.</p>
-          <h3 class="pricing-plan">Fixed Deposit — 12M</h3>
-          <p class="pricing-price">12<i class="ph ph-percent"></i> <span class="pricing-rate">p.a.</span></p>
-          <ul class="pricing-features">
-            <li><i class="ph ph-check-circle" aria-hidden="true"></i> Duration: 12 months</li>
-            <li><i class="ph ph-check-circle" aria-hidden="true"></i> Highest available rate</li>
-            <li><i class="ph ph-check-circle" aria-hidden="true"></i> Principal + interest at maturity</li>
-          </ul>
-          <a href="/register" class="btn-shiny pricing-button">Open Deposit</a>
-        </div>
-
-        <div class="pricing-card glass">
-          <p class="pricing-subtitle">Access capital when you need it.</p>
-          <h3 class="pricing-plan">Loans</h3>
-          <p class="pricing-price">12<i class="ph ph-percent"></i> <span class="pricing-rate">p.a.</span></p>
-          <ul class="pricing-features">
-            <li><i class="ph ph-check-circle" aria-hidden="true"></i> Duration: 12 months</li>
-            <li><i class="ph ph-check-circle" aria-hidden="true"></i> Admin approval required</li>
-            <li><i class="ph ph-check-circle" aria-hidden="true"></i> Simple monthly repayments</li>
-          </ul>
-          <a href="/register" class="btn-primary pricing-button">Apply Now</a>
-        </div>
-
-      </div>
-      <p class="pricing-disclaimer">Rates are indicative and subject to change. See the <a href="/risk">Risk Disclosure</a> for full terms.</p>
     </div>
   </section>
 

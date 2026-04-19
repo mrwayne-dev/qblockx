@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* ── Scroll-based nav pill shrink ─────────────────────────── */
   function initNavScroll() {
-    var nav = document.querySelector('.nav-pill');
+    var nav = document.querySelector('[data-header]');
     if (!nav) return;
     var threshold = 60;
     window.addEventListener('scroll', function () {
@@ -80,6 +80,50 @@ document.addEventListener('DOMContentLoaded', function () {
         nav.classList.remove('scrolled');
       }
     }, { passive: true });
+  }
+
+  /* ── Plan Tab Toggle ───────────────────────────────────────── */
+  function initPlanTabs() {
+    var tabs   = document.querySelectorAll('[data-plan-tab]');
+    var panels = document.querySelectorAll('.plan-panel');
+    if (!tabs.length || !panels.length) return;
+
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var target = tab.dataset.planTab;
+        tabs.forEach(function (t) {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        panels.forEach(function (p) { p.classList.remove('active'); });
+        var targetPanel = document.getElementById('panel-' + target);
+        if (targetPanel) targetPanel.classList.add('active');
+      });
+    });
+  }
+
+  /* ── How It Works Tab Toggle ──────────────────────────────── */
+  function initHiwTabs() {
+    var tabs   = document.querySelectorAll('[data-hiw-tab]');
+    var panels = document.querySelectorAll('.hiw-panel');
+    if (!tabs.length || !panels.length) return;
+
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var target = tab.dataset.hiwTab;
+        tabs.forEach(function (t) {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        panels.forEach(function (p) { p.classList.remove('active'); });
+        var targetPanel = document.getElementById('hiw-' + target);
+        if (targetPanel) targetPanel.classList.add('active');
+      });
+    });
   }
 
   /* ── [data-appear] Scroll Animation ───────────────────────── */
@@ -146,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function () {
       syncTickerDuplicates();
 
     } catch (err) {
-      console.warn('[CrestVale Bank] Crypto price fetch failed:', err);
+      console.warn('[Qblockx] Crypto price fetch failed:', err);
     }
   }
 
@@ -687,6 +731,8 @@ document.addEventListener('DOMContentLoaded', function () {
   loadGoogleTranslate();
   initNavToggle();
   initNavScroll();
+  initPlanTabs();
+  initHiwTabs();
   initAppearOnScroll();
   initHeroCarousel();
   initLightRays();

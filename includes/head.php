@@ -5,9 +5,9 @@
  * Set $pageTitle before requiring this file.
  * Set $pageDescription, $pageKeywords to override defaults.
  */
-$pageTitle       = $pageTitle       ?? 'CrestVale Bank';
-$pageDescription = $pageDescription ?? 'CrestVale Bank is a modern fintech banking platform. Grow your money with goal-based savings, fixed deposits, flexible loans, and instant transfers.';
-$pageKeywords    = $pageKeywords    ?? 'fintech bank, savings plans, fixed deposits, loans, transfers, CrestVale Bank, online banking, banking platform';
+$pageTitle       = $pageTitle       ?? 'Qblockx';
+$pageDescription = $pageDescription ?? 'Qblockx is a multi-asset investment platform. Invest smarter in tiered plans, commodities, and real estate. Earn up to 400% with transparent, structured investment plans.';
+$pageKeywords    = $pageKeywords    ?? 'Qblockx, investment platform, investment plans, commodities, real estate, multi-asset investing, high-yield investments';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,20 +19,24 @@ $pageKeywords    = $pageKeywords    ?? 'fintech bank, savings plans, fixed depos
   <!-- SEO -->
   <meta name="description"  content="<?= htmlspecialchars($pageDescription) ?>">
   <meta name="keywords"     content="<?= htmlspecialchars($pageKeywords) ?>">
-  <meta name="author"       content="CrestVale Bank">
+  <meta name="author"       content="Qblockx">
   <meta name="robots"       content="index, follow">
 
   <!-- Open Graph -->
   <meta property="og:type"        content="website">
-  <meta property="og:site_name"   content="CrestVale Bank">
-  <meta property="og:title"       content="<?= htmlspecialchars($pageTitle) ?> — CrestVale Bank">
+  <meta property="og:site_name"   content="Qblockx">
+  <meta property="og:title"       content="<?= htmlspecialchars($pageTitle) ?> — Qblockx">
   <meta property="og:description" content="<?= htmlspecialchars($pageDescription) ?>">
 
-  <title><?= htmlspecialchars($pageTitle) ?> — CrestVale Bank</title>
+  <title><?= htmlspecialchars($pageTitle) ?> — Qblockx</title>
 
   <!-- Preload critical assets -->
-  <link rel="preload" href="/assets/css/main.css"                   as="style">
-  <link rel="preload" href="/assets/fonts/Recoleta-RegularDEMO.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/css/main.css" as="style">
+
+  <!-- Google Fonts — Qblockx brand typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fragment+Mono&display=swap" rel="stylesheet">
 
   <!-- Styles -->
   <link rel="stylesheet" href="/assets/css/main.css">
