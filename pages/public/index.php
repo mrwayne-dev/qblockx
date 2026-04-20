@@ -17,7 +17,7 @@ require_once '../../includes/head.php';
   <div class="hero-outer">
     <div class="hero-panel">
 
-      <!-- Split: text left -->
+      <!-- Split: centered content container -->
       <div class="hero-split">
 
         <!-- Left: text content -->
@@ -66,26 +66,58 @@ require_once '../../includes/head.php';
 
         </div>
 
-      </div>
+        <!-- Stats card — inside hero-split, positioned at bottom-right -->
+        <div class="hero-stats-card" data-appear>
+          <div class="hero-stat">
+            <span class="hero-stat-value text-gradient-blue" data-counter="12500">0</span>
+            <span class="hero-stat-label">Active Investors</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-value text-gradient-blue-rev" data-counter="400" data-counter-suffix="%">0</span>
+            <span class="hero-stat-label">Max Returns</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-value text-gradient-blue" data-counter="500" data-counter-prefix="$" data-counter-suffix="M+">0</span>
+            <span class="hero-stat-label">Assets Managed</span>
+          </div>
+        </div>
 
-      <!-- Stats card — inside panel at bottom-right -->
-      <div class="hero-stats-card" data-appear>
-        <div class="hero-stat">
-          <span class="hero-stat-value text-gradient-blue" data-counter="12500">0</span>
-          <span class="hero-stat-label">Active Investors</span>
-        </div>
-        <div class="hero-stat">
-          <span class="hero-stat-value text-gradient-blue-rev" data-counter="400" data-counter-suffix="%">0</span>
-          <span class="hero-stat-label">Max Returns</span>
-        </div>
-        <div class="hero-stat">
-          <span class="hero-stat-value text-gradient-blue" data-counter="500" data-counter-prefix="$" data-counter-suffix="M+">0</span>
-          <span class="hero-stat-label">Assets Managed</span>
-        </div>
       </div>
 
     </div>
   </div>
+
+
+  <!-- ── 1b. Logo Carousel ─────────────────────────────────────────── -->
+  <section class="logo-carousel-section" aria-label="Trusted by leading institutions">
+    <p class="logo-carousel-label">Trusted by investors &amp; institutions worldwide</p>
+    <div class="logo-ticker-wrap" aria-hidden="true">
+      <div class="logo-ticker-track">
+        <!-- First set -->
+        <div class="logo-ticker-item"><i class="ph ph-bank"></i><span>ClearBank</span></div>
+        <div class="logo-ticker-item"><i class="ph ph-currency-btc"></i><span>BlockFi</span></div>
+        <div class="logo-ticker-item"><i class="ph ph-buildings"></i><span>PropVest</span></div>
+        <div class="logo-ticker-item"><i class="ph ph-chart-bar"></i><span>TradeAxis</span></div>
+        <div class="logo-ticker-item"><i class="ph ph-shield-check"></i><span>SecureVault</span></div>
+        <div class="logo-ticker-item"><i class="ph ph-globe"></i><span>GlobalFund</span></div>
+        <div class="logo-ticker-item"><i class="ph ph-coins"></i><span>MetalCore</span></div>
+        <div class="logo-ticker-item"><i class="ph ph-trend-up"></i><span>AlphaEdge</span></div>
+        <div class="logo-ticker-item"><i class="ph ph-briefcase"></i><span>CapVenture</span></div>
+        <div class="logo-ticker-item"><i class="ph ph-diamond"></i><span>PremiumAssets</span></div>
+        <!-- Duplicate for seamless loop -->
+        <div class="logo-ticker-item"><i class="ph ph-bank"></i><span>ClearBank</span></div>
+        <div class="logo-ticker-item"><i class="ph ph-currency-btc"></i><span>BlockFi</span></div>
+        <div class="logo-ticker-item"><i class="ph ph-buildings"></i><span>PropVest</span></div>
+        <div class="logo-ticker-item"><i class="ph ph-chart-bar"></i><span>TradeAxis</span></div>
+        <div class="logo-ticker-item"><i class="ph ph-shield-check"></i><span>SecureVault</span></div>
+        <div class="logo-ticker-item"><i class="ph ph-globe"></i><span>GlobalFund</span></div>
+        <div class="logo-ticker-item"><i class="ph ph-coins"></i><span>MetalCore</span></div>
+        <div class="logo-ticker-item"><i class="ph ph-trend-up"></i><span>AlphaEdge</span></div>
+        <div class="logo-ticker-item"><i class="ph ph-briefcase"></i><span>CapVenture</span></div>
+        <div class="logo-ticker-item"><i class="ph ph-diamond"></i><span>PremiumAssets</span></div>
+      </div>
+    </div>
+  </section>
 
 
   <!-- ── 2. Why Qblockx ────────────────────────────────────────────── -->
@@ -582,7 +614,115 @@ require_once '../../includes/head.php';
   </section>
 
 
-  <!-- ── 7. CTA ────────────────────────────────────────────────────── -->
+  <!-- ── 7. Security & Trust ──────────────────────────────────────── -->
+  <section class="section" id="security" role="region" aria-labelledby="security-title">
+    <div class="container">
+
+      <div style="text-align:center; margin-bottom:var(--space-12);" data-appear>
+        <span class="section-label">SECURITY &amp; COMPLIANCE</span>
+        <h2 id="security-title" class="section-title" style="margin-top:var(--space-3);">
+          Enterprise-grade security
+        </h2>
+        <p class="section-subtitle" style="max-width:520px; margin:var(--space-4) auto 0;">
+          Your assets are protected by institutional-level infrastructure, verified audits, and continuous compliance monitoring.
+        </p>
+      </div>
+
+      <div class="security-grid" data-appear>
+
+        <div class="security-stat-card">
+          <div class="security-stat-icon">
+            <i class="ph ph-lock" aria-hidden="true"></i>
+          </div>
+          <div class="security-stat-value">256-bit</div>
+          <div class="security-stat-name">AES Encryption</div>
+          <p class="security-stat-desc">All data and transactions are encrypted with bank-grade AES-256, the same standard used by global financial institutions.</p>
+        </div>
+
+        <div class="security-stat-card security-stat-card--accent">
+          <div class="security-stat-icon">
+            <i class="ph ph-shield-check" aria-hidden="true"></i>
+          </div>
+          <div class="security-stat-value">0</div>
+          <div class="security-stat-name">Security Incidents</div>
+          <p class="security-stat-desc">Since launch, Qblockx has maintained a perfect security record — zero breaches, zero unauthorized access, zero fund losses.</p>
+        </div>
+
+        <div class="security-stat-card">
+          <div class="security-stat-icon">
+            <i class="ph ph-certificate" aria-hidden="true"></i>
+          </div>
+          <div class="security-stat-value">CISA+</div>
+          <div class="security-stat-name">Security Certified</div>
+          <p class="security-stat-desc">Certified by leading cybersecurity bodies with continuous penetration testing and independent infrastructure monitoring.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ── 8. FAQ ─────────────────────────────────────────────────────── -->
+  <section class="section" id="faq" role="region" aria-labelledby="faq-title">
+    <div class="container">
+
+      <div class="faq-layout">
+
+        <!-- Left: sticky header -->
+        <div class="faq-header" data-appear>
+          <span class="section-label">FAQ</span>
+          <h2 id="faq-title" class="section-title" style="margin-top:var(--space-3);">
+            Common questions
+          </h2>
+          <p class="section-subtitle" style="margin-top:var(--space-4);">
+            Everything you need to know about investing with Qblockx. Can't find your answer?
+          </p>
+          <a href="/contact" class="btn-primary" style="margin-top:var(--space-8); display:inline-flex;">
+            Ask us directly <i class="ph ph-arrow-right" aria-hidden="true"></i>
+          </a>
+        </div>
+
+        <!-- Right: accordion -->
+        <div class="faq-list" data-appear>
+
+          <details class="faq-item">
+            <summary>How are investment returns calculated?</summary>
+            <div class="faq-body">Returns are calculated on your principal investment amount based on the plan tier and duration. All return percentages are fixed at the time of investment and verified in real time on your dashboard.</div>
+          </details>
+
+          <details class="faq-item">
+            <summary>When can I withdraw my funds?</summary>
+            <div class="faq-body">Withdrawals are available at plan maturity. You can choose to receive funds via bank transfer or crypto wallet within 24–72 hours of submitting a request.</div>
+          </details>
+
+          <details class="faq-item">
+            <summary>Is my investment insured or protected?</summary>
+            <div class="faq-body">All client funds are held in segregated accounts and protected by our institutional-grade security infrastructure. Independent audits are conducted quarterly to verify fund integrity and compliance.</div>
+          </details>
+
+          <details class="faq-item">
+            <summary>What is the minimum investment amount?</summary>
+            <div class="faq-body">The minimum investment starts at $1,000 on the Micro plan. Each tier has defined minimums and maximums — you can view full details on the <a href="#plans" style="color:var(--color-accent);">Investment Plans</a> section.</div>
+          </details>
+
+          <details class="faq-item">
+            <summary>Can I invest in multiple plans simultaneously?</summary>
+            <div class="faq-body">Yes. You can hold multiple active investments across different plan tiers at the same time. Your dashboard consolidates all active plans, returns, and withdrawal history in a single unified view.</div>
+          </details>
+
+          <details class="faq-item">
+            <summary>How do I get started?</summary>
+            <div class="faq-body">Create a free account, complete identity verification, fund your wallet via bank transfer or cryptocurrency, and select an investment plan. The entire setup takes under 10 minutes.</div>
+          </details>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ── 9. CTA ────────────────────────────────────────────────────── -->
   <section style="background:var(--color-bg); padding:0 0 var(--space-8);" role="region" aria-labelledby="cta-title">
     <div class="section-dark" style="padding:var(--space-20) var(--space-6); text-align:center;">
       <div style="max-width:600px; margin:0 auto;" data-appear>

@@ -15,15 +15,23 @@
   .nav-links-desktop { display: none; }
   .nav-cta-btn { display: none; }
 
-  /* Hero — tablet: bottom padding keeps space for contained stats card */
+  /* Hamburger right-aligned on tablet */
+  .nav-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0;
+  }
+
+  /* Hero — tablet: constrained bottom padding for stats card */
   .hero-split {
-    padding: 110px var(--space-8) 120px;
+    padding: calc(var(--nav-height) + 60px) var(--space-8) 180px;
     gap: var(--space-6);
   }
-  .hero-panel > .hero-stats-card {
-    right: var(--space-8);
+  .hero-split > .hero-stats-card {
+    right: 0;
     left: auto;
-    bottom: 24px;
+    bottom: 32px;
     width: 320px;
   }
 
@@ -135,23 +143,23 @@
   .nav-links-desktop { display: none; }
   .nav-cta-btn { display: none; }
 
+  /* Hamburger right-aligned on mobile */
+  .nav-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0;
+  }
+
   /* ── Hero ────────────────────────────────────────────────── */
-  .hero-outer {
-    padding: var(--space-4) 8px var(--space-8);
-  }
-
-  .hero-panel {
-    border-radius: 20px;
-    min-height: auto;
-  }
-
   /* Split hero: single column, centered content on mobile */
   .hero-split {
     flex-direction: column;
-    padding: 100px var(--space-5) var(--space-10);
+    padding: calc(var(--nav-height) + 40px) var(--space-5) var(--space-10);
     gap: var(--space-6);
-    min-height: auto;
+    min-height: 100svh;
     text-align: center;
+    max-width: 100%;
   }
 
   .hero-left {
@@ -182,11 +190,11 @@
   }
 
   /* Stats card: return to flow on mobile (not absolute) */
-  .hero-panel > .hero-stats-card {
+  .hero-split > .hero-stats-card {
     position: static;
-    width: calc(100% - 40px);
+    width: 100%;
     max-width: 100%;
-    margin: 0 var(--space-5) var(--space-6);
+    margin-top: var(--space-6);
     bottom: auto;
     right: auto;
   }
@@ -402,5 +410,46 @@
 
   .footer-grid {
     grid-template-columns: 1.8fr 1fr 1fr 1fr;
+  }
+
+  .security-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .faq-layout {
+    grid-template-columns: 1fr 1.8fr;
+  }
+}
+
+/* ── Tablet responsive overrides for new sections ────────────── */
+@media (min-width: 810px) and (max-width: 1199px) {
+  .security-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .faq-layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+  }
+
+  .faq-header {
+    position: static;
+  }
+}
+
+/* ── Mobile responsive overrides for new sections ────────────── */
+@media (max-width: 809px) {
+  .security-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .faq-layout {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  .faq-header {
+    position: static;
   }
 }

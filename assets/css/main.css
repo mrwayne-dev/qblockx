@@ -621,26 +621,22 @@ h1, h2, h3, h4 {
 
 /* ── Hero ───────────────────────────────────────────────────── */
 
-/* Outer wrapper — constrains hero panel width */
+/* Outer wrapper — full-width hero background */
 .hero-outer {
-  padding: 8px 16px 32px;
-  background: var(--color-bg);
+  background: #030B1D;
 }
 
-/* Panel — max ~1000px, centered, deep blue radial glow */
+/* Panel — full viewport width, 100vh, deep blue radial glow */
 .hero-panel {
   position: relative;
   background:
-    radial-gradient(ellipse 60% 70% at 78% 28%, rgba(34, 98, 255, 0.60) 0%, rgba(34, 98, 255, 0.22) 42%, transparent 70%),
-    radial-gradient(ellipse 40% 50% at 55% 72%, rgba(0, 18, 70, 0.55) 0%, transparent 58%),
+    radial-gradient(ellipse 60% 70% at 75% 30%, rgba(34, 98, 255, 0.55) 0%, rgba(34, 98, 255, 0.20) 45%, transparent 70%),
+    radial-gradient(ellipse 40% 50% at 50% 75%, rgba(0, 18, 70, 0.55) 0%, transparent 58%),
+    radial-gradient(ellipse 30% 40% at 20% 20%, rgba(34, 98, 255, 0.12) 0%, transparent 60%),
     #030B1D;
-  border-radius: var(--radius-panel);
   overflow: hidden;
   color: var(--color-text-on-dark);
-  min-height: 520px;
-  max-width: 1008px;
-  margin-left: auto;
-  margin-right: auto;
+  min-height: 100vh;
 }
 
 /* bg-image hero variant (when a cover photo is used) */
@@ -658,13 +654,16 @@ h1, h2, h3, h4 {
   z-index: 1;
 }
 
-/* ── Split layout (homepage): text left, visual right ── */
+/* ── Split layout (homepage): text left, centered content ── */
 .hero-split {
   display: flex;
   align-items: center;
   gap: 32px;
-  padding: 110px 40px 120px 40px;
-  min-height: 520px;
+  padding: calc(var(--nav-height) + 80px) var(--space-10) 200px;
+  min-height: 100vh;
+  max-width: 1009px;
+  margin: 0 auto;
+  position: relative;
 }
 
 .hero-left {
@@ -818,11 +817,11 @@ h1, h2, h3, h4 {
   margin: var(--space-8) auto 0;
 }
 
-/* Split hero: absolutely positioned at bottom-right, inside the panel */
-.hero-panel > .hero-stats-card {
+/* Split hero: absolutely positioned at bottom-right, inside the centered split */
+.hero-split > .hero-stats-card {
   position: absolute;
-  bottom: 32px;
-  right: 40px;
+  bottom: 48px;
+  right: 0;
   left: auto;
   width: 380px;
   max-width: none;
@@ -2106,4 +2105,221 @@ h1, h2, h3, h4 {
   letter-spacing: -0.32px;
   font-weight: 400;
   margin-top: 2px;
+}
+
+/* ── Logo Carousel ──────────────────────────────────────────── */
+.logo-carousel-section {
+  padding: var(--space-10) 0;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  overflow: hidden;
+}
+
+.logo-carousel-label {
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-6);
+}
+
+.logo-ticker-wrap {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+}
+
+.logo-ticker-track {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  width: max-content;
+  animation: logo-scroll 32s linear infinite;
+}
+
+.logo-ticker-track:hover {
+  animation-play-state: paused;
+}
+
+.logo-ticker-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-surface-muted);
+  font-size: var(--text-base);
+  font-weight: 600;
+  letter-spacing: -0.32px;
+  white-space: nowrap;
+  user-select: none;
+  transition: color var(--transition-fast);
+}
+
+.logo-ticker-item:hover {
+  color: var(--color-text-body);
+}
+
+.logo-ticker-item i {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+@keyframes logo-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ── Security & Trust ───────────────────────────────────────── */
+.security-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+  margin-top: var(--space-2);
+}
+
+.security-stat-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  padding: var(--space-8) var(--space-6);
+  text-align: center;
+  border: 1px solid var(--color-border);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+}
+
+.security-stat-card:hover {
+  box-shadow: var(--shadow-card-lg);
+  transform: translateY(-2px);
+}
+
+.security-stat-card--accent {
+  background: var(--color-navy);
+  border-color: var(--color-navy-mid);
+  color: var(--color-text-on-dark);
+}
+
+.security-stat-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-accent-10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: var(--color-accent);
+  margin: 0 auto var(--space-5);
+}
+
+.security-stat-card--accent .security-stat-icon {
+  background: rgba(34, 98, 255, 0.20);
+}
+
+.security-stat-value {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -1.2px;
+  line-height: 1;
+  color: var(--color-accent);
+  margin-bottom: var(--space-2);
+}
+
+.security-stat-name {
+  font-size: var(--text-base);
+  font-weight: 700;
+  letter-spacing: -0.32px;
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+}
+
+.security-stat-card--accent .security-stat-name {
+  color: #FFFFFF;
+}
+
+.security-stat-desc {
+  font-size: var(--text-sm);
+  line-height: 21px;
+  letter-spacing: -0.32px;
+  color: var(--color-text-body);
+}
+
+.security-stat-card--accent .security-stat-desc {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* ── FAQ ────────────────────────────────────────────────────── */
+.faq-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.8fr;
+  gap: var(--space-16);
+  align-items: start;
+}
+
+.faq-header {
+  position: sticky;
+  top: calc(var(--nav-height) + var(--space-8));
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.faq-item {
+  border: 1px solid var(--color-border-mid);
+  border-radius: var(--radius-inner);
+  overflow: hidden;
+  transition: border-color var(--transition-fast);
+}
+
+.faq-item[open] {
+  border-color: var(--color-accent-20);
+}
+
+.faq-item summary {
+  padding: var(--space-5) var(--space-6);
+  font-size: var(--text-base);
+  font-weight: 600;
+  letter-spacing: -0.32px;
+  color: var(--color-text);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  transition: color var(--transition-fast);
+}
+
+.faq-item summary::-webkit-details-marker { display: none; }
+
+.faq-item summary::after {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-mid);
+  flex-shrink: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath d='M5 2v6M2 5h6' stroke='%238F96A9' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.faq-item[open] summary::after {
+  transform: rotate(45deg);
+  background-color: var(--color-accent-10);
+  border-color: var(--color-accent-20);
+}
+
+.faq-item summary:hover { color: var(--color-accent); }
+
+.faq-body {
+  padding: 0 var(--space-6) var(--space-5);
+  font-size: var(--text-base);
+  line-height: 26px;
+  letter-spacing: -0.32px;
+  color: var(--color-text-body);
 }
