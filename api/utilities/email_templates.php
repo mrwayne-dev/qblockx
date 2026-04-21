@@ -41,8 +41,9 @@ class Mailer
 
         // Merge caller vars with defaults
         $allVars = array_merge([
-            'year'    => date('Y'),
-            'app_url' => $appUrl,
+            'year'     => date('Y'),
+            'app_url'  => $appUrl,
+            'app_name' => $appName,
         ], $vars);
 
         // Replace all {{placeholder}} tokens (escape values for HTML)

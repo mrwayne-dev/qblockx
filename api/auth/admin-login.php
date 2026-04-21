@@ -29,7 +29,7 @@ try {
     $stmt->execute(['email' => $email]);
     $user = $stmt->fetch();
 
-    if ($user && password_verify($password, $user['password'])) {
+    if ($user && password_verify($password, $user['password']) && (!isset($user['is_active']) || (bool) $user['is_active'])) {
         // Regenerate session ID to prevent session fixation attacks
         session_regenerate_id(true);
         $_SESSION['user_id'] = $user['id'];

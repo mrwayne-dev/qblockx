@@ -49,6 +49,13 @@ try {
         exit;
     }
 
+    // Block login if account has been disabled by admin
+    if (isset($user['is_active']) && !(bool) $user['is_active']) {
+        ob_end_clean();
+        echo json_encode(['success' => false, 'message' => 'Your account has been disabled. Please contact support.']);
+        exit;
+    }
+
     // All good — regenerate session ID to prevent session fixation, then start session
     session_regenerate_id(true);
     $_SESSION['user_id'] = $user['id'];
