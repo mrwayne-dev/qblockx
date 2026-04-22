@@ -24,6 +24,9 @@ RewriteRule ^(.*)/$ /$1 [R=301,L]
 
 # ── Short clean URL aliases ───────────────────────────────────
 # Public pages
+RewriteRule ^plans/?$                  /pages/public/plans.php              [L]
+RewriteRule ^commodities/?$            /pages/public/commodities.php        [L]
+RewriteRule ^realestate/?$             /pages/public/realestate.php         [L]
 RewriteRule ^login/?$                  /pages/public/login.php              [L]
 RewriteRule ^register/?$               /pages/public/register.php           [L]
 RewriteRule ^forgot-password/?$        /pages/public/forgot-password.php    [L]

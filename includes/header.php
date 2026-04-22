@@ -15,10 +15,11 @@ function navActive(string $page, string $current): string {
 <header class="nav-public" data-header<?= $lightNav ? ' data-light-nav' : '' ?>>
   <div class="nav-inner">
 
-    <!-- Logo: white version for dark hero, blue version for light pages / scrolled -->
+    <!-- Logo -->
     <a href="/" class="nav-logo" aria-label="Qblockx home">
-      <img src="/assets/images/logo/logowhite.png" class="nav-logo-img nav-logo-dark" alt="Qblockx">
-      <img src="/assets/images/logo/logoblue.png"  class="nav-logo-img nav-logo-light" alt="Qblockx">
+      <img src="/assets/images/logo/logowhite.png" class="nav-logo-img nav-logo-dark" alt="">
+      <img src="/assets/images/logo/logoblue.png"  class="nav-logo-img nav-logo-light" alt="">
+      <span class="nav-logo-text">QBLOCKX</span>
     </a>
 
     <!-- Desktop inline nav links -->
@@ -52,7 +53,8 @@ function navActive(string $page, string $current): string {
     </button>
 
     <a href="/" class="mobile-drawer-logo">
-      <img src="/assets/images/logo/logowhite.png" alt="Qblockx" style="height:28px;">
+      <img src="/assets/images/logo/logowhite.png" alt="" style="height:24px;">
+      <span>QBLOCKX</span>
     </a>
 
     <nav class="mobile-drawer-nav" aria-label="Mobile navigation">

@@ -14,18 +14,11 @@ require_once '../../includes/head.php';
 <main>
 
   <!-- ── Hero ──────────────────────────────────────────────────── -->
-  <section class="hero" role="region" aria-label="Terms of Service hero">
-    <img
-      src="/assets/images/background/arqorabgimage.png"
-      alt=""
-      class="hero-bg"
-      aria-hidden="true"
-      draggable="false"
-    >
-    <div class="hero-container" data-appear>
-      <span class="hero-tag">Legal</span>
-      <h1 class="hero-heading">Terms of Service</h1>
-      <p class="hero-subtext">
+  <section class="legal-hero" data-appear>
+    <div class="legal-hero-inner">
+      <span class="section-label">Legal</span>
+      <h1 class="section-title">Terms of Service</h1>
+      <p class="section-subtitle">
         These Terms of Service govern your use of Qblockx's platform and services.
         Please read them carefully before creating an account or making investments.
       </p>

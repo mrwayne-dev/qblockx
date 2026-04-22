@@ -417,44 +417,66 @@ h1, h2, h3, h4 {
 }
 .nav-links-desktop a:hover { opacity: 0.65; }
 
-/* ── Nav Logo images ──────────────────────────────────────────── */
+/* ── Nav Logo ────────────────────────────────────────────────── */
 .nav-logo {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  gap: 8px;
+  text-decoration: none;
 }
 .nav-logo-img {
-  height: 30px;
+  height: 28px;
   width: auto;
   display: block;
+  flex-shrink: 0;
 }
-/* Default: dark bg → show white logo */
+.nav-logo-text {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  white-space: nowrap;
+}
+
+/* Default (dark bg pages): white icon + white text */
 .nav-logo-dark  { display: block; }
 .nav-logo-light { display: none; }
 
-/* Scrolled state — nav becomes white glass */
+/* Scrolled state — white glass navbar, dark text */
 .nav-public.scrolled {
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow: 0 1px 0 rgba(211, 216, 233, 0.60);
 }
-.nav-public.scrolled .nav-links-desktop a { color: var(--color-text); }
-.nav-public.scrolled .nav-logo { color: var(--color-accent); }
-.nav-public.scrolled .nav-logo-dark  { display: none; }
-.nav-public.scrolled .nav-logo-light { display: block; }
+.nav-public.scrolled .nav-links-desktop a  { color: var(--color-text); }
+.nav-public.scrolled .nav-login-link       { color: var(--color-text-body); }
+.nav-public.scrolled .nav-login-link:hover { color: var(--color-text); }
+.nav-public.scrolled .nav-logo-dark        { display: none; }
+.nav-public.scrolled .nav-logo-light       { display: block; }
+.nav-public.scrolled .nav-logo-text        { color: var(--color-accent); }
 
-/* Light page nav (legal pages, about) — dark text from the start */
-.nav-public[data-light-nav] .nav-links-desktop a {
-  color: var(--color-text);
+/* Legal/about pages — dark nav from page load (no transparent bleed on white bg) */
+.nav-public[data-light-nav] {
+  background: var(--color-navy);
 }
-.nav-public[data-light-nav] .nav-login-link {
-  color: var(--color-text-body);
+/* Keep white text/icon on dark navy bg */
+.nav-public[data-light-nav] .nav-links-desktop a  { color: rgba(255,255,255,0.85); }
+.nav-public[data-light-nav] .nav-login-link        { color: rgba(255,255,255,0.70); }
+.nav-public[data-light-nav] .nav-login-link:hover  { color: #FFFFFF; }
+.nav-public[data-light-nav] .nav-logo-dark         { display: block; }
+.nav-public[data-light-nav] .nav-logo-light        { display: none; }
+/* Scrolled: switch to white glass with dark text */
+.nav-public[data-light-nav].scrolled {
+  background: rgba(255,255,255,0.96);
 }
-.nav-public[data-light-nav] .nav-login-link:hover {
-  color: var(--color-text);
-}
-.nav-public[data-light-nav] .nav-logo-dark  { display: none; }
-.nav-public[data-light-nav] .nav-logo-light { display: block; }
+.nav-public[data-light-nav].scrolled .nav-links-desktop a  { color: var(--color-text); }
+.nav-public[data-light-nav].scrolled .nav-login-link        { color: var(--color-text-body); }
+.nav-public[data-light-nav].scrolled .nav-logo-dark         { display: none; }
+.nav-public[data-light-nav].scrolled .nav-logo-light        { display: block; }
+.nav-public[data-light-nav].scrolled .nav-logo-text         { color: var(--color-accent); }
 
 .nav-actions {
   display: flex;
@@ -593,11 +615,14 @@ h1, h2, h3, h4 {
 .mobile-drawer-close:hover { background: rgba(255, 255, 255, 0.14); }
 
 .mobile-drawer-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 17px;
   font-weight: 700;
-  color: var(--color-accent);
-  letter-spacing: 0.04em;
+  color: #FFFFFF;
+  letter-spacing: 0.10em;
   text-transform: uppercase;
   text-decoration: none;
 }
@@ -1502,14 +1527,69 @@ h1, h2, h3, h4 {
   justify-content: center;
   padding: var(--space-6);
 }
-.auth-card {
+/* .auth-split = same as .auth-card — HTML uses both */
+.auth-card,
+.auth-split {
   display: flex;
   width: 100%;
-  max-width: 900px;
+  max-width: 920px;
   border-radius: var(--radius-panel);
   overflow: hidden;
   box-shadow: var(--shadow-card-lg);
 }
+
+/* Input with leading icon */
+.input-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.input-icon-wrap input,
+.input-icon-wrap select {
+  width: 100%;
+  padding: 14px 18px 14px 44px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-mid);
+  border-radius: var(--radius-inner);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  color: var(--color-text);
+  letter-spacing: -0.32px;
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+.input-icon-wrap input:focus,
+.input-icon-wrap select:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(34,98,255,0.08);
+}
+.input-icon-wrap input::placeholder { color: var(--color-text-muted); }
+.input-icon-wrap .input-icon {
+  position: absolute;
+  left: 16px;
+  color: var(--color-text-muted);
+  font-size: 16px;
+  pointer-events: none;
+  z-index: 1;
+}
+/* Password reveal toggle */
+.input-icon-wrap .input-toggle-pw {
+  position: absolute;
+  right: 14px;
+}
+
+/* Auth misc helpers */
+.auth-subtext {
+  font-size: var(--text-sm);
+  color: var(--color-text-body);
+  letter-spacing: -0.32px;
+}
+.auth-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.full-width { width: 100%; justify-content: center; }
 .auth-panel {
   width: 40%;
   flex-shrink: 0;
@@ -1692,12 +1772,45 @@ h1, h2, h3, h4 {
 }
 
 /* ── Legal Pages ─────────────────────────────────────────────── */
+
+/* Legal hero — simple light-themed header (no dark overlay needed) */
+.legal-hero {
+  background: var(--color-surface);
+  padding: calc(var(--nav-height) + 64px) var(--space-6) 72px;
+  text-align: center;
+  border-bottom: 1px solid var(--color-border-mid);
+}
+.legal-hero-inner {
+  max-width: 640px;
+  margin: 0 auto;
+}
+.legal-hero-inner .section-label {
+  display: block;
+  margin-bottom: var(--space-4);
+}
+.legal-hero-inner .section-title {
+  font-size: 48px;
+  line-height: 56px;
+  letter-spacing: -1.8px;
+  margin-bottom: var(--space-5);
+}
+.legal-hero-inner .section-subtitle {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
 .legal-page-section {
   padding: var(--section-pad) 0;
 }
-.legal-page-section .container {
+.legal-page-section .container,
+.legal-page-container {
   max-width: 760px;
+  margin-inline: auto;
+  padding-inline: var(--space-6);
 }
+
+/* .legal-page-body = alias for .legal-doc typography */
+.legal-page-body h2,
 .legal-doc h2 {
   font-size: 20px;
   font-weight: 700;
@@ -1705,6 +1818,7 @@ h1, h2, h3, h4 {
   color: var(--color-text);
   margin: var(--space-10) 0 var(--space-4);
 }
+.legal-page-body h3,
 .legal-doc h3 {
   font-size: var(--text-base);
   font-weight: 700;
@@ -1712,35 +1826,47 @@ h1, h2, h3, h4 {
   color: var(--color-text);
   margin: var(--space-6) 0 var(--space-3);
 }
+.legal-page-body p,
 .legal-doc p {
   font-size: var(--text-base);
-  line-height: 24px;
+  line-height: 26px;
   letter-spacing: -0.32px;
   color: var(--color-text-body);
   margin-bottom: var(--space-4);
 }
-.legal-doc ul, .legal-doc ol {
+.legal-page-body ul,
+.legal-page-body ol,
+.legal-doc ul,
+.legal-doc ol {
   padding-left: var(--space-6);
   margin-bottom: var(--space-4);
 }
+.legal-page-body ul,
 .legal-doc ul { list-style: disc; }
+.legal-page-body ol,
 .legal-doc ol { list-style: decimal; }
+.legal-page-body li,
 .legal-doc li {
   font-size: var(--text-base);
-  line-height: 24px;
+  line-height: 26px;
   letter-spacing: -0.32px;
   color: var(--color-text-body);
   margin-bottom: var(--space-2);
 }
+.legal-page-body a,
 .legal-doc a {
   color: var(--color-accent);
   text-decoration: underline;
 }
+.legal-page-date,
 .legal-doc-last-updated {
+  display: block;
   font-size: var(--text-sm);
   color: var(--color-text-muted);
   margin-bottom: var(--space-8);
   letter-spacing: -0.32px;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-mid);
 }
 
 /* ── FAQ Accordion ───────────────────────────────────────────── */
@@ -2386,18 +2512,16 @@ h1, h2, h3, h4 {
 }
 
 /* ── Page Loader ────────────────────────────────────────────────
-   Full-page overlay shown until DOMContentLoaded               */
+   Full-page overlay with breathing logo — no spinner            */
 .page-loader {
   position: fixed;
   inset: 0;
   z-index: 9999;
   background: var(--color-bg);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-5);
-  transition: opacity 0.4s var(--ease);
+  transition: opacity 0.5s var(--ease);
 }
 
 .page-loader.loader-done {
@@ -2406,23 +2530,14 @@ h1, h2, h3, h4 {
 }
 
 .loader-logo {
-  height: 40px;
+  height: 56px;
   width: auto;
-  animation: loader-pulse 1.2s ease-in-out infinite;
+  animation: loader-breathe 1.6s ease-in-out infinite;
 }
 
-.loader-ring {
-  width: 36px;
-  height: 36px;
-  border: 3px solid var(--color-surface-mid);
-  border-top-color: var(--color-accent);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes loader-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%       { opacity: 0.6; transform: scale(0.96); }
+@keyframes loader-breathe {
+  0%, 100% { opacity: 1;   transform: scale(1);    }
+  50%       { opacity: 0.4; transform: scale(0.88); }
 }
 
 /* ── Toast ──────────────────────────────────────────────────────

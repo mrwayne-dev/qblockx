@@ -14,19 +14,12 @@ require_once '../../includes/head.php';
 <main>
 
   <!-- ── Hero ──────────────────────────────────────────────────── -->
-  <section class="hero" role="region" aria-label="Risk Disclosure hero">
-    <img
-      src="/assets/images/background/arqorabgimage2.png"
-      alt=""
-      class="hero-bg"
-      aria-hidden="true"
-      draggable="false"
-    >
-    <div class="hero-container" data-appear>
-      <span class="hero-tag">Legal</span>
-      <h1 class="hero-heading">Risk Disclosure</h1>
-      <p class="hero-subtext">
-        Investing in cryptocurrency carries significant risk. Please read this disclosure carefully
+  <section class="legal-hero" data-appear>
+    <div class="legal-hero-inner">
+      <span class="section-label">Legal</span>
+      <h1 class="section-title">Risk Disclosure</h1>
+      <p class="section-subtitle">
+        Investing carries significant risk. Please read this disclosure carefully
         before making any investment decision on Qblockx.
       </p>
     </div>

@@ -14,18 +14,11 @@ require_once '../../includes/head.php';
 <main>
 
   <!-- ── Hero ──────────────────────────────────────────────────── -->
-  <section class="hero" role="region" aria-label="Privacy Policy hero">
-    <img
-      src="/assets/images/background/arqorabgimage2.png"
-      alt=""
-      class="hero-bg"
-      aria-hidden="true"
-      draggable="false"
-    >
-    <div class="hero-container" data-appear>
-      <span class="hero-tag">Legal</span>
-      <h1 class="hero-heading">Privacy Policy</h1>
-      <p class="hero-subtext">
+  <section class="legal-hero" data-appear>
+    <div class="legal-hero-inner">
+      <span class="section-label">Legal</span>
+      <h1 class="section-title">Privacy Policy</h1>
+      <p class="section-subtitle">
         We are committed to protecting your personal information and your right to privacy.
         This policy outlines how Qblockx collects, uses, and safeguards your data.
       </p>

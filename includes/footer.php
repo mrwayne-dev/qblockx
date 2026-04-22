@@ -92,7 +92,6 @@ $currentYear = date('Y');
 <!-- ── Page Loader ──────────────────────────────────────────────── -->
 <div id="pageLoader" class="page-loader" aria-hidden="true">
   <img src="/assets/images/logo/logoblue.png" class="loader-logo" alt="Loading Qblockx">
-  <div class="loader-ring"></div>
 </div>
 
 <!-- ── Scripts ─────────────────────────────────────────────────── -->

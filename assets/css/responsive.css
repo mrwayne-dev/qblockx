@@ -71,7 +71,8 @@
   }
 
   /* Auth card — keep split but narrower */
-  .auth-card {
+  .auth-card,
+  .auth-split {
     max-width: 100%;
   }
   .auth-panel {
@@ -315,7 +316,8 @@
     align-items: flex-start;
   }
 
-  .auth-card {
+  .auth-card,
+  .auth-split {
     flex-direction: column;
     max-width: 100%;
     border-radius: var(--radius-inner);
@@ -334,6 +336,16 @@
     padding: var(--space-8) var(--space-6);
   }
 
+  /* Legal hero — compact on mobile */
+  .legal-hero {
+    padding: calc(var(--nav-height) + 40px) var(--space-5) 48px;
+  }
+  .legal-hero-inner .section-title {
+    font-size: 32px;
+    line-height: 40px;
+    letter-spacing: -1px;
+  }
+
   /* ── Contact section ─────────────────────────────────────── */
   .contact-section {
     grid-template-columns: 1fr;
@@ -342,7 +354,9 @@
 
   /* ── Legal content ───────────────────────────────────────── */
   .legal-doc p,
-  .legal-doc li {
+  .legal-doc li,
+  .legal-page-body p,
+  .legal-page-body li {
     font-size: 14px;
     line-height: 22px;
   }
