@@ -1,30 +1,35 @@
 <?php
 /**
  * Project: Qblockx
- * Include: header.php — logo + CTA + hamburger only (no inline nav links)
+ * Include: header.php
  */
 
 $currentPage = basename($_SERVER['PHP_SELF']);
+$lightNav    = isset($navTheme) && $navTheme === 'light';
+
 function navActive(string $page, string $current): string {
     return $current === $page ? ' aria-current="page"' : '';
 }
 ?>
 
-<header class="nav-public" data-header>
+<header class="nav-public" data-header<?= $lightNav ? ' data-light-nav' : '' ?>>
   <div class="nav-inner">
 
-    <!-- Logo -->
-    <a href="/" class="nav-logo" aria-label="Qblockx home">QBLOCKX</a>
+    <!-- Logo: white version for dark hero, blue version for light pages / scrolled -->
+    <a href="/" class="nav-logo" aria-label="Qblockx home">
+      <img src="/assets/images/logo/logowhite.png" class="nav-logo-img nav-logo-dark" alt="Qblockx">
+      <img src="/assets/images/logo/logoblue.png"  class="nav-logo-img nav-logo-light" alt="Qblockx">
+    </a>
 
-    <!-- Desktop inline nav links (hidden on tablet/mobile via responsive.css) -->
+    <!-- Desktop inline nav links -->
     <nav class="nav-links-desktop" aria-label="Main navigation">
-      <a href="/#plans"<?= navActive('index.php', $currentPage) ?>>Plans</a>
-      <a href="/#assets">Commodities</a>
-      <a href="/products#real-estate">Real Estate</a>
+      <a href="/plans"<?= navActive('plans.php', $currentPage) ?>>Plans</a>
+      <a href="/commodities"<?= navActive('commodities.php', $currentPage) ?>>Commodities</a>
+      <a href="/realestate"<?= navActive('realestate.php', $currentPage) ?>>Real Estate</a>
       <a href="/about"<?= navActive('about.php', $currentPage) ?>>About</a>
     </nav>
 
-    <!-- Actions: Login + Get Started + hamburger -->
+    <!-- Actions -->
     <div class="nav-actions">
       <a href="/login" class="nav-login-link">Log in</a>
       <a href="/register" class="nav-cta-btn">Get started</a>
@@ -42,25 +47,22 @@ function navActive(string $page, string $current): string {
 <div class="nav-mobile-drawer" id="mobileMenu" data-mobile-menu aria-hidden="true">
   <div class="mobile-drawer-inner">
 
-    <!-- Close button -->
     <button class="mobile-drawer-close" data-nav-toggler aria-label="Close menu">
       <i class="ph ph-x" aria-hidden="true"></i>
     </button>
 
-    <!-- Brand mark -->
-    <a href="/" class="mobile-drawer-logo">QBLOCKX</a>
+    <a href="/" class="mobile-drawer-logo">
+      <img src="/assets/images/logo/logowhite.png" alt="Qblockx" style="height:28px;">
+    </a>
 
-    <!-- Nav links -->
     <nav class="mobile-drawer-nav" aria-label="Mobile navigation">
       <a href="/"<?= navActive('index.php', $currentPage) ?>>Home</a>
-      <a href="/#plans">Plans</a>
-      <a href="/#assets">Assets</a>
-      <a href="/#how-it-works">How It Works</a>
+      <a href="/plans"<?= navActive('plans.php', $currentPage) ?>>Plans</a>
+      <a href="/commodities"<?= navActive('commodities.php', $currentPage) ?>>Commodities</a>
+      <a href="/realestate"<?= navActive('realestate.php', $currentPage) ?>>Real Estate</a>
       <a href="/about"<?= navActive('about.php', $currentPage) ?>>About</a>
-      <a href="/contact"<?= navActive('contact.php', $currentPage) ?>>Contact</a>
     </nav>
 
-    <!-- Bottom actions -->
     <div class="mobile-drawer-actions">
       <a href="/login" class="mobile-drawer-login">Log In</a>
       <a href="/register" class="btn-primary" style="justify-content:center;">Get Started</a>

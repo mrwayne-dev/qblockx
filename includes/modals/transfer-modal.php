@@ -28,7 +28,7 @@
     <div class="bottom-sheet-body">
 
       <p class="modal-note">
-        Send money instantly to any verified CrestVale Bank account holder using their registered email address.
+        Send money instantly to any verified Qblockx account holder using their registered email address.
       </p>
 
       <form data-action="transfer" novalidate>

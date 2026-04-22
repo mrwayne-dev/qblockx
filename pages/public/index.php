@@ -17,57 +17,51 @@ require_once '../../includes/head.php';
   <div class="hero-outer">
     <div class="hero-panel">
 
-      <!-- Split: centered content container -->
-      <div class="hero-split">
+      <div class="hero-content hero-home" data-appear>
 
-        <!-- Left: text content -->
-        <div class="hero-left" data-appear>
-
-          <!-- Conic-gradient spinning badge -->
-          <div class="badge-outer">
-            <div class="badge-ring"></div>
-            <div class="badge-ring" style="animation-delay:-1s;"></div>
-            <div class="badge-ring" style="animation-delay:-2s;"></div>
-            <div class="badge-inner">
-              <i class="ph ph-chart-line-up" aria-hidden="true" style="margin-right:6px;"></i>
-              Welcome to Qblockx
-            </div>
+        <!-- Spinning badge -->
+        <div class="badge-outer">
+          <div class="badge-ring"></div>
+          <div class="badge-ring" style="animation-delay:-1s;"></div>
+          <div class="badge-ring" style="animation-delay:-2s;"></div>
+          <div class="badge-inner">
+            <i class="ph ph-chart-line-up" aria-hidden="true" style="margin-right:6px;"></i>
+            Welcome to Qblockx
           </div>
-
-          <!-- H1 -->
-          <h1 class="hero-h1">
-            Invest smarter,<br>earn more.
-          </h1>
-
-          <!-- Subtext -->
-          <p class="hero-subtext">
-            Qblockx gives you access to high-yield investment plans, commodities, and real estate — all in one transparent platform.
-          </p>
-
-          <!-- CTAs -->
-          <div class="hero-actions">
-            <a href="/register" class="btn-primary">
-              Start Investing <i class="ph ph-arrow-right" aria-hidden="true"></i>
-            </a>
-            <a href="#how-it-works" class="btn-outline-white">
-              How It Works
-            </a>
-          </div>
-
-          <!-- Social proof -->
-          <div class="hero-proof">
-            <div class="hero-avatars" aria-hidden="true">
-              <div class="hero-avatar" style="background:linear-gradient(135deg,#2262FF,#6B99FF);"></div>
-              <div class="hero-avatar" style="background:linear-gradient(135deg,#111C3A,#2262FF);"></div>
-              <div class="hero-avatar" style="background:linear-gradient(135deg,#3FE0A1,#2262FF);"></div>
-            </div>
-            <p class="hero-proof-text">Trusted by <strong>12,500+</strong> investors worldwide</p>
-          </div>
-
         </div>
 
-        <!-- Stats card — inside hero-split, positioned at bottom-right -->
-        <div class="hero-stats-card" data-appear>
+        <!-- H1 -->
+        <h1 class="hero-h1 hero-h1--xl">
+          Invest smarter,<br>earn more.
+        </h1>
+
+        <!-- Subtext -->
+        <p class="hero-subtext">
+          Qblockx gives you access to high-yield investment plans, commodities, and real estate — all in one transparent platform.
+        </p>
+
+        <!-- CTAs -->
+        <div class="hero-actions">
+          <a href="/register" class="btn-primary">
+            Start Investing <i class="ph ph-arrow-right" aria-hidden="true"></i>
+          </a>
+          <a href="#how-it-works" class="btn-outline-white">
+            How It Works
+          </a>
+        </div>
+
+        <!-- Social proof -->
+        <div class="hero-proof">
+          <div class="hero-avatars" aria-hidden="true">
+            <div class="hero-avatar" style="background:linear-gradient(135deg,#2262FF,#6B99FF);"></div>
+            <div class="hero-avatar" style="background:linear-gradient(135deg,#111C3A,#2262FF);"></div>
+            <div class="hero-avatar" style="background:linear-gradient(135deg,#3FE0A1,#2262FF);"></div>
+          </div>
+          <p class="hero-proof-text">Trusted by <strong>12,500+</strong> investors worldwide</p>
+        </div>
+
+        <!-- Stats card — flows naturally centered -->
+        <div class="hero-stats-card hero-stats-home">
           <div class="hero-stat">
             <span class="hero-stat-value text-gradient-blue" data-counter="12500">0</span>
             <span class="hero-stat-label">Active Investors</span>

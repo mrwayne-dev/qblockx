@@ -6,6 +6,7 @@
 $pageTitle       = 'About Us';
 $pageDescription = 'Learn about Qblockx — a multi-asset investment platform built to give individuals access to high-yield investment plans, commodities, and real estate with full transparency.';
 $pageKeywords    = 'Qblockx about, investment platform, who we are, mission, values';
+$navTheme        = 'light';
 require_once '../../includes/head.php';
 ?>
 

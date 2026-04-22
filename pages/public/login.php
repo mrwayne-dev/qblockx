@@ -12,30 +12,27 @@ require_once '../../includes/head.php';
 
     <!-- ── Left brand panel ── -->
     <div class="auth-panel">
-      <a href="/" class="auth-panel-logo" aria-label="CrestVale Bank home">
-        <span class="nav-logo-mark" aria-hidden="true">
-          <img src="/assets/images/logo/2.png" alt="">
-        </span>
-        CrestVale Bank
+      <a href="/" class="auth-panel-logo" aria-label="Qblockx home">
+        <img src="/assets/images/logo/logowhite.png" alt="Qblockx" style="height:32px;">
       </a>
 
       <div class="auth-panel-body">
         <h2 class="auth-panel-heading">Your daily<br>returns await.</h2>
         <p class="auth-panel-sub">
-          Sign in and monitor your automated crypto investment contracts in real time.
+          Sign in and monitor your high-yield investment plans, commodities, and real estate in real time.
         </p>
         <div class="auth-panel-stats">
           <div class="auth-panel-stat">
-            <span class="auth-panel-stat-value">48K+</span>
+            <span class="auth-panel-stat-value">12K+</span>
             <span class="auth-panel-stat-label">Investors</span>
           </div>
           <div class="auth-panel-stat">
-            <span class="auth-panel-stat-value">130+</span>
+            <span class="auth-panel-stat-value">150+</span>
             <span class="auth-panel-stat-label">Countries</span>
           </div>
           <div class="auth-panel-stat">
-            <span class="auth-panel-stat-value">8<i class="ph ph-percent"></i></span>
-            <span class="auth-panel-stat-label">Max Daily</span>
+            <span class="auth-panel-stat-value">400%</span>
+            <span class="auth-panel-stat-label">Max Returns</span>
           </div>
         </div>
       </div>

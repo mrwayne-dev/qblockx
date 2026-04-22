@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Admin Login — CrestVale Bank</title>
+  <title>Admin Login — Qblockx</title>
 
   <!-- Fonts -->
   <link rel="preload" href="/assets/fonts/DMSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
@@ -26,11 +26,8 @@
 
     <!-- ── Left brand panel ── -->
     <div class="auth-panel">
-      <a href="/" class="auth-panel-logo" aria-label="CrestVale Bank home">
-        <span class="nav-logo-mark" aria-hidden="true">
-          <img src="/assets/images/logo/2.png" alt="">
-        </span>
-        CrestVale Bank
+      
+        <img src="/assets/images/logo/logowhite.png" alt="Qblockx" style="height:32px;">
       </a>
 
       <div class="auth-panel-body">
@@ -70,7 +67,7 @@
           <div class="input-icon-wrap">
             <i class="ph ph-envelope input-icon" aria-hidden="true"></i>
             <input type="email" id="email" name="email" required
-                   placeholder="admin@crestvalebank.com" autocomplete="email">
+                   placeholder="admin@qblockx.com" autocomplete="email">
           </div>
         </div>
 

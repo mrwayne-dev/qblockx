@@ -12,30 +12,27 @@ require_once '../../includes/head.php';
 
     <!-- ── Left brand panel ── -->
     <div class="auth-panel">
-      <a href="/" class="auth-panel-logo" aria-label="CrestVale Bank home">
-        <span class="nav-logo-mark" aria-hidden="true">
-          <img src="/assets/images/logo/2.png" alt="">
-        </span>
-        CrestVale Bank
+      <a href="/" class="auth-panel-logo" aria-label="Qblockx home">
+        <img src="/assets/images/logo/logowhite.png" alt="Qblockx" style="height:32px;">
       </a>
 
       <div class="auth-panel-body">
-        <h2 class="auth-panel-heading">Banking built<br>for modern living.</h2>
+        <h2 class="auth-panel-heading">Invest smarter,<br>earn more.</h2>
         <p class="auth-panel-sub">
-          Open your account in minutes and access savings, fixed deposits, and loans — all in one place.
+          Open your account in minutes and access high-yield plans, commodities, and fractional real estate — all in one platform.
         </p>
         <div class="auth-panel-stats">
           <div class="auth-panel-stat">
-            <span class="auth-panel-stat-value">50K+</span>
-            <span class="auth-panel-stat-label">Members</span>
+            <span class="auth-panel-stat-value">12K+</span>
+            <span class="auth-panel-stat-label">Investors</span>
           </div>
           <div class="auth-panel-stat">
-            <span class="auth-panel-stat-value">$120M+</span>
+            <span class="auth-panel-stat-value">$500M+</span>
             <span class="auth-panel-stat-label">Managed</span>
           </div>
           <div class="auth-panel-stat">
-            <span class="auth-panel-stat-value">Bank-Grade</span>
-            <span class="auth-panel-stat-label">Security</span>
+            <span class="auth-panel-stat-value">400%</span>
+            <span class="auth-panel-stat-label">Max Returns</span>
           </div>
         </div>
       </div>
@@ -45,7 +42,7 @@ require_once '../../includes/head.php';
     <div class="auth-form-panel">
 
       <h1 class="auth-heading">Create your account</h1>
-      <p class="auth-subtext">Create your free CrestVale Bank account.</p>
+      <p class="auth-subtext">Create your free Qblockx account.</p>
 
       <div id="authMsg" class="auth-msg" role="alert" aria-live="polite" style="display:none;"></div>
 

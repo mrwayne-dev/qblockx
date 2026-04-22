@@ -390,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       btn.disabled          = true;
       text.style.display    = 'none';
-      spinner.style.display = '';
+      spinner.style.display = 'block';
 
       var data = {
         email:    document.getElementById('email').value.trim(),
@@ -454,7 +454,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       btn.disabled          = true;
       text.style.display    = 'none';
-      spinner.style.display = '';
+      spinner.style.display = 'block';
 
       var currencyEl = document.getElementById('currency');
       var data  = {
@@ -506,7 +506,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       btn.disabled          = true;
       text.style.display    = 'none';
-      spinner.style.display = '';
+      spinner.style.display = 'block';
 
       var data = { email: document.getElementById('email').value.trim() };
 
@@ -560,7 +560,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       btn.disabled          = true;
       text.style.display    = 'none';
-      spinner.style.display = '';
+      spinner.style.display = 'block';
 
       try {
         var res    = await fetch('/api/auth/user-reset-password.php', {
@@ -641,7 +641,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (btn)     btn.disabled          = true;
         if (text)    text.style.display    = 'none';
-        if (spinner) spinner.style.display = '';
+        if (spinner) spinner.style.display = 'block';
 
         try {
           var res    = await fetch('/api/auth/user-verify-email.php', {
@@ -727,7 +727,47 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  /* ── Toast Notifications ───────────────────────────────────── */
+  function showToast(message, type) {
+    type = type || 'success';
+    var container = document.getElementById('toastContainer');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'toastContainer';
+      container.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;';
+      document.body.appendChild(container);
+    }
+    var toast = document.createElement('div');
+    toast.className = 'toast toast--' + type;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(function () {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(8px)';
+      toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      setTimeout(function () { toast.remove(); }, 300);
+    }, 4000);
+  }
+  window.showToast = showToast;
+
+  /* ── Page Loader ────────────────────────────────────────────── */
+  function initPageLoader() {
+    var loader = document.getElementById('pageLoader');
+    if (!loader) return;
+    window.addEventListener('load', function () {
+      loader.classList.add('loader-done');
+      setTimeout(function () { loader.style.display = 'none'; }, 500);
+    });
+    setTimeout(function () {
+      if (!loader.classList.contains('loader-done')) {
+        loader.classList.add('loader-done');
+        setTimeout(function () { loader.style.display = 'none'; }, 500);
+      }
+    }, 3000);
+  }
+
   /* ── Init ──────────────────────────────────────────────────── */
+  initPageLoader();
   loadGoogleTranslate();
   initNavToggle();
   initNavScroll();

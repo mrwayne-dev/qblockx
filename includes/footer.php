@@ -16,7 +16,9 @@ $currentYear = date('Y');
 
         <!-- Brand + Newsletter -->
         <div>
-          <a href="/" class="footer-logo" aria-label="Qblockx home">QBLOCKX</a>
+          <a href="/" class="footer-logo" aria-label="Qblockx home">
+            <img src="/assets/images/logo/logowhite.png" alt="Qblockx" style="height:28px; width:auto;">
+          </a>
           <p class="footer-tagline">
             Multi-asset investment platform — smarter investing in plans, commodities, and real estate.
           </p>
@@ -86,6 +88,12 @@ $currentYear = date('Y');
     </p>
   </div>
 </section>
+
+<!-- ── Page Loader ──────────────────────────────────────────────── -->
+<div id="pageLoader" class="page-loader" aria-hidden="true">
+  <img src="/assets/images/logo/logoblue.png" class="loader-logo" alt="Loading Qblockx">
+  <div class="loader-ring"></div>
+</div>
 
 <!-- ── Scripts ─────────────────────────────────────────────────── -->
 <!-- main.js is loaded via head.php -->

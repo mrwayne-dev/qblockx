@@ -417,6 +417,20 @@ h1, h2, h3, h4 {
 }
 .nav-links-desktop a:hover { opacity: 0.65; }
 
+/* ── Nav Logo images ──────────────────────────────────────────── */
+.nav-logo {
+  display: flex;
+  align-items: center;
+}
+.nav-logo-img {
+  height: 30px;
+  width: auto;
+  display: block;
+}
+/* Default: dark bg → show white logo */
+.nav-logo-dark  { display: block; }
+.nav-logo-light { display: none; }
+
 /* Scrolled state — nav becomes white glass */
 .nav-public.scrolled {
   background: rgba(255, 255, 255, 0.94);
@@ -426,6 +440,21 @@ h1, h2, h3, h4 {
 }
 .nav-public.scrolled .nav-links-desktop a { color: var(--color-text); }
 .nav-public.scrolled .nav-logo { color: var(--color-accent); }
+.nav-public.scrolled .nav-logo-dark  { display: none; }
+.nav-public.scrolled .nav-logo-light { display: block; }
+
+/* Light page nav (legal pages, about) — dark text from the start */
+.nav-public[data-light-nav] .nav-links-desktop a {
+  color: var(--color-text);
+}
+.nav-public[data-light-nav] .nav-login-link {
+  color: var(--color-text-body);
+}
+.nav-public[data-light-nav] .nav-login-link:hover {
+  color: var(--color-text);
+}
+.nav-public[data-light-nav] .nav-logo-dark  { display: none; }
+.nav-public[data-light-nav] .nav-logo-light { display: block; }
 
 .nav-actions {
   display: flex;
@@ -2322,4 +2351,100 @@ h1, h2, h3, h4 {
   line-height: 26px;
   letter-spacing: -0.32px;
   color: var(--color-text-body);
+}
+
+/* ── Homepage Hero Variant ──────────────────────────────────────
+   Centered, bigger text, flows with stats card below                */
+.hero-home {
+  max-width: 760px;
+  padding-top: calc(var(--nav-height) + 100px);
+  padding-bottom: 80px;
+}
+
+.hero-h1--xl {
+  font-size: 66px;
+  line-height: 72px;
+  letter-spacing: -2.5px;
+}
+
+.hero-home .hero-subtext {
+  font-size: var(--text-lg);
+  line-height: 28px;
+  max-width: 560px;
+  margin-inline: auto;
+}
+
+/* Hero stats card centered variant */
+.hero-stats-home {
+  position: static !important;
+  width: 100% !important;
+  max-width: 620px !important;
+  margin: var(--space-10) auto 0 !important;
+  left: auto !important;
+  bottom: auto !important;
+  border-radius: 20px;
+}
+
+/* ── Page Loader ────────────────────────────────────────────────
+   Full-page overlay shown until DOMContentLoaded               */
+.page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-5);
+  transition: opacity 0.4s var(--ease);
+}
+
+.page-loader.loader-done {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loader-logo {
+  height: 40px;
+  width: auto;
+  animation: loader-pulse 1.2s ease-in-out infinite;
+}
+
+.loader-ring {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--color-surface-mid);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes loader-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(0.96); }
+}
+
+/* ── Toast ──────────────────────────────────────────────────────
+   Positioned via JS-injected container                          */
+.toast {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 12px 20px;
+  border-radius: var(--radius-inner);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: -0.32px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  animation: toast-in 0.3s var(--ease);
+  min-width: 220px;
+  max-width: 360px;
+}
+.toast--success { background: var(--color-success); color: #FFFFFF; }
+.toast--error   { background: var(--color-error);   color: #FFFFFF; }
+.toast--info    { background: var(--color-accent);  color: #FFFFFF; }
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
 }

@@ -11,9 +11,7 @@ $currentSection = $currentSection ?? 'overview';
   <!-- Sidebar brand -->
   <a href="/" class="sidebar-logo">
     <span class="nav-logo-mark" aria-hidden="true">
-      <img src="/assets/images/logo/2.png" alt="">
-    </span>
-    <span class="sidebar-logo-text">CrestVale Bank</span>
+      <img src="/assets/images/logo/logoblue.png" alt="Qblockx" style="height:26px;">
   </a>
 
   <!-- Nav items -->

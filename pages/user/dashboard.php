@@ -119,7 +119,7 @@ require_once '../../includes/head.php';
       <div class="table-card" id="ratesCard">
         <div class="table-card-header">
           <h3>Products &amp; Rates</h3>
-          <span class="badge badge-info">CrestVale Bank </span>
+          <span class="badge badge-info">Qblockx </span>
         </div>
         <div class="rates-tabs" id="ratesTabs">
           <button class="rates-tab active" data-rates-filter="savings" type="button">Savings</button>

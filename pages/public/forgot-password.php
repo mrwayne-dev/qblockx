@@ -12,11 +12,8 @@ require_once '../../includes/head.php';
 
     <!-- ── Left brand panel ── -->
     <div class="auth-panel">
-      <a href="/" class="auth-panel-logo" aria-label="CrestVale Bank home">
-        <span class="nav-logo-mark" aria-hidden="true">
-          <img src="/assets/images/logo/2.png" alt="">
-        </span>
-        CrestVale Bank
+      <a href="/" class="auth-panel-logo" aria-label="Qblockx home">
+        <img src="/assets/images/logo/logowhite.png" alt="Qblockx" style="height:32px;">
       </a>
 
       <div class="auth-panel-body">

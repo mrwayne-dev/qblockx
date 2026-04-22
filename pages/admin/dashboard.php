@@ -14,7 +14,7 @@ $admin = getAuthUser();
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Admin — CrestVale Bank</title>
+  <title>Admin — Qblockx</title>
 
   <!-- Fonts -->
   <link rel="preload" href="/assets/fonts/Recoleta-RegularDEMO.woff2" as="font" type="font/woff2" crossorigin>
@@ -36,8 +36,8 @@ $admin = getAuthUser();
   <aside class="admin-sidebar">
 
     <a href="/admin/dashboard" class="sidebar-logo">
-      <img src="/assets/images/logo/2.png" alt="CrestVale Bank" onerror="this.style.display='none'">
-      CrestVale Bank
+      <img src="/assets/images/logo/logowhite.png" alt="Qblockx" style="height:28px;">
+      Qblockx
       <span class="sidebar-logo-badge">Admin</span>
     </a>
 
@@ -101,8 +101,8 @@ $admin = getAuthUser();
     <!-- Mobile topbar -->
     <header class="admin-topbar">
       <a href="/admin/dashboard" class="topbar-logo">
-        <img src="/assets/images/logo/2.png" alt="" onerror="this.style.display='none'">
-        CrestVale Bank
+        <img src="/assets/images/logo/logowhite.png" alt="Qblockx" style="height:28px;">
+        Qblockx
         <span class="topbar-badge">Admin</span>
       </a>
       <a href="/api/auth/logout.php" class="sidebar-logout" style="margin-left:auto;" title="Sign out">
