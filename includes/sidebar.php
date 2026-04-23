@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Include: sidebar.php — user dashboard left sidebar
  */
 $currentSection = $currentSection ?? 'overview';
@@ -12,6 +12,8 @@ $currentSection = $currentSection ?? 'overview';
   <a href="/" class="sidebar-logo">
     <span class="nav-logo-mark" aria-hidden="true">
       <img src="/assets/images/logo/logoblue.png" alt="Qblockx" style="height:26px;">
+    </span>
+    <span class="sidebar-brand-text">Qblockx</span>
   </a>
 
   <!-- Nav items -->
@@ -29,22 +31,22 @@ $currentSection = $currentSection ?? 'overview';
       <span>Wallet</span>
     </a>
 
-    <a href="#" class="sidebar-nav-item <?= $currentSection === 'savings' ? 'active' : '' ?>"
-       data-nav="savings" aria-label="Savings">
-      <i class="ph ph-piggy-bank" aria-hidden="true"></i>
-      <span>Savings</span>
+    <a href="#" class="sidebar-nav-item <?= $currentSection === 'investments' ? 'active' : '' ?>"
+       data-nav="investments" aria-label="Investments">
+      <i class="ph ph-chart-line-up" aria-hidden="true"></i>
+      <span>Investments</span>
     </a>
 
-    <a href="#" class="sidebar-nav-item <?= $currentSection === 'deposits' ? 'active' : '' ?>"
-       data-nav="deposits" aria-label="Deposits">
-      <i class="ph ph-vault" aria-hidden="true"></i>
-      <span>Deposits</span>
+    <a href="#" class="sidebar-nav-item <?= $currentSection === 'commodities' ? 'active' : '' ?>"
+       data-nav="commodities" aria-label="Commodities">
+      <i class="ph ph-coin" aria-hidden="true"></i>
+      <span>Commodities</span>
     </a>
 
-    <a href="#" class="sidebar-nav-item <?= $currentSection === 'loans' ? 'active' : '' ?>"
-       data-nav="loans" aria-label="Loans">
-      <i class="ph ph-hand-coins" aria-hidden="true"></i>
-      <span>Loans</span>
+    <a href="#" class="sidebar-nav-item <?= $currentSection === 'realestate' ? 'active' : '' ?>"
+       data-nav="realestate" aria-label="Real Estate">
+      <i class="ph ph-buildings" aria-hidden="true"></i>
+      <span>Real Estate</span>
     </a>
 
     <a href="#" class="sidebar-nav-item <?= $currentSection === 'profile' ? 'active' : '' ?>"

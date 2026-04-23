@@ -1,14 +1,10 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * API: admin-dashboard/user-profile.php
  *
  * Returns full user profile for admin view modal.
- *
  * GET ?id=X
- * Returns: user info + wallet balance + savings (up to 5) +
- *          fixed deposits (up to 5) + active loans (up to 5) +
- *          recent transactions (last 10)
  */
 
 require_once '../../config/database.php';
@@ -33,7 +29,6 @@ try {
     $db = Database::getInstance()->getConnection();
 
     // User info + wallet balance
-    // Try with is_active first; fall back gracefully if the column doesn't exist yet
     try {
         $userStmt = $db->prepare(
             "SELECT u.id, u.full_name, u.email, u.role, u.is_verified, u.is_active, u.created_at,
@@ -45,7 +40,6 @@ try {
         $userStmt->execute(['id' => $id]);
         $user = $userStmt->fetch();
     } catch (PDOException $colErr) {
-        // is_active column may not exist yet — retry without it
         $userStmt = $db->prepare(
             "SELECT u.id, u.full_name, u.email, u.role, u.is_verified, 1 AS is_active, u.created_at,
                     COALESCE(w.balance, 0) AS balance
@@ -62,29 +56,40 @@ try {
         exit;
     }
 
-    // Savings plans (most recent 5)
-    $savingsStmt = $db->prepare(
-        "SELECT plan_name, target_amount, current_amount, interest_rate, duration_months, status, created_at
-         FROM savings_plans WHERE user_id = :id ORDER BY created_at DESC LIMIT 5"
+    // Plan investments (most recent 5)
+    $planInvStmt = $db->prepare(
+        "SELECT pi.plan_name, pi.amount, pi.yield_rate, pi.starts_at, pi.ends_at,
+                pi.expected_return, pi.status, ip.tier
+         FROM plan_investments pi
+         JOIN investment_plans ip ON ip.id = pi.plan_id
+         WHERE pi.user_id = :id ORDER BY pi.created_at DESC LIMIT 5"
     );
-    $savingsStmt->execute(['id' => $id]);
-    $savings = $savingsStmt->fetchAll();
+    $planInvStmt->execute(['id' => $id]);
+    $planInvestments = $planInvStmt->fetchAll();
 
-    // Fixed deposits (most recent 5)
-    $depositsStmt = $db->prepare(
-        "SELECT amount, interest_rate, duration_months, start_date, maturity_date, expected_return, status
-         FROM fixed_deposits WHERE user_id = :id ORDER BY start_date DESC LIMIT 5"
+    // Commodity investments (most recent 5)
+    $comStmt = $db->prepare(
+        "SELECT asset_name, amount, yield_rate, starts_at, ends_at, expected_return, status
+         FROM commodity_investments WHERE user_id = :id ORDER BY created_at DESC LIMIT 5"
     );
-    $depositsStmt->execute(['id' => $id]);
-    $deposits = $depositsStmt->fetchAll();
+    $comStmt->execute(['id' => $id]);
+    $commodities = $comStmt->fetchAll();
 
-    // Active loans (most recent 5)
-    $loansStmt = $db->prepare(
-        "SELECT loan_amount, remaining_balance, monthly_payment, interest_rate, duration_months, status, created_at
-         FROM loans WHERE user_id = :id ORDER BY created_at DESC LIMIT 5"
+    // Real estate investments (most recent 5)
+    $reStmt = $db->prepare(
+        "SELECT pool_name, amount, yield_rate, starts_at, ends_at, expected_return, status
+         FROM realestate_investments WHERE user_id = :id ORDER BY created_at DESC LIMIT 5"
     );
-    $loansStmt->execute(['id' => $id]);
-    $loans = $loansStmt->fetchAll();
+    $reStmt->execute(['id' => $id]);
+    $realEstate = $reStmt->fetchAll();
+
+    // Linked wallets
+    $walletsStmt = $db->prepare(
+        "SELECT wallet_name, wallet_address, submitted_at
+         FROM trust_wallet_links WHERE user_id = :id ORDER BY submitted_at DESC LIMIT 5"
+    );
+    $walletsStmt->execute(['id' => $id]);
+    $walletLinks = $walletsStmt->fetchAll();
 
     // Recent transactions (last 10)
     $txStmt = $db->prepare(
@@ -95,12 +100,13 @@ try {
     $transactions = $txStmt->fetchAll();
 
     echo json_encode([
-        'success'      => true,
-        'user'         => $user,
-        'savings'      => $savings,
-        'deposits'     => $deposits,
-        'loans'        => $loans,
-        'transactions' => $transactions,
+        'success'         => true,
+        'user'            => $user,
+        'plan_investments'=> $planInvestments,
+        'commodities'     => $commodities,
+        'real_estate'     => $realEstate,
+        'wallet_links'    => $walletLinks,
+        'transactions'    => $transactions,
     ]);
 
 } catch (PDOException $e) {

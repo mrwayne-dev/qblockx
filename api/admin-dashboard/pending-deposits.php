@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Admin: Pending Deposits — list unresolved deposit transactions
  */
 

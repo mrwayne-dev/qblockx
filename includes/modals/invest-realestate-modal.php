@@ -21,6 +21,12 @@
 
     <div class="modal-body">
 
+      <!-- Available balance indicator -->
+      <div class="modal-balance-bar">
+        <i class="ph ph-wallet" aria-hidden="true"></i>
+        Available balance: <strong id="reBalance">—</strong>
+      </div>
+
       <div class="form-group">
         <label for="rePoolSelect">Select Property Pool</label>
         <select id="rePoolSelect" class="form-select" onchange="onREPoolChange()">

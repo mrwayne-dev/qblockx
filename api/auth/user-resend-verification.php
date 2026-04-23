@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * API: Resend email verification code
  * Method: POST  { email }
  */

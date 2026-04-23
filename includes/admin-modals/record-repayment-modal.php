@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Modal: Record Loan Repayment
  *
  * Admin enters repayment amount for a specific loan.

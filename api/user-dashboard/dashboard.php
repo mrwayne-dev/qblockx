@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * API: user-dashboard/dashboard.php — Overview stats
  */
 
@@ -22,29 +22,37 @@ try {
     $balance  = $wallet ? (float) $wallet['balance'] : 0.0;
     $currency = $wallet['currency'] ?? 'USD';
 
-    // Savings balance (sum of current_amount across active plans)
-    $savingsStmt = $db->prepare(
-        "SELECT COALESCE(SUM(current_amount), 0) FROM savings_plans
-         WHERE user_id = :uid AND status = 'active'"
+    // Aggregate investment stats across all 3 types (all-time total invested)
+    // Named params must be unique per statement when emulated prepares are off
+    $invAggStmt = $db->prepare(
+        "SELECT
+           (SELECT COALESCE(SUM(amount),0) FROM plan_investments       WHERE user_id = :uid1)
+         + (SELECT COALESCE(SUM(amount),0) FROM commodity_investments  WHERE user_id = :uid2)
+         + (SELECT COALESCE(SUM(amount),0) FROM realestate_investments WHERE user_id = :uid3)
+         AS total_invested_all"
     );
-    $savingsStmt->execute(['uid' => $uid]);
-    $savings_balance = (float) $savingsStmt->fetchColumn();
+    $invAggStmt->execute(['uid1' => $uid, 'uid2' => $uid, 'uid3' => $uid]);
+    $total_invested_all = (float) $invAggStmt->fetchColumn();
 
-    // Deposits balance (sum of amounts in active fixed deposits)
-    $depositsStmt = $db->prepare(
-        "SELECT COALESCE(SUM(amount), 0) FROM fixed_deposits
-         WHERE user_id = :uid AND status = 'active'"
+    $activeAggStmt = $db->prepare(
+        "SELECT
+           (SELECT COUNT(*) FROM plan_investments       WHERE user_id = :uid4 AND status = 'active')
+         + (SELECT COUNT(*) FROM commodity_investments  WHERE user_id = :uid5 AND status = 'active')
+         + (SELECT COUNT(*) FROM realestate_investments WHERE user_id = :uid6 AND status = 'active')
+         AS active_count_all"
     );
-    $depositsStmt->execute(['uid' => $uid]);
-    $deposits_balance = (float) $depositsStmt->fetchColumn();
+    $activeAggStmt->execute(['uid4' => $uid, 'uid5' => $uid, 'uid6' => $uid]);
+    $active_count_all = (int) $activeAggStmt->fetchColumn();
 
-    // Loan balance (sum of remaining_balance on active loans)
-    $loansStmt = $db->prepare(
-        "SELECT COALESCE(SUM(remaining_balance), 0) FROM loans
-         WHERE user_id = :uid AND status = 'active'"
+    $expectedAggStmt = $db->prepare(
+        "SELECT
+           (SELECT COALESCE(SUM(expected_return),0) FROM plan_investments       WHERE user_id = :uid7 AND status = 'active')
+         + (SELECT COALESCE(SUM(expected_return),0) FROM commodity_investments  WHERE user_id = :uid8 AND status = 'active')
+         + (SELECT COALESCE(SUM(expected_return),0) FROM realestate_investments WHERE user_id = :uid9 AND status = 'active')
+         AS total_expected_all"
     );
-    $loansStmt->execute(['uid' => $uid]);
-    $loan_balance = (float) $loansStmt->fetchColumn();
+    $expectedAggStmt->execute(['uid7' => $uid, 'uid8' => $uid, 'uid9' => $uid]);
+    $total_expected_all = (float) $expectedAggStmt->fetchColumn();
 
     // Recent transactions (last 5)
     $txStmt = $db->prepare(
@@ -82,15 +90,16 @@ try {
                 'member_since' => $userInfo['created_at'],
             ],
             'currency'            => $currency,
-            'balance'             => number_format($balance,          2, '.', ''),
-            'savings_balance'     => number_format($savings_balance,  2, '.', ''),
-            'deposits_balance'    => number_format($deposits_balance, 2, '.', ''),
-            'loan_balance'        => number_format($loan_balance,     2, '.', ''),
+            'balance'             => number_format($balance,             2, '.', ''),
+            'total_invested_all'  => number_format($total_invested_all, 2, '.', ''),
+            'active_count_all'    => $active_count_all,
+            'total_expected_all'  => number_format($total_expected_all, 2, '.', ''),
             'recent_transactions' => $recent_transactions,
             'rates'               => $rates,
         ]
     ]);
 } catch (PDOException $e) {
+    error_log('dashboard.php PDOException: ' . $e->getMessage());
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Server error']);
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Modal: Trade / Invest — start a new investment contract
  *
  * data-action="invest" — handled by startInvestment() in user-dashboard.js

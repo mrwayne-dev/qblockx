@@ -41,20 +41,6 @@ require_once '../../includes/head.php';
           <a href="#markets" class="btn-outline-white">Explore Markets</a>
         </div>
 
-        <div class="hero-stats-card" data-appear>
-          <div class="hero-stat">
-            <span class="hero-stat-value text-gradient-blue">3</span>
-            <span class="hero-stat-label">Asset categories</span>
-          </div>
-          <div class="hero-stat">
-            <span class="hero-stat-value text-gradient-blue-rev">Global</span>
-            <span class="hero-stat-label">Market access</span>
-          </div>
-          <div class="hero-stat">
-            <span class="hero-stat-value text-gradient-blue">24/7</span>
-            <span class="hero-stat-label">Portfolio tracking</span>
-          </div>
-        </div>
 
       </div>
     </div>
@@ -167,54 +153,48 @@ require_once '../../includes/head.php';
           </p>
         </div>
 
-        <div class="feature-grid" data-appear>
+        <div class="commo-why-bento" data-appear>
 
-          <div class="feature-card">
-            <div class="feature-card-icon"><i class="ph ph-trend-up" aria-hidden="true"></i></div>
-            <div class="feature-card-content">
-              <h3 class="feature-card-title">Inflation hedge</h3>
-              <p class="feature-card-body">Commodity prices historically rise with inflation. When the purchasing power of cash falls, tangible assets tend to hold or increase their real value.</p>
-            </div>
+          <!-- Tall accent cell (spans 2 rows on left) -->
+          <div class="cwb-cell cwb-cell--tall">
+            <div class="cwb-icon"><i class="ph ph-trend-up" aria-hidden="true"></i></div>
+            <div class="cwb-title">Inflation hedge</div>
+            <p class="cwb-body">Commodity prices historically rise with inflation. When the purchasing power of cash falls, tangible assets hold or increase their real value.</p>
           </div>
 
-          <div class="feature-card">
-            <div class="feature-card-icon"><i class="ph ph-shuffle" aria-hidden="true"></i></div>
-            <div class="feature-card-content">
-              <h3 class="feature-card-title">Low correlation to equities</h3>
-              <p class="feature-card-body">Commodity returns often move independently of stock markets. Adding them to a portfolio reduces overall volatility and smooths drawdowns during equity sell-offs.</p>
-            </div>
+          <!-- Wide cell (row 1, cols 2-3) -->
+          <div class="cwb-cell cwb-cell--wide">
+            <div class="cwb-icon"><i class="ph ph-shuffle" aria-hidden="true"></i></div>
+            <div class="cwb-title">Low correlation to equities</div>
+            <p class="cwb-body">Commodity returns often move independently of stock markets. Adding them reduces overall portfolio volatility and smooths drawdowns during equity sell-offs.</p>
           </div>
 
-          <div class="feature-card">
-            <div class="feature-card-icon"><i class="ph ph-globe" aria-hidden="true"></i></div>
-            <div class="feature-card-content">
-              <h3 class="feature-card-title">Global supply-demand dynamics</h3>
-              <p class="feature-card-body">Commodity prices are driven by fundamental supply and demand — not sentiment or speculation. Informed investors can position around structural trends in energy, food, and metals.</p>
-            </div>
+          <!-- Row 2, col 2 -->
+          <div class="cwb-cell">
+            <div class="cwb-icon"><i class="ph ph-globe" aria-hidden="true"></i></div>
+            <div class="cwb-title">Global supply-demand</div>
+            <p class="cwb-body">Prices driven by fundamental supply and demand — not sentiment. Position around structural trends in energy, food, and metals.</p>
           </div>
 
-          <div class="feature-card">
-            <div class="feature-card-icon"><i class="ph ph-lock" aria-hidden="true"></i></div>
-            <div class="feature-card-content">
-              <h3 class="feature-card-title">Store of value</h3>
-              <p class="feature-card-body">Precious metals have preserved wealth across centuries and civilisations. Unlike paper currencies, gold and silver cannot be printed into existence or defaulted on.</p>
-            </div>
+          <!-- Row 2, col 3 -->
+          <div class="cwb-cell">
+            <div class="cwb-icon"><i class="ph ph-lock" aria-hidden="true"></i></div>
+            <div class="cwb-title">Store of value</div>
+            <p class="cwb-body">Precious metals have preserved wealth across centuries. Gold and silver cannot be printed into existence or defaulted on.</p>
           </div>
 
-          <div class="feature-card">
-            <div class="feature-card-icon"><i class="ph ph-chart-bar" aria-hidden="true"></i></div>
-            <div class="feature-card-content">
-              <h3 class="feature-card-title">Portfolio diversification</h3>
-              <p class="feature-card-body">Three distinct commodity categories — metals, energy, agriculture — each responding to different macroeconomic drivers, giving you layered diversification in a single asset class.</p>
-            </div>
+          <!-- Wide cell (row 3, cols 1-2) -->
+          <div class="cwb-cell cwb-cell--wide">
+            <div class="cwb-icon"><i class="ph ph-chart-bar" aria-hidden="true"></i></div>
+            <div class="cwb-title">Portfolio diversification</div>
+            <p class="cwb-body">Metals, energy, and agriculture each respond to different macroeconomic drivers — giving you layered diversification across a single asset class.</p>
           </div>
 
-          <div class="feature-card">
-            <div class="feature-card-icon"><i class="ph ph-currency-dollar" aria-hidden="true"></i></div>
-            <div class="feature-card-content">
-              <h3 class="feature-card-title">Accessible entry point</h3>
-              <p class="feature-card-body">Through Qblockx, commodity exposure starts at the same minimum as investment plans. No need for futures accounts, brokerage accounts, or physical storage.</p>
-            </div>
+          <!-- Row 3, col 3 -->
+          <div class="cwb-cell">
+            <div class="cwb-icon"><i class="ph ph-currency-dollar" aria-hidden="true"></i></div>
+            <div class="cwb-title">Accessible entry</div>
+            <p class="cwb-body">Commodity exposure from the same minimum as investment plans. No futures accounts or physical storage needed.</p>
           </div>
 
         </div>

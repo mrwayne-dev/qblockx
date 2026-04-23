@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Modal: View User Profile
  *
  * Read-only user profile showing wallet balance + linked

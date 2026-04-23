@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * API: Forgot password — sends reset link via email
  */
 ob_start();

@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Modal: Generic Admin Confirm / Prompt
  *
  * Driven entirely by JS helpers:

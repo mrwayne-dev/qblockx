@@ -41,20 +41,6 @@ require_once '../../includes/head.php';
           <a href="#plans" class="btn-outline-white">Compare Plans</a>
         </div>
 
-        <div class="hero-stats-card" data-appear>
-          <div class="hero-stat">
-            <span class="hero-stat-value text-gradient-blue">8</span>
-            <span class="hero-stat-label">Plan tiers</span>
-          </div>
-          <div class="hero-stat">
-            <span class="hero-stat-value text-gradient-blue-rev">Up to 400%</span>
-            <span class="hero-stat-label">Returns per cycle</span>
-          </div>
-          <div class="hero-stat">
-            <span class="hero-stat-value text-gradient-blue">$1K–$10M</span>
-            <span class="hero-stat-label">Capital range</span>
-          </div>
-        </div>
 
       </div>
     </div>
@@ -252,54 +238,42 @@ require_once '../../includes/head.php';
           </p>
         </div>
 
-        <div class="feature-grid" data-appear>
+        <div class="plans-feat-bento" data-appear>
 
-          <div class="feature-card">
-            <div class="feature-card-icon"><i class="ph ph-lock-simple-open" aria-hidden="true"></i></div>
-            <div class="feature-card-content">
-              <h3 class="feature-card-title">Fixed durations</h3>
-              <p class="feature-card-body">Each plan has a defined cycle length — 7 to 365 days. You know exactly when your capital matures before you invest.</p>
-            </div>
+          <div class="pfb-cell">
+            <div class="pfb-icon"><i class="ph ph-lock-simple-open" aria-hidden="true"></i></div>
+            <div class="pfb-title">Fixed durations</div>
+            <p class="pfb-body">Each plan has a defined cycle length — 7 to 365 days. Know exactly when your capital matures before you invest.</p>
           </div>
 
-          <div class="feature-card">
-            <div class="feature-card-icon"><i class="ph ph-chart-line-up" aria-hidden="true"></i></div>
-            <div class="feature-card-content">
-              <h3 class="feature-card-title">Transparent returns</h3>
-              <p class="feature-card-body">Return ranges are published upfront and never adjusted mid-cycle. What you see on the plan card is what you earn.</p>
-            </div>
+          <div class="pfb-cell pfb-cell--wide">
+            <div class="pfb-icon"><i class="ph ph-chart-line-up" aria-hidden="true"></i></div>
+            <div class="pfb-title">Transparent returns</div>
+            <p class="pfb-body">Return ranges are published upfront and never adjusted mid-cycle. What you see on the plan card is exactly what you earn — verified on your dashboard in real time.</p>
           </div>
 
-          <div class="feature-card">
-            <div class="feature-card-icon"><i class="ph ph-arrows-clockwise" aria-hidden="true"></i></div>
-            <div class="feature-card-content">
-              <h3 class="feature-card-title">Auto-reinvest option</h3>
-              <p class="feature-card-body">Enable compounding from your dashboard. Matured returns roll directly into the next cycle, growing your portfolio without manual action.</p>
-            </div>
+          <div class="pfb-cell pfb-cell--wide">
+            <div class="pfb-icon"><i class="ph ph-arrows-clockwise" aria-hidden="true"></i></div>
+            <div class="pfb-title">Auto-reinvest option</div>
+            <p class="pfb-body">Enable compounding from your dashboard. Matured returns roll directly into the next cycle, growing your portfolio without any manual action required.</p>
           </div>
 
-          <div class="feature-card">
-            <div class="feature-card-icon"><i class="ph ph-shield-check" aria-hidden="true"></i></div>
-            <div class="feature-card-content">
-              <h3 class="feature-card-title">Capital protection</h3>
-              <p class="feature-card-body">Your principal is ring-fenced for the plan duration. Qblockx does not commingle client funds with operational capital.</p>
-            </div>
+          <div class="pfb-cell">
+            <div class="pfb-icon"><i class="ph ph-shield-check" aria-hidden="true"></i></div>
+            <div class="pfb-title">Capital protection</div>
+            <p class="pfb-body">Your principal is ring-fenced for the plan duration. Client funds are never commingled with operational capital.</p>
           </div>
 
-          <div class="feature-card">
-            <div class="feature-card-icon"><i class="ph ph-users-three" aria-hidden="true"></i></div>
-            <div class="feature-card-content">
-              <h3 class="feature-card-title">Referral rewards</h3>
-              <p class="feature-card-body">Earn 5–10% commission on every investor you refer. Commission is credited to your wallet immediately on plan activation.</p>
-            </div>
+          <div class="pfb-cell">
+            <div class="pfb-icon"><i class="ph ph-users-three" aria-hidden="true"></i></div>
+            <div class="pfb-title">Referral rewards</div>
+            <p class="pfb-body">Earn 5–10% commission on every investor you refer. Credited instantly on plan activation.</p>
           </div>
 
-          <div class="feature-card">
-            <div class="feature-card-icon"><i class="ph ph-wallet" aria-hidden="true"></i></div>
-            <div class="feature-card-content">
-              <h3 class="feature-card-title">Instant withdrawal</h3>
-              <p class="feature-card-body">Matured returns and principal are released instantly at the end of your cycle. No waiting periods, no redemption queues.</p>
-            </div>
+          <div class="pfb-cell pfb-cell--wide">
+            <div class="pfb-icon"><i class="ph ph-wallet" aria-hidden="true"></i></div>
+            <div class="pfb-title">Instant withdrawal</div>
+            <p class="pfb-body">Matured returns and principal are released instantly at the end of your cycle. No waiting periods, no redemption queues — funds in your wallet when the cycle ends.</p>
           </div>
 
         </div>

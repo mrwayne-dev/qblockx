@@ -1,0 +1,172 @@
+0x
+1inch Wallet
+Airgap
+Airswap
+Aktionariat
+Aladdin Wallet
+Alice
+AlphaWallet
+Arculus
+Argent
+AT.Wallet
+AToken Wallet
+Atomic
+Authereum
+BC vault
+Bifrost
+Binance Chain
+Binance Chain Wallet
+Binance Coin (BNB)
+Bitbox wallet
+BitFi
+Bitfifa
+Bitinka
+BitKeep
+Bitlox
+Bitmymoney
+BitPanda
+Bitpay
+BitPie
+BitVault
+Bitwala
+Block.io
+Blockchain
+Bread wallet
+Bridge Wallet
+Buntoy
+Cardano Coin
+Cello Wallet
+Cobo vault wallet
+Coin98
+Coinbase
+Coinbase Wallet
+Coinify
+Coinmama
+Coinomi
+CoinUs
+Compound
+Coolwallet
+CoolWallet S
+Crypterium
+Crypto Key Stack
+Crypto.com DeFi Wallet
+Cryptonator
+Curv
+Curve Dao Token
+CYBAVO Wallet
+D'Cent Wallet
+DDEX
+Defiant
+Dexwallet
+Dharma
+Doge Coin
+Dok Wallet
+dYdX
+EasyPocket
+Eidoo
+Ellipal
+Erisx
+Etoro
+EverRise Token
+Exodus Wallet
+Fantom
+Flare Wallet
+FTX
+Gala Token
+GamingShiba Token
+Gate.io
+GateHub
+Guarda Wallet
+Gemini
+Gnosis Safe Multisig
+GridPlus
+HaloDefi Wallet
+HashKey Me
+HEX
+Huobi Wallet
+ICON wallet
+IDEX
+imToken
+Infinito
+Iotex
+Jade Wallet
+Jasmy Coin
+Jaxx liberty wallet
+Keepkey
+KEPLR
+KEYRING PRO
+Kraken
+KyberSwap
+Ledger
+Ledger Hardware
+Ledger Live
+Localbitcoin
+Loopring Wallet
+Maker
+Math Wallet
+MathWallet
+Metamask
+Metapets Coin
+Midas Wallet
+Mongoose Token
+moonpay
+MyEtherWallet
+MYKEY
+Nash
+Nexo Wallet
+NIL Coin
+Nuo
+O3Wallet
+ONTO
+Ownbit
+Paybis
+PEAKDEFI Wallet
+Phantom
+Pillar
+PlasmaPay
+Plug Wallet
+Polkadot
+Polygon (MATIC)
+Polygon Wallet
+PoolTogether
+Rainbow
+RobinHood
+Rohinhood
+RWallet
+SafePal Wallet
+SaitaMask
+Sandbox Token
+SecuX v20
+SHIBA INU
+Solana Coin
+Solo Coin
+SparkPoint
+Spatium
+Talken Wallet
+Tangem Wallet
+Terra
+Token Pocket
+Tokenary
+TokenPocket
+Tongue Wallet
+Torus
+Tradestation
+Trezor Wallet
+Trust Wallet
+Trustee Wallet
+TrustVault
+Uniswap
+Unstoppable Wallet
+Uphold
+Valora
+ViaWallet
+Vision
+Wallet Connect
+Wallet.io
+Walleth
+Xaman Wallet
+XinFin XDC Network
+XRP
+Xumm Wallet
+Yoroi Wallet
+ZelCore

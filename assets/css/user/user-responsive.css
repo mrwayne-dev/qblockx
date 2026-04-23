@@ -96,3 +96,66 @@
     display: none; /* show only avatar on very small screens */
   }
 }
+
+/* ── New components responsive ──────────────────────────────── */
+@media (max-width: 1100px) {
+  body.dashboard-body .overview-grid--market {
+    grid-template-columns: 1fr;
+  }
+  body.dashboard-body .perf-insights-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  body.dashboard-body .re-market-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 899px) {
+  body.dashboard-body .overview-grid--3 {
+    grid-template-columns: 1fr 1fr;
+  }
+  body.dashboard-body .wallet-meta-row {
+    grid-template-columns: 1fr;
+  }
+  body.dashboard-body .trust-wallet-inner {
+    flex-direction: column;
+    text-align: center;
+  }
+  body.dashboard-body .how-to-steps {
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+  body.dashboard-body .how-step-arrow {
+    transform: rotate(90deg);
+    align-self: center;
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 599px) {
+  body.dashboard-body .overview-grid--3 {
+    grid-template-columns: 1fr;
+  }
+  body.dashboard-body .wallet-info-grid {
+    grid-template-columns: 1fr;
+  }
+  body.dashboard-body .perf-insights-grid {
+    grid-template-columns: 1fr;
+  }
+  body.dashboard-body .re-market-grid {
+    grid-template-columns: 1fr;
+  }
+  body.dashboard-body .tw-wallet-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  body.dashboard-body .how-to-invest {
+    padding: 1.8rem 1.6rem;
+  }
+  body.dashboard-body .re-market-overview {
+    padding: 1.8rem 1.6rem;
+  }
+  body.dashboard-body .tx-pagination {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

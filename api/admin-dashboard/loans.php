@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * API: admin-dashboard/loans.php — Admin loans management (approve/reject/disburse)
  */
 

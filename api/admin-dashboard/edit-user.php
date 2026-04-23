@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Admin: Edit User — update personal info, balance, referral commission
  */
 
@@ -74,7 +74,7 @@ try {
         // Record admin adjustment transaction for audit trail
         $db->prepare(
             "INSERT INTO transactions (user_id, type, amount, currency, status, notes)
-             VALUES (:uid, 'deposit', :amt, 'USD', 'completed', 'Admin balance adjustment')"
+             VALUES (:uid, 'deposit', :amt, 'USD', 'completed', 'Qblockx Fund')"
         )->execute(['uid' => $id, 'amt' => $newBalance]);
     }
 

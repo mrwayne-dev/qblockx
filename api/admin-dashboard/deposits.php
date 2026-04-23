@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * API: admin-dashboard/deposits.php — Admin fixed deposits management
  */
 

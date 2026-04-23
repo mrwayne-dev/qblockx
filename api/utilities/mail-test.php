@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * SMTP mail test — DELETE or restrict access before going live
  *
  * Usage: visit  /api/utilities/mail-test.php?to=you@example.com
@@ -49,13 +49,13 @@ try {
     $mail->CharSet    = 'UTF-8';
 
     $mail->setFrom(
-        getenv('SMTP_FROM')      ?: 'noreply@crestvalebank.com',
-        getenv('SMTP_FROM_NAME') ?: 'CrestVale Bank'
+        getenv('SMTP_FROM')      ?: 'support@qblockx.com',
+        getenv('SMTP_FROM_NAME') ?: 'Qblockx'
     );
     $mail->addAddress($to, 'Test User');
     $mail->isHTML(false);
-    $mail->Subject = 'CrestVale Bank — SMTP Test';
-    $mail->Body    = 'This is a test email from CrestVale Bank. If you received this, SMTP is working correctly.';
+    $mail->Subject = 'Qblockx — SMTP Test';
+    $mail->Body    = 'This is a test email from Qblockx. If you received this, SMTP is working correctly.';
 
     $mail->send();
     $ok = true;

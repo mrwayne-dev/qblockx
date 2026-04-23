@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Created by: Wayne
  */
 
@@ -22,13 +22,13 @@ try {
         $balance  = $wallet ? (float) $wallet['balance'] : 0.0;
         $currency = $wallet['currency'] ?? 'USD';
 
-        // Recent transactions (last 10)
+        // All transactions for paginated display (capped at 500)
         $txStmt = $db->prepare(
             "SELECT id, type, amount, status, payment_id, notes, created_at
              FROM transactions
              WHERE user_id = :uid
              ORDER BY created_at DESC
-             LIMIT 10"
+             LIMIT 500"
         );
         $txStmt->execute(['uid' => $user['id']]);
         $transactions = $txStmt->fetchAll();
@@ -253,7 +253,7 @@ try {
                     'transaction_reference' => $transaction_reference ?: null,
                 ]);
 
-                $txNotes = 'Bank transfer to ' . $bank_name . ', ' . $bank_country . ' — being processed by Crestvale Bank';
+                $txNotes = 'Bank transfer to ' . $bank_name . ', ' . $bank_country . ' — processing';
             } else {
                 $db->prepare(
                     "INSERT INTO withdrawal_requests (user_id, amount, currency, wallet_address, withdrawal_method, fee)
@@ -266,7 +266,7 @@ try {
                     'fee'      => $fee,
                 ]);
 
-                $txNotes = 'Withdrawal (' . strtoupper($currency) . ') — being processed by Crestvale Bank';
+                $txNotes = 'Withdrawal (' . strtoupper($currency) . ') — processing';
             }
 
             // Transaction record
@@ -280,7 +280,7 @@ try {
             ]);
 
             $db->commit();
-            echo json_encode(['success' => true, 'message' => 'Withdrawal request submitted. Crestvale Bank will process it within 24–48 hours.']);
+            echo json_encode(['success' => true, 'message' => 'Withdrawal request submitted. It will be processed within 24–48 hours.']);
         }
 
     } else {

@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Page: Email Verification — enter 6-digit code sent by email
  */
 $pageTitle = 'Verify Your Email';
@@ -13,26 +13,27 @@ require_once '../../includes/head.php';
     <!-- ── Left brand panel ── -->
     <div class="auth-panel">
       <a href="/" class="auth-panel-logo" aria-label="Qblockx home">
-        <img src="/assets/images/logo/logowhite.png" alt="Qblockx" style="height:32px;">
+        <img src="/assets/images/logo/logowhite.png" alt="">
+        <span class="auth-panel-logo-text">Qblockx</span>
       </a>
 
       <div class="auth-panel-body">
         <h2 class="auth-panel-heading">One last step<br>to get started.</h2>
         <p class="auth-panel-sub">
-          Verify your identity and start banking with CrestVale.
+          Check your inbox for the 6-digit code and verify your Qblockx account.
         </p>
         <div class="auth-panel-stats">
           <div class="auth-panel-stat">
-            <span class="auth-panel-stat-value">50K+</span>
-            <span class="auth-panel-stat-label">Members</span>
+            <span class="auth-panel-stat-value">12K+</span>
+            <span class="auth-panel-stat-label">Investors</span>
           </div>
           <div class="auth-panel-stat">
-            <span class="auth-panel-stat-value">$120M+</span>
+            <span class="auth-panel-stat-value">$500M+</span>
             <span class="auth-panel-stat-label">Managed</span>
           </div>
           <div class="auth-panel-stat">
-            <span class="auth-panel-stat-value">Bank-Grade</span>
-            <span class="auth-panel-stat-label">Security</span>
+            <span class="auth-panel-stat-value">400%</span>
+            <span class="auth-panel-stat-label">Max Returns</span>
           </div>
         </div>
       </div>
@@ -68,10 +69,7 @@ require_once '../../includes/head.php';
         </div>
 
         <button type="submit" class="btn-primary full-width auth-submit" id="verifyBtn">
-          <span class="btn-text">Verify Email</span>
-          <span class="btn-spinner" style="display:none;">
-            <i class="ph ph-circle-notch ph-spin" aria-hidden="true"></i>
-          </span>
+          Verify Email
         </button>
       </form>
 

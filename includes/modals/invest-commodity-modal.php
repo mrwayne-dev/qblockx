@@ -21,6 +21,12 @@
 
     <div class="modal-body">
 
+      <!-- Available balance indicator -->
+      <div class="modal-balance-bar">
+        <i class="ph ph-wallet" aria-hidden="true"></i>
+        Available balance: <strong id="commodityBalance">—</strong>
+      </div>
+
       <div class="form-group">
         <label for="commodityAssetSelect">Select Asset</label>
         <select id="commodityAssetSelect" class="form-select" onchange="onCommodityAssetChange()">
@@ -30,6 +36,14 @@
 
       <!-- Asset info bar — shown after selection -->
       <div id="commodityAssetInfo" class="invest-info-bar" style="display:none;">
+        <div class="invest-info-item">
+          <span class="invest-info-label">Live Price</span>
+          <span class="invest-info-value" id="commodityLivePrice">—</span>
+        </div>
+        <div class="invest-info-item">
+          <span class="invest-info-label">24h Change</span>
+          <span class="invest-info-value" id="commodityLiveChange">—</span>
+        </div>
         <div class="invest-info-item">
           <span class="invest-info-label">Duration</span>
           <span class="invest-info-value" id="commodityDuration">—</span>

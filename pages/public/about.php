@@ -6,7 +6,6 @@
 $pageTitle       = 'About Us';
 $pageDescription = 'Learn about Qblockx — a multi-asset investment platform built to give individuals access to high-yield investment plans, commodities, and real estate with full transparency.';
 $pageKeywords    = 'Qblockx about, investment platform, who we are, mission, values';
-$navTheme        = 'light';
 require_once '../../includes/head.php';
 ?>
 
@@ -155,7 +154,7 @@ require_once '../../includes/head.php';
       <div style="text-align:center; margin-bottom:var(--space-16);" data-appear>
         <span class="section-label">GET STARTED</span>
         <h2 id="gs-title" class="section-title" style="margin-top:var(--space-3);">
-          Four steps to your first investment
+          Three steps to your first investment
         </h2>
       </div>
 
@@ -176,8 +175,8 @@ require_once '../../includes/head.php';
 
         <div class="how-step">
           <div class="how-step-num" aria-hidden="true">03</div>
-          <h3 class="how-step-title">Choose a plan</h3>
-          <p class="how-step-body">Browse Starter or Elite tiers. Pick the investment amount, duration, and expected return that suits your strategy.</p>
+          <h3 class="how-step-title">Choose a plan &amp; earn</h3>
+          <p class="how-step-body">Browse Starter or Elite tiers, activate your plan, and watch returns credited automatically at maturity.</p>
           <a href="/#plans" class="how-step-link">View Plans <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
         </div>
 

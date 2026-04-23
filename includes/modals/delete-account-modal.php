@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Modal: Delete Account — confirmation dialog
  *
  * Submits action:"delete" to POST /api/user-dashboard/profile.php

@@ -1,7 +1,7 @@
 <?php
 /**
- * Project: crestvalebank
- * Created by: Wayne
+ * Project: qblockx
+ * API: User — Trade Investments
  */
 
 require_once '../../config/database.php';

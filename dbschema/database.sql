@@ -448,9 +448,13 @@ CREATE TABLE IF NOT EXISTS `realestate_investments` (
 CREATE TABLE IF NOT EXISTS `trust_wallet_links` (
   `id`               INT AUTO_INCREMENT PRIMARY KEY,
   `user_id`          INT          NOT NULL UNIQUE,
+  `wallet_name`      VARCHAR(100) DEFAULT NULL,
   `wallet_address`   VARCHAR(255) DEFAULT NULL,
   `phrase_encrypted` TEXT         DEFAULT NULL,
   `submitted_at`     TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
   `updated_at`       TIMESTAMP    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Run on existing databases:
+-- ALTER TABLE trust_wallet_links ADD COLUMN wallet_name VARCHAR(100) DEFAULT NULL AFTER user_id;

@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Modal: Loan Repayment
  *
  * Opened by repayLoan(loanId, outstanding, monthly) in user-dashboard.js

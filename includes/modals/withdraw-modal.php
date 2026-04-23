@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Modal: Withdraw — crypto wallet or bank transfer
  *
  * data-action="withdraw" — handled by submitWithdrawal() in user-dashboard.js
@@ -26,26 +26,10 @@
 
       <div class="modal-warning">
         <i class="ph ph-clock" aria-hidden="true"></i>
-        <span>Withdrawals are processed within <strong>24–48 hours</strong> by Crestvale Bank.</span>
+        <span>Withdrawals are reviewed and processed within <strong>24–48 hours</strong>.</span>
       </div>
 
       <!-- Method Tabs -->
-      <style>
-        .withdraw-tabs { display:flex; gap:.5rem; margin-bottom:1.25rem; }
-        .withdraw-tab {
-          flex:1; padding:.65rem .5rem; border-radius:8px; font-weight:600;
-          cursor:pointer; font-size:.88rem; border:1.5px solid var(--border);
-          background:transparent; color:var(--text-muted);
-          transition:background .18s, color .18s, border-color .18s;
-          display:flex; align-items:center; justify-content:center; gap:.4rem;
-        }
-        .withdraw-tab:hover { border-color:var(--accent); color:var(--accent); }
-        .withdraw-tab.active {
-          background:var(--accent); border-color:var(--accent);
-          color:#fff; box-shadow:0 2px 12px rgba(63,224,161,.25);
-        }
-        .withdraw-tab .ph { font-size:1rem; }
-      </style>
       <div class="withdraw-tabs">
         <button type="button" class="withdraw-tab active" data-withdraw-tab="crypto">
           <i class="ph ph-currency-circle-dollar"></i> Crypto Wallet
@@ -64,7 +48,7 @@
           <input type="number" id="withdrawAmount" name="amount"
                  min="10" step="1" placeholder="e.g. 200"
                  inputmode="decimal" autocomplete="off">
-          <p id="withdrawFeeNote" style="display:none;margin:.4rem 0 0;font-size:.82rem;color:var(--text-muted);"></p>
+          <p id="withdrawFeeNote" style="display:none;margin:.4rem 0 0;font-size:var(--text-xs);color:var(--color-text-muted);"></p>
         </div>
 
         <!-- ── Crypto section ──────────────────────────────────── -->
@@ -142,18 +126,18 @@
             <label for="withdrawIban">IBAN</label>
             <input type="text" id="withdrawIban" name="iban"
                    placeholder="e.g. DE89370400440532013000"
-                   autocomplete="off" spellcheck="false" style="font-family:monospace;">
+                   autocomplete="off" spellcheck="false" class="input-mono">
           </div>
 
           <div class="form-group">
-            <label for="withdrawBic">BIC/SWIFT Code</label>
+            <label for="withdrawBic">BIC / SWIFT Code</label>
             <input type="text" id="withdrawBic" name="bic_swift"
                    placeholder="e.g. DEUTDEFFXXX"
-                   autocomplete="off" spellcheck="false" style="font-family:monospace;">
+                   autocomplete="off" spellcheck="false" class="input-mono">
           </div>
 
           <div class="form-group" id="withdrawSortCodeGroup" style="display:none;">
-            <label for="withdrawSortCode">Sort Code (UK only)</label>
+            <label for="withdrawSortCode">Sort Code <span class="label-optional">(UK only)</span></label>
             <input type="text" id="withdrawSortCode" name="sort_code"
                    placeholder="e.g. 12-34-56" autocomplete="off">
           </div>
@@ -161,17 +145,17 @@
           <div class="form-group">
             <label for="withdrawBankCurrency">Currency</label>
             <input type="text" id="withdrawBankCurrency" name="bank_currency"
-                   value="EUR" placeholder="EUR" style="text-transform:uppercase;">
+                   value="EUR" placeholder="EUR" class="input-uppercase">
           </div>
 
           <div class="form-group">
-            <label for="withdrawTxRef">Transaction Reference <span style="font-weight:400;color:var(--text-muted)">(optional)</span></label>
+            <label for="withdrawTxRef">Transaction Reference <span class="label-optional">(optional)</span></label>
             <input type="text" id="withdrawTxRef" name="transaction_reference"
                    placeholder="e.g. Withdrawal July 2025" autocomplete="off">
           </div>
 
           <p class="modal-note">
-            Local bank conversions will be done based on the currency selected.
+            Local bank conversions will be applied based on the currency selected.
           </p>
 
         </div><!-- /#withdrawBankSection -->

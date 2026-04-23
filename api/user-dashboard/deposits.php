@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * API: user-dashboard/deposits.php — Fixed deposits (GET list | POST open)
  */
 

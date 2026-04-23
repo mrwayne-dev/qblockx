@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Include: mobile-dock.php — bottom mobile navigation dock (user dashboard)
  * Visible only on ≤ 899px via responsive.css
  */
@@ -21,22 +21,22 @@ $currentSection = $currentSection ?? 'overview';
     <span>Wallet</span>
   </a>
 
-  <a href="#" class="dock-item <?= $currentSection === 'savings' ? 'active' : '' ?>"
-     data-nav="savings" aria-label="Savings">
-    <i class="ph ph-piggy-bank" aria-hidden="true"></i>
-    <span>Savings</span>
+  <a href="#" class="dock-item <?= $currentSection === 'investments' ? 'active' : '' ?>"
+     data-nav="investments" aria-label="Investments">
+    <i class="ph ph-chart-line-up" aria-hidden="true"></i>
+    <span>Invest</span>
   </a>
 
-  <a href="#" class="dock-item <?= $currentSection === 'deposits' ? 'active' : '' ?>"
-     data-nav="deposits" aria-label="Deposits">
-    <i class="ph ph-vault" aria-hidden="true"></i>
-    <span>Deposits</span>
+  <a href="#" class="dock-item <?= $currentSection === 'commodities' ? 'active' : '' ?>"
+     data-nav="commodities" aria-label="Markets">
+    <i class="ph ph-coin" aria-hidden="true"></i>
+    <span>Markets</span>
   </a>
 
-  <a href="#" class="dock-item <?= $currentSection === 'loans' ? 'active' : '' ?>"
-     data-nav="loans" aria-label="Loans">
-    <i class="ph ph-hand-coins" aria-hidden="true"></i>
-    <span>Loans</span>
+  <a href="#" class="dock-item <?= $currentSection === 'realestate' ? 'active' : '' ?>"
+     data-nav="realestate" aria-label="Real Estate">
+    <i class="ph ph-buildings" aria-hidden="true"></i>
+    <span>Property</span>
   </a>
 
   <a href="#" class="dock-item <?= $currentSection === 'profile' ? 'active' : '' ?>"

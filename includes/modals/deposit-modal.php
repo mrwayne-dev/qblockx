@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Modal: Deposit — NOWPayments hosted invoice flow
  *
  * User enters amount → JS calls now-payment-initiate.php → receives

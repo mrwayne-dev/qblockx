@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * API: admin-dashboard/settings.php — Interest rates & system settings
  */
 
@@ -14,16 +14,36 @@ try {
     $db = Database::getInstance()->getConnection();
 
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-        $rates = $db->query(
-            "SELECT id, product, label, duration_months, rate, is_active FROM rates ORDER BY product, duration_months"
-        )->fetchAll();
-
         $settingsStmt = $db->query("SELECT `key`, `value` FROM system_settings");
         $rawSettings  = $settingsStmt->fetchAll();
         $settings     = [];
         foreach ($rawSettings as $row) { $settings[$row['key']] = $row['value']; }
 
-        echo json_encode(['success' => true, 'rates' => $rates, 'settings' => $settings]);
+        try {
+            $invPlans = $db->query("SELECT * FROM investment_plans ORDER BY min_amount ASC")->fetchAll();
+        } catch (PDOException $e) { $invPlans = []; }
+
+        try {
+            $comAssets = $db->query(
+                "SELECT id, name, symbol, min_investment, duration_days, yield_min, yield_max, is_active
+                 FROM commodity_assets ORDER BY sort_order ASC"
+            )->fetchAll();
+        } catch (PDOException $e) { $comAssets = []; }
+
+        try {
+            $rePools = $db->query(
+                "SELECT id, name, property_type, min_investment, duration_days, yield_min, yield_max, payout_frequency, is_active
+                 FROM realestate_pools ORDER BY sort_order ASC"
+            )->fetchAll();
+        } catch (PDOException $e) { $rePools = []; }
+
+        echo json_encode([
+            'success'          => true,
+            'settings'         => $settings,
+            'investment_plans' => $invPlans,
+            'commodity_assets' => $comAssets,
+            'realestate_pools' => $rePools,
+        ]);
 
     } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $input  = json_decode(file_get_contents('php://input'), true) ?? [];

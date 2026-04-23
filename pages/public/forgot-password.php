@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Page: Forgot Password
  */
 $pageTitle = 'Forgot Password';
@@ -13,7 +13,8 @@ require_once '../../includes/head.php';
     <!-- ── Left brand panel ── -->
     <div class="auth-panel">
       <a href="/" class="auth-panel-logo" aria-label="Qblockx home">
-        <img src="/assets/images/logo/logowhite.png" alt="Qblockx" style="height:32px;">
+        <img src="/assets/images/logo/logowhite.png" alt="">
+        <span class="auth-panel-logo-text">Qblockx</span>
       </a>
 
       <div class="auth-panel-body">
@@ -50,10 +51,7 @@ require_once '../../includes/head.php';
         </div>
 
         <button type="submit" class="btn-primary full-width auth-submit" id="forgotBtn">
-          <span class="btn-text">Send Reset Link</span>
-          <span class="btn-spinner" style="display:none;">
-            <i class="ph ph-circle-notch ph-spin" aria-hidden="true"></i>
-          </span>
+          Send Reset Link
         </button>
 
       </form>

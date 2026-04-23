@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * API: payments/now-payment-status.php
  *
  * Called by the frontend after the user returns from the NOWPayments

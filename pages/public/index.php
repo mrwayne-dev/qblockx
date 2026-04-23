@@ -117,10 +117,11 @@ require_once '../../includes/head.php';
   <!-- ── 2. Why Qblockx ────────────────────────────────────────────── -->
   <section class="section" id="why-qblockx" role="region" aria-labelledby="why-title">
     <div class="container">
-      <div class="why-grid">
 
-        <!-- Left: heading + CTA -->
-        <div class="why-left" data-appear>
+      <div class="why-bento">
+
+        <!-- Main dark cell -->
+        <div class="why-bento-main" data-appear>
           <span class="section-label">WHY QBLOCKX</span>
           <h2 id="why-title" class="section-title">
             Built for serious investors.<br>Designed for everyone.
@@ -128,44 +129,38 @@ require_once '../../includes/head.php';
           <p class="section-subtitle">
             Qblockx combines institutional-grade investment infrastructure with a platform simple enough for first-time investors. No jargon, no hidden fees, no surprises.
           </p>
-          <div>
-            <a href="/register" class="btn-primary">Open an Account <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
-          </div>
+          <a href="/register" class="btn-primary" style="align-self:flex-start;">
+            Open an Account <i class="ph ph-arrow-right" aria-hidden="true"></i>
+          </a>
         </div>
 
-        <!-- Right: benefit cards -->
-        <div class="why-benefits" data-appear>
-          <div class="benefit-card">
-            <div class="benefit-icon"><i class="ph ph-shield-check" aria-hidden="true"></i></div>
-            <div>
-              <div class="benefit-title">Secure &amp; Audited</div>
-              <p class="benefit-body">All funds held in segregated accounts. Independent audits every quarter.</p>
-            </div>
-          </div>
-          <div class="benefit-card">
-            <div class="benefit-icon"><i class="ph ph-chart-line-up" aria-hidden="true"></i></div>
-            <div>
-              <div class="benefit-title">Transparent Returns</div>
-              <p class="benefit-body">Every plan shows exact return percentages — verified, not estimated.</p>
-            </div>
-          </div>
-          <div class="benefit-card">
-            <div class="benefit-icon"><i class="ph ph-currency-dollar" aria-hidden="true"></i></div>
-            <div>
-              <div class="benefit-title">Flexible Withdrawals</div>
-              <p class="benefit-body">Withdraw to your bank or crypto wallet at maturity. No lockup penalties.</p>
-            </div>
-          </div>
-          <div class="benefit-card">
-            <div class="benefit-icon"><i class="ph ph-globe" aria-hidden="true"></i></div>
-            <div>
-              <div class="benefit-title">Global Access</div>
-              <p class="benefit-body">Available to investors in 150+ countries with multi-currency deposit support.</p>
-            </div>
-          </div>
+        <!-- Benefit cells -->
+        <div class="why-bento-cell" data-appear>
+          <div class="why-bento-icon"><i class="ph ph-shield-check" aria-hidden="true"></i></div>
+          <div class="why-bento-title">Secure &amp; Audited</div>
+          <p class="why-bento-body">All funds held in segregated accounts. Independent audits every quarter.</p>
+        </div>
+
+        <div class="why-bento-cell" data-appear>
+          <div class="why-bento-icon"><i class="ph ph-chart-line-up" aria-hidden="true"></i></div>
+          <div class="why-bento-title">Transparent Returns</div>
+          <p class="why-bento-body">Every plan shows exact return percentages — verified, not estimated.</p>
+        </div>
+
+        <div class="why-bento-cell" data-appear>
+          <div class="why-bento-icon"><i class="ph ph-currency-dollar" aria-hidden="true"></i></div>
+          <div class="why-bento-title">Flexible Withdrawals</div>
+          <p class="why-bento-body">Withdraw to your bank or crypto wallet at maturity. No lockup penalties.</p>
+        </div>
+
+        <div class="why-bento-cell" data-appear>
+          <div class="why-bento-icon"><i class="ph ph-globe" aria-hidden="true"></i></div>
+          <div class="why-bento-title">Global Access</div>
+          <p class="why-bento-body">Available to investors in 150+ countries with multi-currency deposit support.</p>
         </div>
 
       </div>
+
     </div>
   </section>
 
@@ -177,150 +172,45 @@ require_once '../../includes/head.php';
       <div class="section-header" data-appear>
         <h2 id="hiw-title" class="section-title">How does it work?</h2>
         <p class="section-subtitle" style="margin-top:var(--space-4);">
-          It's easy to get started. Just follow our simple three-step guide to set up your account and grow your wealth.
+          Three simple steps from registration to your first return. Setup takes under 10 minutes.
         </p>
       </div>
 
-      <!-- Step tabs -->
-      <div class="hiw-tabs" role="tablist" aria-label="How it works steps">
-        <button class="hiw-tab active" role="tab" aria-selected="true"
-                data-hiw-tab="step1" id="hiw-tab-1">Create an account</button>
-        <button class="hiw-tab" role="tab" aria-selected="false"
-                data-hiw-tab="step2" id="hiw-tab-2">Fund your wallet</button>
-        <button class="hiw-tab" role="tab" aria-selected="false"
-                data-hiw-tab="step3" id="hiw-tab-3">Earn passive returns</button>
-      </div>
+      <div class="hiw-bento" data-appear>
 
-      <!-- Step 1 -->
-      <div class="hiw-panel active" id="hiw-step1" role="tabpanel" aria-labelledby="hiw-tab-1" data-appear>
-        <div class="hiw-panel-top">
-          <h3 class="hiw-panel-title">Create your account</h3>
-          <p class="hiw-panel-body">Begin your journey into smarter investing by creating a secure, verified account with us. The process is quick, simple, and straightforward.</p>
-          <a href="/register" class="btn-primary">Get Started <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+        <!-- Step 1: wide cell -->
+        <div class="hiw-bento-step hiw-bento-step--wide">
+          <div class="hiw-bento-num" aria-hidden="true">01</div>
+          <h3 class="hiw-bento-title">Create your account</h3>
+          <p class="hiw-bento-body">Sign up in minutes. Verify your identity, fund your central wallet via bank transfer or crypto, and you're ready to invest. No minimums to open — capital requirements only apply when you activate a plan.</p>
+          <a href="/register" class="how-step-link">Get Started <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
         </div>
-        <div class="hiw-screens" aria-hidden="true">
-          <div class="hiw-screen">
-            <div class="hiw-screen-header"><span class="hiw-screen-dot"></span><span class="hiw-screen-bar"></span><span class="hiw-screen-dot"></span></div>
-            <div class="hiw-screen-body">
-              <div class="hiw-screen-row short"></div>
-              <div class="hiw-screen-row wide"></div>
-              <div class="hiw-screen-row medium"></div>
-              <div class="hiw-screen-row wide"></div>
-              <div class="hiw-screen-row short"></div>
-              <div class="hiw-screen-btn"></div>
-            </div>
-          </div>
-          <div class="hiw-screen">
-            <div class="hiw-screen-header"><span class="hiw-screen-dot"></span><span class="hiw-screen-bar"></span><span class="hiw-screen-dot"></span></div>
-            <div class="hiw-screen-body">
-              <div class="hiw-screen-row accent"></div>
-              <div class="hiw-screen-row wide"></div>
-              <div class="hiw-screen-row medium"></div>
-              <div class="hiw-screen-row wide"></div>
-              <div class="hiw-screen-row accent"></div>
-              <div class="hiw-screen-btn"></div>
-            </div>
-          </div>
-          <div class="hiw-screen">
-            <div class="hiw-screen-header"><span class="hiw-screen-dot"></span><span class="hiw-screen-bar"></span><span class="hiw-screen-dot"></span></div>
-            <div class="hiw-screen-body">
-              <div class="hiw-screen-row medium"></div>
-              <div class="hiw-screen-row wide"></div>
-              <div class="hiw-screen-row accent"></div>
-              <div class="hiw-screen-row medium"></div>
-              <div class="hiw-screen-row wide"></div>
-              <div class="hiw-screen-btn"></div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Step 2 -->
-      <div class="hiw-panel" id="hiw-step2" role="tabpanel" aria-labelledby="hiw-tab-2">
-        <div class="hiw-panel-top">
-          <h3 class="hiw-panel-title">Fund your wallet</h3>
-          <p class="hiw-panel-body">Transfer funds to your Qblockx wallet via bank transfer or cryptocurrency. Your capital is secured and ready to be put to work immediately.</p>
-          <a href="/register" class="btn-primary">Deposit Now <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
-        </div>
-        <div class="hiw-screens" aria-hidden="true">
-          <div class="hiw-screen">
-            <div class="hiw-screen-header"><span class="hiw-screen-dot"></span><span class="hiw-screen-bar"></span><span class="hiw-screen-dot"></span></div>
-            <div class="hiw-screen-body">
-              <div class="hiw-screen-row medium"></div>
-              <div class="hiw-screen-row wide"></div>
-              <div class="hiw-screen-row accent"></div>
-              <div class="hiw-screen-row short"></div>
-              <div class="hiw-screen-row wide"></div>
-              <div class="hiw-screen-btn"></div>
-            </div>
-          </div>
-          <div class="hiw-screen">
-            <div class="hiw-screen-header"><span class="hiw-screen-dot"></span><span class="hiw-screen-bar"></span><span class="hiw-screen-dot"></span></div>
-            <div class="hiw-screen-body">
-              <div class="hiw-screen-row accent"></div>
-              <div class="hiw-screen-row wide"></div>
-              <div class="hiw-screen-row medium"></div>
-              <div class="hiw-screen-row wide"></div>
-              <div class="hiw-screen-row short"></div>
-              <div class="hiw-screen-btn"></div>
-            </div>
-          </div>
-          <div class="hiw-screen">
-            <div class="hiw-screen-header"><span class="hiw-screen-dot"></span><span class="hiw-screen-bar"></span><span class="hiw-screen-dot"></span></div>
-            <div class="hiw-screen-body">
-              <div class="hiw-screen-row wide"></div>
-              <div class="hiw-screen-row short"></div>
-              <div class="hiw-screen-row accent"></div>
-              <div class="hiw-screen-row medium"></div>
-              <div class="hiw-screen-row wide"></div>
-              <div class="hiw-screen-btn"></div>
-            </div>
+        <!-- Visual cell: tall accent panel -->
+        <div class="hiw-bento-visual" aria-hidden="true">
+          <div class="hiw-bento-visual-inner">
+            <i class="ph ph-chart-line-up hiw-bento-visual-icon"></i>
+            <div class="hiw-bento-visual-stat">400%</div>
+            <div class="hiw-bento-visual-label">Max returns per cycle</div>
           </div>
         </div>
-      </div>
 
-      <!-- Step 3 -->
-      <div class="hiw-panel" id="hiw-step3" role="tabpanel" aria-labelledby="hiw-tab-3">
-        <div class="hiw-panel-top">
-          <h3 class="hiw-panel-title">Earn passive returns</h3>
-          <p class="hiw-panel-body">Select a plan and watch your investment grow. Returns are credited automatically at maturity — withdraw anytime to your preferred payment method.</p>
-          <a href="#plans" class="btn-primary">View Plans <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
+        <!-- Step 2 -->
+        <div class="hiw-bento-step">
+          <div class="hiw-bento-num" aria-hidden="true">02</div>
+          <h3 class="hiw-bento-title">Fund your wallet</h3>
+          <p class="hiw-bento-body">Transfer via bank or crypto. Capital is secured and ready to work immediately.</p>
+          <a href="/register" class="how-step-link">Deposit Now <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
         </div>
-        <div class="hiw-screens" aria-hidden="true">
-          <div class="hiw-screen">
-            <div class="hiw-screen-header"><span class="hiw-screen-dot"></span><span class="hiw-screen-bar"></span><span class="hiw-screen-dot"></span></div>
-            <div class="hiw-screen-body">
-              <div class="hiw-screen-row short"></div>
-              <div class="hiw-screen-row accent"></div>
-              <div class="hiw-screen-row wide"></div>
-              <div class="hiw-screen-row medium"></div>
-              <div class="hiw-screen-row wide"></div>
-              <div class="hiw-screen-btn"></div>
-            </div>
-          </div>
-          <div class="hiw-screen">
-            <div class="hiw-screen-header"><span class="hiw-screen-dot"></span><span class="hiw-screen-bar"></span><span class="hiw-screen-dot"></span></div>
-            <div class="hiw-screen-body">
-              <div class="hiw-screen-row accent"></div>
-              <div class="hiw-screen-row wide"></div>
-              <div class="hiw-screen-row medium"></div>
-              <div class="hiw-screen-row short"></div>
-              <div class="hiw-screen-row accent"></div>
-              <div class="hiw-screen-btn"></div>
-            </div>
-          </div>
-          <div class="hiw-screen">
-            <div class="hiw-screen-header"><span class="hiw-screen-dot"></span><span class="hiw-screen-bar"></span><span class="hiw-screen-dot"></span></div>
-            <div class="hiw-screen-body">
-              <div class="hiw-screen-row wide"></div>
-              <div class="hiw-screen-row medium"></div>
-              <div class="hiw-screen-row accent"></div>
-              <div class="hiw-screen-row wide"></div>
-              <div class="hiw-screen-row short"></div>
-              <div class="hiw-screen-btn"></div>
-            </div>
-          </div>
+
+        <!-- Step 3: accent dark -->
+        <div class="hiw-bento-step hiw-bento-step--accent">
+          <div class="hiw-bento-num" aria-hidden="true">03</div>
+          <h3 class="hiw-bento-title">Earn passive returns</h3>
+          <p class="hiw-bento-body">Select a plan and watch returns grow. Credit at maturity — withdraw anytime.</p>
+          <a href="#plans" class="how-step-link" style="color:rgba(107,153,255,0.90);">View Plans <i class="ph ph-arrow-right" aria-hidden="true"></i></a>
         </div>
+
       </div>
 
     </div>

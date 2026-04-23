@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * API: admin-dashboard/credit-debit.php
  *
  * Admin credits or debits a user wallet directly.

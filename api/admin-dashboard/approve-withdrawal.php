@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * API: Approve or reject a pending withdrawal request (admin only)
  */
 ob_start();

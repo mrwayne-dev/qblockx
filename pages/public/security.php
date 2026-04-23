@@ -43,21 +43,6 @@ require_once '../../includes/head.php';
           </a>
         </div>
 
-        <!-- Stats card -->
-        <div class="hero-stats-card" data-appear>
-          <div class="hero-stat">
-            <span class="hero-stat-value text-gradient-blue">256-bit</span>
-            <span class="hero-stat-label">AES Encryption</span>
-          </div>
-          <div class="hero-stat">
-            <span class="hero-stat-value text-gradient-blue-rev">24/7</span>
-            <span class="hero-stat-label">Fraud Monitoring</span>
-          </div>
-          <div class="hero-stat">
-            <span class="hero-stat-value text-gradient-blue">KYC+</span>
-            <span class="hero-stat-label">Identity Verified</span>
-          </div>
-        </div>
 
       </div>
     </div>

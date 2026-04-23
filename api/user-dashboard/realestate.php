@@ -42,9 +42,10 @@ try {
 
         $summaryStmt = $db->prepare(
             "SELECT
-               COALESCE(SUM(CASE WHEN status = 'active' THEN amount ELSE 0 END), 0) AS total_invested,
-               COALESCE(SUM(total_paid_out), 0)                                      AS total_paid_out,
-               COUNT(CASE WHEN status = 'active' THEN 1 END)                         AS active_count
+               COALESCE(SUM(CASE WHEN status = 'active' THEN amount ELSE 0 END), 0)                 AS total_invested,
+               COALESCE(SUM(CASE WHEN status = 'active' THEN expected_return ELSE 0 END), 0)         AS total_expected,
+               COALESCE(SUM(total_paid_out), 0)                                                      AS total_paid_out,
+               COUNT(CASE WHEN status = 'active' THEN 1 END)                                         AS active_count
              FROM realestate_investments
              WHERE user_id = :uid"
         );
@@ -58,6 +59,7 @@ try {
                 'my_investments' => $myInvestments,
                 'portfolio'      => [
                     'total_invested' => number_format((float) $summary['total_invested'], 2, '.', ''),
+                    'total_expected' => number_format((float) $summary['total_expected'], 2, '.', ''),
                     'total_paid_out' => number_format((float) $summary['total_paid_out'], 2, '.', ''),
                     'active_count'   => (int) $summary['active_count'],
                 ],
@@ -115,9 +117,8 @@ try {
         $payout_interval_days = $pool['payout_frequency'] === 'quarterly' ? 90 : 30;
         $next_payout_at       = date('Y-m-d H:i:s', strtotime('+' . $payout_interval_days . ' days'));
 
-        // Expected return at max yield over full duration (periodic, not compounded for simplicity)
-        $periods         = (int) $pool['duration_days'] / $payout_interval_days;
-        $expected_return = round($amount + ($amount * (float) $pool['yield_max'] / 100), 2);
+        $yield_rate      = round((float) $pool['yield_max'], 2);
+        $expected_return = round($amount + ($amount * $yield_rate / 100), 2);
 
         $db->prepare(
             "UPDATE wallets SET balance = balance - :amount, updated_at = NOW() WHERE user_id = :uid"
@@ -125,18 +126,19 @@ try {
 
         $db->prepare(
             "INSERT INTO realestate_investments
-               (user_id, pool_id, pool_name, amount, starts_at, ends_at,
+               (user_id, pool_id, pool_name, amount, yield_rate, starts_at, ends_at,
                 next_payout_at, expected_return)
-             VALUES (:uid, :pid, :pname, :amount, :starts, :ends, :next_payout, :expected)"
+             VALUES (:uid, :pid, :pname, :amount, :yield, :starts, :ends, :next_payout, :expected)"
         )->execute([
-            'uid'        => $user['id'],
-            'pid'        => $pool['id'],
-            'pname'      => $pool['name'],
-            'amount'     => $amount,
-            'starts'     => $starts_at,
-            'ends'       => $ends_at,
-            'next_payout'=> $next_payout_at,
-            'expected'   => $expected_return,
+            'uid'         => $user['id'],
+            'pid'         => $pool['id'],
+            'pname'       => $pool['name'],
+            'amount'      => $amount,
+            'yield'       => $yield_rate,
+            'starts'      => $starts_at,
+            'ends'        => $ends_at,
+            'next_payout' => $next_payout_at,
+            'expected'    => $expected_return,
         ]);
 
         $db->prepare(
@@ -149,6 +151,24 @@ try {
         ]);
 
         $db->commit();
+
+        // Send investment confirmation email (non-blocking)
+        try {
+            require_once '../../api/utilities/email_templates.php';
+            $uStmt = $db->prepare("SELECT full_name, email FROM users WHERE id = :uid");
+            $uStmt->execute(['uid' => $user['id']]);
+            $u = $uStmt->fetch();
+            if ($u) {
+                Mailer::sendInvestmentStarted(
+                    $u['email'], $u['full_name'],
+                    $pool['name'], $amount,
+                    (float) $pool['yield_min'], (float) $pool['yield_max'],
+                    (int) $pool['duration_days']
+                );
+            }
+        } catch (Exception $emailErr) {
+            error_log('Real estate investment email error: ' . $emailErr->getMessage());
+        }
 
         echo json_encode([
             'success' => true,

@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Modal: Transfer Funds — internal CrestVale-to-CrestVale transfer
  *
  * User enters recipient email + amount → JS POSTs to wallet.php with

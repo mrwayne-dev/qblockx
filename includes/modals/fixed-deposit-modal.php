@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Modal: Open Fixed Deposit
  *
  * User selects a plan (duration) and enters amount.

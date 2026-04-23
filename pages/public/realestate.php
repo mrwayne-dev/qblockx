@@ -41,20 +41,6 @@ require_once '../../includes/head.php';
           <a href="#categories" class="btn-outline-white">View Categories</a>
         </div>
 
-        <div class="hero-stats-card" data-appear>
-          <div class="hero-stat">
-            <span class="hero-stat-value text-gradient-blue">3</span>
-            <span class="hero-stat-label">Property types</span>
-          </div>
-          <div class="hero-stat">
-            <span class="hero-stat-value text-gradient-blue-rev">Global</span>
-            <span class="hero-stat-label">Market access</span>
-          </div>
-          <div class="hero-stat">
-            <span class="hero-stat-value text-gradient-blue">Fractional</span>
-            <span class="hero-stat-label">Ownership model</span>
-          </div>
-        </div>
 
       </div>
     </div>
@@ -227,54 +213,46 @@ require_once '../../includes/head.php';
         </p>
       </div>
 
-      <div class="feature-grid" data-appear>
+      <div class="re-benefits-bento" data-appear>
 
-        <div class="feature-card">
-          <div class="feature-card-icon"><i class="ph ph-money" aria-hidden="true"></i></div>
-          <div class="feature-card-content">
-            <h3 class="feature-card-title">Passive rental income</h3>
-            <p class="feature-card-body">Earn a proportional share of rental income from your property fractions. Income is credited to your wallet on each distribution cycle.</p>
-          </div>
+        <!-- Row 1: two equal cells -->
+        <div class="rbb-cell">
+          <div class="rbb-icon"><i class="ph ph-money" aria-hidden="true"></i></div>
+          <div class="rbb-title">Passive rental income</div>
+          <p class="rbb-body">Earn a proportional share of rental income from your property fractions. Income is credited to your wallet on each distribution cycle.</p>
         </div>
 
-        <div class="feature-card">
-          <div class="feature-card-icon"><i class="ph ph-chart-line-up" aria-hidden="true"></i></div>
-          <div class="feature-card-content">
-            <h3 class="feature-card-title">Capital appreciation</h3>
-            <p class="feature-card-body">In addition to rental yield, your fraction value grows as the underlying property appreciates. At exit, you receive both the income earned and the appreciation gain.</p>
-          </div>
+        <div class="rbb-cell">
+          <div class="rbb-icon"><i class="ph ph-chart-line-up" aria-hidden="true"></i></div>
+          <div class="rbb-title">Capital appreciation</div>
+          <p class="rbb-body">Your fraction value grows as the property appreciates. At exit, receive both income earned and the appreciation gain.</p>
         </div>
 
-        <div class="feature-card">
-          <div class="feature-card-icon"><i class="ph ph-globe-hemisphere-west" aria-hidden="true"></i></div>
-          <div class="feature-card-content">
-            <h3 class="feature-card-title">Global diversification</h3>
-            <p class="feature-card-body">Access property markets across multiple regions and economies. Spread exposure across residential, commercial, and industrial properties without geographic concentration risk.</p>
-          </div>
+        <!-- Row 2: full-width dark cell -->
+        <div class="rbb-cell rbb-cell--wide rbb-cell--dark">
+          <div class="rbb-icon"><i class="ph ph-globe-hemisphere-west" aria-hidden="true"></i></div>
+          <div class="rbb-title">Global diversification</div>
+          <p class="rbb-body">Access property markets across multiple regions and economies. Spread exposure across residential, commercial, and industrial properties without geographic concentration risk.</p>
         </div>
 
-        <div class="feature-card">
-          <div class="feature-card-icon"><i class="ph ph-hammer" aria-hidden="true"></i></div>
-          <div class="feature-card-content">
-            <h3 class="feature-card-title">Zero management burden</h3>
-            <p class="feature-card-body">No landlord duties. No tenant calls. No maintenance bills. Qblockx manages all operational aspects of each property on behalf of fraction holders.</p>
-          </div>
+        <!-- Row 3: two equal cells -->
+        <div class="rbb-cell">
+          <div class="rbb-icon"><i class="ph ph-hammer" aria-hidden="true"></i></div>
+          <div class="rbb-title">Zero management burden</div>
+          <p class="rbb-body">No landlord duties. No tenant calls. No maintenance bills. Qblockx handles all operational aspects on behalf of fraction holders.</p>
         </div>
 
-        <div class="feature-card">
-          <div class="feature-card-icon"><i class="ph ph-file-text" aria-hidden="true"></i></div>
-          <div class="feature-card-content">
-            <h3 class="feature-card-title">Transparent documentation</h3>
-            <p class="feature-card-body">Every property investment comes with full documentation — valuation reports, rental agreements, ownership structure, and projected return schedule.</p>
-          </div>
+        <div class="rbb-cell">
+          <div class="rbb-icon"><i class="ph ph-file-text" aria-hidden="true"></i></div>
+          <div class="rbb-title">Transparent documentation</div>
+          <p class="rbb-body">Every property comes with full docs — valuation reports, rental agreements, ownership structure, and projected return schedule.</p>
         </div>
 
-        <div class="feature-card">
-          <div class="feature-card-icon"><i class="ph ph-shield-check" aria-hidden="true"></i></div>
-          <div class="feature-card-content">
-            <h3 class="feature-card-title">Segregated investor funds</h3>
-            <p class="feature-card-body">Real estate investment funds are held separately from Qblockx operational capital. Your property allocation is ring-fenced and auditable at all times.</p>
-          </div>
+        <!-- Row 4: full-width dark cell -->
+        <div class="rbb-cell rbb-cell--wide rbb-cell--dark">
+          <div class="rbb-icon"><i class="ph ph-shield-check" aria-hidden="true"></i></div>
+          <div class="rbb-title">Segregated investor funds</div>
+          <p class="rbb-body">Real estate investment funds are held separately from Qblockx operational capital. Your property allocation is ring-fenced and independently auditable at all times.</p>
         </div>
 
       </div>

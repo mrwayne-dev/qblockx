@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Page: User Login
  */
 $pageTitle = 'Sign In';
@@ -13,7 +13,8 @@ require_once '../../includes/head.php';
     <!-- ── Left brand panel ── -->
     <div class="auth-panel">
       <a href="/" class="auth-panel-logo" aria-label="Qblockx home">
-        <img src="/assets/images/logo/logowhite.png" alt="Qblockx" style="height:32px;">
+        <img src="/assets/images/logo/logowhite.png" alt="">
+        <span class="auth-panel-logo-text">Qblockx</span>
       </a>
 
       <div class="auth-panel-body">
@@ -75,10 +76,7 @@ require_once '../../includes/head.php';
         </div>
 
         <button type="submit" class="btn-primary full-width auth-submit" id="loginBtn">
-          <span class="btn-text">Sign In</span>
-          <span class="btn-spinner" style="display:none;">
-            <i class="ph ph-circle-notch ph-spin" aria-hidden="true"></i>
-          </span>
+          Sign In
         </button>
 
       </form>

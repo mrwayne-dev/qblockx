@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Central Mailer: loads HTML templates, fills {{placeholders}}, sends via PHPMailer SMTP
  *
  * Usage:
@@ -35,9 +35,9 @@ class Mailer
         }
 
         $html    = file_get_contents($path);
-        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
-        $appUrl  = rtrim(getenv('APP_URL') ?: 'https://crestvalebank.com', '/');
-        $appHost = parse_url($appUrl, PHP_URL_HOST) ?: 'crestvalebank.com';
+        $appName = getenv('APP_NAME') ?: 'Qblockx';
+        $appUrl  = rtrim(getenv('APP_URL') ?: 'https://qblockx.com', '/');
+        $appHost = parse_url($appUrl, PHP_URL_HOST) ?: 'qblockx.com';
 
         // Merge caller vars with defaults
         $allVars = array_merge([
@@ -99,8 +99,8 @@ class Mailer
             $mail->CharSet    = 'UTF-8';
 
             $mail->setFrom(
-                getenv('SMTP_FROM')      ?: 'noreply@crestvalebank.com',
-                getenv('SMTP_FROM_NAME') ?: (getenv('APP_NAME') ?: 'CrestVale Bank')
+                getenv('SMTP_FROM')      ?: 'noreply@qblockx.com',
+                getenv('SMTP_FROM_NAME') ?: (getenv('APP_NAME') ?: 'Qblockx')
             );
             $mail->addAddress($to, $toName);
             $mail->isHTML(true);
@@ -127,7 +127,7 @@ class Mailer
      */
     public static function sendVerification(string $email, string $name, string $code): bool
     {
-        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+        $appName = getenv('APP_NAME') ?: 'Qblockx';
 
         $html = self::render('verify-email.html', [
             'first_name'        => $name ?: 'there',
@@ -147,7 +147,7 @@ class Mailer
      */
     public static function sendPasswordReset(string $email, string $name, string $resetUrl): bool
     {
-        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+        $appName = getenv('APP_NAME') ?: 'Qblockx';
 
         $html = self::render('password-reset.html', [
             'first_name' => $name ?: 'there',
@@ -162,7 +162,7 @@ class Mailer
      */
     public static function sendDepositPending(string $email, string $name): bool
     {
-        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+        $appName = getenv('APP_NAME') ?: 'Qblockx';
 
         $html = self::render('deposit-pending.html', [
             'first_name' => $name ?: 'there',
@@ -181,7 +181,7 @@ class Mailer
         string $currency,
         string $paymentId
     ): bool {
-        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+        $appName = getenv('APP_NAME') ?: 'Qblockx';
 
         $html = self::render('deposit-confirmed.html', [
             'first_name' => $name ?: 'there',
@@ -204,7 +204,7 @@ class Mailer
         string $interestRate,
         int    $durationMonths
     ): bool {
-        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+        $appName = getenv('APP_NAME') ?: 'Qblockx';
 
         $html = self::render('savings-plan-created.html', [
             'first_name'      => $name ?: 'there',
@@ -227,7 +227,7 @@ class Mailer
         string $totalReturn,
         string $maturityDate
     ): bool {
-        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+        $appName = getenv('APP_NAME') ?: 'Qblockx';
 
         $html = self::render('deposit-matured.html', [
             'first_name'    => $name ?: 'there',
@@ -249,7 +249,7 @@ class Mailer
         string $planName,
         string $creditDate
     ): bool {
-        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+        $appName = getenv('APP_NAME') ?: 'Qblockx';
 
         $html = self::render('interest-credited.html', [
             'first_name'      => $name ?: 'there',
@@ -271,7 +271,7 @@ class Mailer
         string $walletAddress,
         int    $processingHours = 24
     ): bool {
-        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+        $appName = getenv('APP_NAME') ?: 'Qblockx';
 
         $html = self::render('withdrawal-pending.html', [
             'first_name'       => $name ?: 'there',
@@ -293,7 +293,7 @@ class Mailer
         string $walletAddress,
         string $txHash = ''
     ): bool {
-        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+        $appName = getenv('APP_NAME') ?: 'Qblockx';
 
         $html = self::render('withdrawal-confirmed.html', [
             'first_name'     => $name ?: 'there',
@@ -316,7 +316,7 @@ class Mailer
         string $submittedDate,
         string $rejectionReason = ''
     ): bool {
-        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+        $appName = getenv('APP_NAME') ?: 'Qblockx';
 
         $html = self::render('withdrawal-rejected.html', [
             'first_name'       => $name ?: 'there',
@@ -338,7 +338,7 @@ class Mailer
         string $bonusAmount,
         string $referredName
     ): bool {
-        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+        $appName = getenv('APP_NAME') ?: 'Qblockx';
 
         $html = self::render('referral-bonus.html', [
             'first_name'    => $name ?: 'there',
@@ -354,7 +354,7 @@ class Mailer
      */
     public static function sendUserSignIn(string $email, string $name, string $loginTime): bool
     {
-        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+        $appName = getenv('APP_NAME') ?: 'Qblockx';
 
         $html = self::render('user-signin.html', [
             'first_name' => $name ?: 'there',
@@ -369,7 +369,7 @@ class Mailer
      */
     public static function sendAdminSignIn(string $email, string $name, string $loginTime): bool
     {
-        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+        $appName = getenv('APP_NAME') ?: 'Qblockx';
 
         $html = self::render('admin-signin.html', [
             'first_name' => $name ?: 'Admin',
@@ -391,7 +391,7 @@ class Mailer
         string $maturityDate,
         string $expectedReturn
     ): bool {
-        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+        $appName = getenv('APP_NAME') ?: 'Qblockx';
 
         $html = self::render('fixed-deposit-opened.html', [
             'first_name'      => $name ?: 'there',
@@ -406,6 +406,33 @@ class Mailer
     }
 
     /**
+     * Investment plan / commodity / real estate position activated.
+     */
+    public static function sendInvestmentStarted(
+        string $email,
+        string $name,
+        string $planName,
+        float  $amount,
+        float  $yieldMin,
+        float  $yieldMax,
+        int    $durationDays
+    ): bool {
+        $firstName = explode(' ', trim($name))[0] ?: $name;
+        $appName   = getenv('APP_NAME') ?: 'Qblockx';
+
+        $html = self::render('investment-started.html', [
+            'first_name'      => $firstName,
+            'plan_name'       => $planName,
+            'amount'          => number_format($amount, 2),
+            'daily_yield_min' => $yieldMin,
+            'daily_yield_max' => $yieldMax,
+            'duration_days'   => $durationDays,
+        ]);
+
+        return self::send($email, $name, 'Your investment is now active — ' . $planName, $html);
+    }
+
+    /**
      * Loan application approved and funds disbursed.
      */
     public static function sendLoanApproved(
@@ -415,7 +442,7 @@ class Mailer
         string $monthlyPayment,
         int    $durationMonths
     ): bool {
-        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+        $appName = getenv('APP_NAME') ?: 'Qblockx';
 
         $html = self::render('loan-approved.html', [
             'first_name'      => $name ?: 'there',
@@ -436,7 +463,7 @@ class Mailer
         string $amount,
         string $reason = ''
     ): bool {
-        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+        $appName = getenv('APP_NAME') ?: 'Qblockx';
 
         $html = self::render('loan-rejected.html', [
             'first_name' => $name ?: 'there',
@@ -457,7 +484,7 @@ class Mailer
         string $remainingBalance,
         string $dueDate
     ): bool {
-        $appName = getenv('APP_NAME') ?: 'CrestVale Bank';
+        $appName = getenv('APP_NAME') ?: 'Qblockx';
 
         $html = self::render('loan-payment-due.html', [
             'first_name'        => $name ?: 'there',

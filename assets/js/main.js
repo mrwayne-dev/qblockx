@@ -1,5 +1,5 @@
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * File: assets/js/main.js
  * Public-facing JS: nav pill, ticker, crypto prices, scroll animations
  */
@@ -382,15 +382,19 @@ document.addEventListener('DOMContentLoaded', function () {
     var form = document.getElementById('loginForm');
     if (!form) return;
 
+    // Show signed-out toast when redirected from logout
+    (function () {
+      if (new URLSearchParams(window.location.search).get('loggedout') === '1') {
+        showToast("You've been signed out.", 'info');
+        if (history.replaceState) history.replaceState(null, '', '/login');
+      }
+    })();
+
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
-      var btn     = document.getElementById('loginBtn');
-      var text    = btn.querySelector('.btn-text');
-      var spinner = btn.querySelector('.btn-spinner');
-
-      btn.disabled          = true;
-      text.style.display    = 'none';
-      spinner.style.display = 'block';
+      var btn = document.getElementById('loginBtn');
+      if (btn) { btn.disabled = true; btn.textContent = 'Signing in…'; }
+      showPageLoader();
 
       var data = {
         email:    document.getElementById('email').value.trim(),
@@ -406,9 +410,11 @@ document.addEventListener('DOMContentLoaded', function () {
         var result = await res.json();
 
         if (result.success) {
-          showAuthMsg('authMsg', 'Login successful! Redirecting…', false);
+          showToast('Welcome back!', 'success');
           window.location.href = '/dashboard';
         } else {
+          hidePageLoader();
+          if (btn) { btn.disabled = false; btn.textContent = 'Sign In'; }
           if (result.unverified) {
             try { sessionStorage.setItem('pendingVerifyEmail', data.email); } catch (ignore) {}
             var msg = (result.message || 'Please verify your email.') +
@@ -417,15 +423,11 @@ document.addEventListener('DOMContentLoaded', function () {
           } else {
             showAuthMsg('authMsg', result.message || 'Invalid credentials. Please try again.', true);
           }
-          btn.disabled          = false;
-          text.style.display    = '';
-          spinner.style.display = 'none';
         }
       } catch (err) {
+        hidePageLoader();
+        if (btn) { btn.disabled = false; btn.textContent = 'Sign In'; }
         showAuthMsg('authMsg', 'A network error occurred. Please try again.', true);
-        btn.disabled          = false;
-        text.style.display    = '';
-        spinner.style.display = 'none';
       }
     });
   }
@@ -437,9 +439,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
-      var btn      = document.getElementById('registerBtn');
-      var text     = btn.querySelector('.btn-text');
-      var spinner  = btn.querySelector('.btn-spinner');
       var password = document.getElementById('password').value;
       var confirm  = document.getElementById('confirm').value;
 
@@ -452,9 +451,9 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      btn.disabled          = true;
-      text.style.display    = 'none';
-      spinner.style.display = 'block';
+      var btn = document.getElementById('registerBtn');
+      if (btn) { btn.disabled = true; btn.textContent = 'Creating account…'; }
+      showPageLoader();
 
       var currencyEl = document.getElementById('currency');
       var data  = {
@@ -473,22 +472,18 @@ document.addEventListener('DOMContentLoaded', function () {
         var result = await res.json();
 
         if (result.success) {
-          showAuthMsg('authMsg', 'Account created! We\'ve sent a 6-digit code to your email.', false);
           try { sessionStorage.setItem('pendingVerifyEmail', data.email); } catch (ignore) {}
-          setTimeout(function () {
-            window.location.href = '/verify-email';
-          }, 1500);
+          showToast('Account created! Check your email for your verification code.', 'success');
+          setTimeout(function () { window.location.href = '/verify-email'; }, 1200);
         } else {
+          hidePageLoader();
+          if (btn) { btn.disabled = false; btn.textContent = 'Create Account'; }
           showAuthMsg('authMsg', result.message || 'Registration failed. Please try again.', true);
-          btn.disabled          = false;
-          text.style.display    = '';
-          spinner.style.display = 'none';
         }
       } catch (err) {
+        hidePageLoader();
+        if (btn) { btn.disabled = false; btn.textContent = 'Create Account'; }
         showAuthMsg('authMsg', 'A network error occurred. Please try again.', true);
-        btn.disabled          = false;
-        text.style.display    = '';
-        spinner.style.display = 'none';
       }
     });
   }
@@ -500,13 +495,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
-      var btn     = document.getElementById('forgotBtn');
-      var text    = btn.querySelector('.btn-text');
-      var spinner = btn.querySelector('.btn-spinner');
-
-      btn.disabled          = true;
-      text.style.display    = 'none';
-      spinner.style.display = 'block';
+      showPageLoader();
 
       var data = { email: document.getElementById('email').value.trim() };
 
@@ -518,18 +507,15 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         var result = await res.json();
 
-        showAuthMsg('authMsg', result.message || 'If that email exists, you\'ll receive a reset link shortly.', !result.success);
-
-        if (!result.success) {
-          btn.disabled          = false;
-          text.style.display    = '';
-          spinner.style.display = 'none';
+        hidePageLoader();
+        if (result.success) {
+          showToast('Reset link sent to your email.', 'info');
+        } else {
+          showAuthMsg('authMsg', result.message || 'Could not send reset link. Please try again.', true);
         }
       } catch (err) {
+        hidePageLoader();
         showAuthMsg('authMsg', 'A network error occurred. Please try again.', true);
-        btn.disabled          = false;
-        text.style.display    = '';
-        spinner.style.display = 'none';
       }
     });
   }
@@ -543,9 +529,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
-      var btn      = document.getElementById('resetBtn');
-      var text     = btn.querySelector('.btn-text');
-      var spinner  = btn.querySelector('.btn-spinner');
       var password = document.getElementById('password').value;
       var confirm  = document.getElementById('confirm').value;
 
@@ -558,9 +541,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      btn.disabled          = true;
-      text.style.display    = 'none';
-      spinner.style.display = 'block';
+      showPageLoader();
 
       try {
         var res    = await fetch('/api/auth/user-reset-password.php', {
@@ -570,22 +551,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         var result = await res.json();
 
-        showAuthMsg('authMsg', result.message, !result.success);
-
+        hidePageLoader();
         if (result.success) {
-          setTimeout(function () {
-            window.location.href = '/login';
-          }, 2000);
+          showToast('Password reset successfully. Please sign in.', 'success');
+          setTimeout(function () { window.location.href = '/login'; }, 1200);
         } else {
-          btn.disabled          = false;
-          text.style.display    = '';
-          spinner.style.display = 'none';
+          showAuthMsg('authMsg', result.message || 'Reset failed. Please try again.', true);
         }
       } catch (err) {
+        hidePageLoader();
         showAuthMsg('authMsg', 'A network error occurred. Please try again.', true);
-        btn.disabled          = false;
-        text.style.display    = '';
-        spinner.style.display = 'none';
       }
     });
   }
@@ -612,9 +587,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (form) {
       form.addEventListener('submit', async function (e) {
         e.preventDefault();
-        var btn     = document.getElementById('verifyBtn');
-        var text    = btn ? btn.querySelector('.btn-text')    : null;
-        var spinner = btn ? btn.querySelector('.btn-spinner') : null;
         var code    = (document.getElementById('verifyCode') || {}).value || '';
         code = code.trim();
 
@@ -639,9 +611,7 @@ document.addEventListener('DOMContentLoaded', function () {
           return;
         }
 
-        if (btn)     btn.disabled          = true;
-        if (text)    text.style.display    = 'none';
-        if (spinner) spinner.style.display = 'block';
+        showPageLoader();
 
         try {
           var res    = await fetch('/api/auth/user-verify-email.php', {
@@ -651,33 +621,25 @@ document.addEventListener('DOMContentLoaded', function () {
           });
           var result = await res.json();
 
+          hidePageLoader();
           if (result.success) {
             try { sessionStorage.removeItem('pendingVerifyEmail'); } catch (ignore) {}
-            if (msgEl) {
-              msgEl.textContent   = result.message || 'Email verified! Redirecting…';
-              msgEl.className     = 'auth-msg auth-msg--success';
-              msgEl.style.display = '';
-            }
-            setTimeout(function () { window.location.href = '/login'; }, 2000);
+            showToast('Email verified! Logging you in…', 'success');
+            setTimeout(function () { window.location.href = '/login'; }, 1200);
           } else {
             if (msgEl) {
               msgEl.textContent   = result.message || 'Verification failed. Please try again.';
               msgEl.className     = 'auth-msg auth-msg--error';
               msgEl.style.display = '';
             }
-            if (btn)     btn.disabled          = false;
-            if (text)    text.style.display    = '';
-            if (spinner) spinner.style.display = 'none';
           }
         } catch (err) {
+          hidePageLoader();
           if (msgEl) {
             msgEl.textContent   = 'A network error occurred. Please try again.';
             msgEl.className     = 'auth-msg auth-msg--error';
             msgEl.style.display = '';
           }
-          if (btn)     btn.disabled          = false;
-          if (text)    text.style.display    = '';
-          if (spinner) spinner.style.display = 'none';
         }
       });
     }
@@ -765,6 +727,34 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }, 3000);
   }
+
+  /* ── Page Loader: show/hide API ────────────────────────────── */
+  function getOrCreateLoader() {
+    var loader = document.getElementById('pageLoader');
+    if (!loader) {
+      loader = document.createElement('div');
+      loader.id = 'pageLoader';
+      loader.className = 'page-loader loader-done';
+      loader.setAttribute('aria-hidden', 'true');
+      loader.innerHTML = '<img src="/assets/images/logo/logoblue.png" class="loader-logo" alt="Loading Qblockx">';
+      document.body.appendChild(loader);
+    }
+    return loader;
+  }
+  function showPageLoader() {
+    var loader = getOrCreateLoader();
+    loader.style.display = '';
+    loader.style.opacity = '1';
+    loader.classList.remove('loader-done');
+  }
+  function hidePageLoader() {
+    var loader = document.getElementById('pageLoader');
+    if (!loader) return;
+    loader.classList.add('loader-done');
+    setTimeout(function () { loader.style.display = 'none'; }, 500);
+  }
+  window.showPageLoader = showPageLoader;
+  window.hidePageLoader = hidePageLoader;
 
   /* ── Init ──────────────────────────────────────────────────── */
   initPageLoader();

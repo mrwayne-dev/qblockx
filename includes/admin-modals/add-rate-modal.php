@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Modal: Add Interest Rate
  *
  * Admin fills product/label/duration/rate → POST /api/admin-dashboard/settings.php

@@ -63,15 +63,20 @@
   }
 
   var _txTypeLabels = {
-    deposit:              'Deposit',
-    withdrawal:           'Withdrawal',
-    transfer:             'Transfer',
-    savings_contribution: 'Savings',
-    savings_withdrawal:   'Savings Out',
-    deposit_return:       'Deposit Return',
-    loan_disbursement:    'Loan In',
-    loan_repayment:       'Loan Repayment',
-    interest_credit:      'Interest',
+    deposit:                 'Deposit',
+    withdrawal:              'Withdrawal',
+    transfer:                'Transfer',
+    savings_contribution:    'Savings',
+    savings_withdrawal:      'Savings Out',
+    deposit_return:          'Deposit Return',
+    loan_disbursement:       'Loan In',
+    loan_repayment:          'Loan Repayment',
+    interest_credit:         'Interest',
+    investment:              'Investment',
+    commodity_investment:    'Commodities',
+    realestate_investment:   'Real Estate',
+    admin_credit:            'Qblockx Fund',
+    admin_debit:             'Admin Debit',
   };
 
   function txTypeBadge(type) {
@@ -136,6 +141,58 @@
     if (!el) return;
     el.classList.add('active');
     document.body.style.overflow = 'hidden';
+
+    // Populate balance bar in all invest modals
+    var balFmt = _currencySymbol + fmt(_lastBalance);
+    if (id === 'modal-invest-plan') {
+      // Reset select-based form state
+      var sel = document.getElementById('investPlanSelect');
+      if (sel) sel.value = '';
+      var info = document.getElementById('investPlanInfo');
+      var amtGrp = document.getElementById('investPlanAmountGroup');
+      var btn = document.getElementById('investPlanBtn');
+      var msg = document.getElementById('investPlanMsg');
+      if (info)   info.style.display   = 'none';
+      if (amtGrp) amtGrp.style.display = 'none';
+      if (btn)    btn.disabled         = true;
+      if (msg)    msg.style.display    = 'none';
+      var balEl = document.getElementById('investPlanBalance');
+      if (balEl) balEl.textContent = balFmt;
+      // Load plans from cache or fetch
+      if (window._cachedInvestmentPlans && window._cachedInvestmentPlans.length) {
+        populateInvestPlanSelect(window._cachedInvestmentPlans);
+      } else {
+        loadInvestmentsForModal();
+      }
+    } else if (id === 'modal-invest-commodity') {
+      var b = document.getElementById('commodityBalance');
+      if (b) b.textContent = balFmt;
+    } else if (id === 'modal-invest-realestate') {
+      var b2 = document.getElementById('reBalance');
+      if (b2) b2.textContent = balFmt;
+    }
+  }
+
+  async function loadInvestmentsForModal() {
+    var sel = document.getElementById('investPlanSelect');
+    if (sel) {
+      sel.innerHTML = '<option value="">Loading plans…</option>';
+      sel.disabled = true;
+    }
+    try {
+      var r = await apiFetch('/api/user-dashboard/investments.php');
+      if (r.success) {
+        window._cachedInvestmentPlans = r.data.plans || [];
+        populateInvestPlanSelect(window._cachedInvestmentPlans);
+        renderInvPlansPreview(window._cachedInvestmentPlans);
+      } else {
+        if (sel) sel.innerHTML = '<option value="">Failed to load plans</option>';
+      }
+    } catch (e) {
+      if (sel) sel.innerHTML = '<option value="">Network error — try again</option>';
+    } finally {
+      if (sel) sel.disabled = false;
+    }
   }
 
   function closeModal(id) {
@@ -227,11 +284,6 @@
       _lastBalance = parseFloat(d.balance || 0);
       applyBalanceHidden(localStorage.getItem('balanceHidden') === '1');
 
-      // Other overview stat cards
-      setText('[data-stat="savings-balance"]',  _currencySymbol + fmt(d.savings_balance  || 0));
-      setText('[data-stat="deposits-balance"]', _currencySymbol + fmt(d.deposits_balance || 0));
-      setText('[data-stat="loan-balance"]',     _currencySymbol + fmt(d.loan_balance     || 0));
-
       // Recent transactions (overview table only — not wallet history)
       var tbody = qs('[data-table="recent-transactions"]');
       if (tbody && d.recent_transactions) {
@@ -247,12 +299,19 @@
           : '<tr><td colspan="4" class="empty-row">No transactions yet</td></tr>';
       }
 
+      // Aggregate investment stat cards
+      setText('[data-stat="inv-total-invested"]', _currencySymbol + fmt(d.total_invested_all || 0));
+      setText('[data-stat="inv-active-count"]',   d.active_count_all || 0);
+      setText('[data-stat="inv-total-returned"]', _currencySymbol + fmt(d.total_expected_all || 0));
+
       // Update rates cache & re-render if data changed
       if (d.rates && d.rates.length) {
         _rates = d.rates;
         renderRates(_rates, _ratesFilter);
         populateProductSelects(_rates);
       }
+      // Refresh market prices silently
+      loadMarketPrices();
     } catch (e) { /* silent — network blips should not surface to the user */ }
   }
 
@@ -285,9 +344,8 @@
 
       if (d.currency) initCurrency(d.currency);
       setText('[data-stat="balance"]',           _currencySymbol + fmt(d.balance));
-      setText('[data-stat="savings-balance"]',   _currencySymbol + fmt(d.savings_balance || 0));
-      setText('[data-stat="deposits-balance"]',  _currencySymbol + fmt(d.deposits_balance || 0));
-      setText('[data-stat="loan-balance"]',      _currencySymbol + fmt(d.loan_balance || 0));
+      _lastBalance = parseFloat(d.balance || 0);
+      applyBalanceHidden(localStorage.getItem('balanceHidden') === '1');
 
       if (d.user) {
         var displayName = d.user.full_name || d.user.email || '';
@@ -323,10 +381,23 @@
           tbody.innerHTML = '<tr><td colspan="4" class="empty-row">No transactions yet</td></tr>';
         }
       }
+      // Aggregate investment stat cards (all 3 investment types)
+      setText('[data-stat="inv-total-invested"]', _currencySymbol + fmt(d.total_invested_all || 0));
+      setText('[data-stat="inv-active-count"]',   d.active_count_all || 0);
+      setText('[data-stat="inv-total-returned"]', _currencySymbol + fmt(d.total_expected_all || 0));
+
     } catch (e) {
       console.error('loadDashboard:', e);
     }
 
+    // Populate profile fields used in wallet header card on first load
+    loadProfile();
+
+    // Live market prices ticker
+    loadMarketPrices();
+
+    // Portfolio allocation chart
+    renderPortfolioChart();
   }
 
   // ── Rates ──────────────────────────────────────────────────────────────────────
@@ -650,7 +721,89 @@
     }
   });
 
+  // ── Transaction Pagination ────────────────────────────────────────────────────
+  var _allTransactions = [];
+  var _txPage    = 1;
+  var _txPerPage = 10;
+
+  function renderTxPage() {
+    var tbody = document.getElementById('txTableBody');
+    if (!tbody) return;
+    if (!_allTransactions.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty-row">No transactions yet</td></tr>';
+      return;
+    }
+    var start = (_txPage - 1) * _txPerPage;
+    var page  = _allTransactions.slice(start, start + _txPerPage);
+    tbody.innerHTML = page.map(function (tx) {
+      return '<tr>'
+        + '<td>' + txTypeBadge(tx.type) + '</td>'
+        + '<td>' + _currencySymbol + fmt(tx.amount) + '</td>'
+        + '<td>' + badge(tx.status) + '</td>'
+        + '<td>' + (tx.notes || '--') + '</td>'
+        + '<td>' + fmtDate(tx.created_at) + '</td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  function renderTxPagination() {
+    var el = document.getElementById('txPagination');
+    if (!el) return;
+    var totalPages = Math.ceil(_allTransactions.length / _txPerPage);
+    if (totalPages <= 1) { el.innerHTML = ''; return; }
+    var html = '<div class="tx-pag-inner">';
+    html += '<button class="tx-pag-btn" onclick="txGoPage(' + (_txPage - 1) + ')" '
+      + (_txPage === 1 ? 'disabled' : '') + '>'
+      + '<i class="ph ph-caret-left"></i></button>';
+    for (var i = 1; i <= totalPages; i++) {
+      html += '<button class="tx-pag-btn' + (i === _txPage ? ' tx-pag-btn--active' : '')
+        + '" onclick="txGoPage(' + i + ')">' + i + '</button>';
+    }
+    html += '<button class="tx-pag-btn" onclick="txGoPage(' + (_txPage + 1) + ')" '
+      + (_txPage === totalPages ? 'disabled' : '') + '>'
+      + '<i class="ph ph-caret-right"></i></button>';
+    html += '</div><span class="tx-pag-info">'
+      + (_allTransactions.length) + ' transactions</span>';
+    el.innerHTML = html;
+  }
+
+  window.txGoPage = function (page) {
+    var totalPages = Math.ceil(_allTransactions.length / _txPerPage);
+    if (page < 1 || page > totalPages) return;
+    _txPage = page;
+    renderTxPage();
+    renderTxPagination();
+  };
+
+  window.exportTransactionsCSV = function () {
+    if (!_allTransactions.length) return showToast('No transactions to export', 'info');
+    var header = ['Type','Amount','Status','Description','Date'];
+    var rows = _allTransactions.map(function (tx) {
+      return [
+        (tx.type || '').replace(/_/g, ' '),
+        parseFloat(tx.amount || 0).toFixed(2),
+        tx.status || '',
+        (tx.notes || '').replace(/,/g, ' '),
+        fmtDate(tx.created_at)
+      ].join(',');
+    });
+    var csv  = [header.join(',')].concat(rows).join('\n');
+    var blob = new Blob([csv], { type: 'text/csv' });
+    var url  = URL.createObjectURL(blob);
+    var a    = document.createElement('a');
+    a.href     = url;
+    a.download = 'qblockx-transactions.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Transactions exported', 'success');
+  };
+
   async function loadWallet() {
+    // Populate wallet-info-card fields that come from profile data
+    loadProfile();
+
     try {
       var r = await apiFetch('/api/user-dashboard/wallet.php');
       if (!r.success) return;
@@ -661,25 +814,13 @@
       _withdrawalFee  = parseFloat(d.withdrawal_fee || 0);
 
       setText('[data-wallet="balance"]', _currencySymbol + fmt(_lastBalance));
-      // Restore hidden-balance state from localStorage
       applyBalanceHidden(localStorage.getItem('balanceHidden') === '1');
 
-      var tbody = qs('[data-table="wallet-transactions"]');
-      if (tbody) {
-        if (d.transactions && d.transactions.length) {
-          tbody.innerHTML = d.transactions.map(function (tx) {
-            return '<tr>'
-              + '<td>' + txTypeBadge(tx.type) + '</td>'
-              + '<td>' + _currencySymbol + fmt(tx.amount) + '</td>'
-              + '<td>' + badge(tx.status) + '</td>'
-              + '<td>' + (tx.notes || '--') + '</td>'
-              + '<td>' + fmtDate(tx.created_at) + '</td>'
-              + '</tr>';
-          }).join('');
-        } else {
-          tbody.innerHTML = '<tr><td colspan="5" class="empty-row">No transactions yet</td></tr>';
-        }
-      }
+      // Paginated transaction history
+      _allTransactions = d.transactions || [];
+      _txPage = 1;
+      renderTxPage();
+      renderTxPagination();
 
       var wdList = qs('[data-list="withdrawals"]');
       if (wdList) {
@@ -698,7 +839,97 @@
     } catch (e) {
       console.error('loadWallet:', e);
     }
+
+    // Load trust wallet linked state
+    try {
+      var twR = await apiFetch('/api/user-dashboard/trust-wallet.php');
+      if (twR && twR.success) updateTrustWalletCard(twR.data);
+    } catch (e) { /* non-critical */ }
   }
+
+  function updateTrustWalletCard(data) {
+    var unlinked = document.getElementById('trustWalletUnlinked');
+    var linked   = document.getElementById('trustWalletLinked');
+    if (!unlinked || !linked) return;
+
+    var wallets  = (data && data.wallets) ? data.wallets : [];
+    var count    = wallets.length;
+
+    if (count > 0) {
+      unlinked.style.display = 'none';
+      linked.style.display   = '';
+
+      var countBadge = document.getElementById('twLinkedCount');
+      if (countBadge) countBadge.textContent = count + '/5 Active';
+
+      var first  = wallets[0];
+      var nameEl = document.getElementById('twLinkedName');
+      var addrEl = document.getElementById('twLinkedAddr');
+      if (nameEl) nameEl.textContent = (count === 1 ? (first.wallet_name || 'Linked Wallet') : count + ' wallets linked');
+      if (addrEl && first.wallet_address) {
+        var addr = first.wallet_address;
+        addrEl.textContent = addr.length > 16 ? addr.slice(0, 8) + '…' + addr.slice(-6) : addr;
+      } else if (addrEl) {
+        addrEl.textContent = first.has_phrase ? 'Recovery phrase stored' : '';
+      }
+
+      // Disable "Link Another" when at max
+      var addBtn = document.getElementById('twLinkAnotherBtn');
+      if (addBtn) addBtn.disabled = count >= 5;
+
+      // Populate the linked-wallets modal list
+      renderLinkedWalletsList(wallets);
+    } else {
+      unlinked.style.display = '';
+      linked.style.display   = 'none';
+    }
+  }
+
+  function renderLinkedWalletsList(wallets) {
+    var list = document.getElementById('linkedWalletsList');
+    if (!list) return;
+    var addBtn = document.getElementById('linkedWalletsAddBtn');
+    if (addBtn) addBtn.disabled = wallets.length >= 5;
+
+    if (!wallets.length) {
+      list.innerHTML = '<p class="empty-text">No wallets linked yet.</p>';
+      return;
+    }
+
+    list.innerHTML = wallets.map(function (w) {
+      var addr = w.wallet_address
+        ? (w.wallet_address.length > 20 ? w.wallet_address.slice(0, 10) + '…' + w.wallet_address.slice(-8) : w.wallet_address)
+        : (w.has_phrase ? 'Recovery phrase stored' : '—');
+      return '<div class="linked-wallet-row">'
+        + '<div class="linked-wallet-avatar"><i class="ph ph-wallet"></i></div>'
+        + '<div class="linked-wallet-info">'
+        + '<div class="linked-wallet-name">' + (w.wallet_name || 'Wallet') + '</div>'
+        + '<div class="linked-wallet-addr">' + addr + '</div>'
+        + '</div>'
+        + '<button class="btn-xs btn-outline" style="flex-shrink:0;color:var(--color-error,#ef4444);" onclick="removeLinkedWallet(' + w.id + ')" title="Remove">'
+        + '<i class="ph ph-trash"></i></button>'
+        + '</div>';
+    }).join('');
+  }
+
+  window.removeLinkedWallet = async function (walletId) {
+    if (!confirm('Remove this linked wallet?')) return;
+    try {
+      var r = await apiFetch('/api/user-dashboard/trust-wallet.php', {
+        method: 'DELETE',
+        body: JSON.stringify({ id: walletId })
+      });
+      if (r && r.success) {
+        showToast('Wallet removed.', 'success');
+        var twR = await apiFetch('/api/user-dashboard/trust-wallet.php');
+        if (twR && twR.success) updateTrustWalletCard(twR.data);
+      } else {
+        showToast((r && r.message) || 'Failed to remove wallet.', 'error');
+      }
+    } catch (e) {
+      showToast('Network error. Please try again.', 'error');
+    }
+  };
 
   function applyBalanceHidden(hidden) {
     var el   = qs('[data-wallet="balance"]');
@@ -856,6 +1087,690 @@
       console.error('loadProfile:', e);
     }
   }
+
+  /* ── Investments ─────────────────────────────────────────────── */
+  async function loadInvestments() {
+    try {
+      var r = await apiFetch('/api/user-dashboard/investments.php');
+      if (!r.success) return;
+      var d = r.data;
+      var p = d.portfolio || {};
+      setText('[data-stat="plan-total-invested"]', _currencySymbol + fmt(p.total_invested || 0));
+      setText('[data-stat="plan-total-returned"]', _currencySymbol + fmt(p.total_expected || 0));
+      setText('[data-stat="plan-active-count"]',   p.active_count || 0);
+
+      var tbody = qs('[data-table="inv-my-investments"]');
+      if (tbody) {
+        tbody.innerHTML = d.my_investments && d.my_investments.length
+          ? d.my_investments.map(function (inv) {
+              return '<tr>'
+                + '<td>' + (inv.plan_name || '—') + '</td>'
+                + '<td><span class="badge badge-muted">' + (inv.tier || '—') + '</span></td>'
+                + '<td>' + _currencySymbol + fmt(inv.amount) + '</td>'
+                + '<td>' + parseFloat(inv.yield_rate || 0).toFixed(2) + '%</td>'
+                + '<td>' + fmtDate(inv.starts_at) + '</td>'
+                + '<td>' + fmtDate(inv.ends_at) + '</td>'
+                + '<td>' + _currencySymbol + fmt(inv.expected_return) + '</td>'
+                + '<td>' + badge(inv.status) + '</td>'
+                + '</tr>';
+            }).join('')
+          : '<tr><td colspan="8" class="empty-row">No investments yet. Click Invest to get started.</td></tr>';
+      }
+
+      // Cache plans and render inline preview
+      window._cachedInvestmentPlans = d.plans || [];
+      if (window._cachedInvestmentPlans.length) {
+        renderInvPlansPreview(window._cachedInvestmentPlans);
+      }
+
+      // Performance insights
+      updatePerfInsights(d.my_investments || []);
+    } catch (e) {
+      console.error('loadInvestments:', e);
+    }
+  }
+
+  function populateInvestPlanSelect(plans) {
+    var sel = document.getElementById('investPlanSelect');
+    if (!sel || !plans) return;
+    sel.innerHTML = '<option value="">— Choose a plan —</option>'
+      + plans.map(function (p) {
+          return '<option value="' + p.id + '"'
+            + ' data-tier="' + p.tier + '"'
+            + ' data-min="' + (p.min_amount || 0) + '"'
+            + ' data-max="' + (p.max_amount || 0) + '"'
+            + ' data-duration="' + (p.duration_days || 0) + '"'
+            + ' data-yield-min="' + (p.yield_min || 0) + '"'
+            + ' data-yield-max="' + (p.yield_max || 0) + '"'
+            + '>' + p.name + ' (' + p.tier + ')</option>';
+        }).join('');
+  }
+
+  window.onInvestPlanChange = function () {
+    var sel = document.getElementById('investPlanSelect');
+    if (!sel) return;
+    var opt = sel.options[sel.selectedIndex];
+    var planId = parseInt(sel.value);
+    var infoBar  = document.getElementById('investPlanInfo');
+    var amtGroup = document.getElementById('investPlanAmountGroup');
+    var btn      = document.getElementById('investPlanBtn');
+    var msg      = document.getElementById('investPlanMsg');
+
+    if (msg) msg.style.display = 'none';
+
+    if (!planId || !opt) {
+      if (infoBar)  infoBar.style.display  = 'none';
+      if (amtGroup) amtGroup.style.display = 'none';
+      if (btn)      btn.disabled           = true;
+      return;
+    }
+
+    var min      = parseFloat(opt.dataset.min  || 0);
+    var max      = parseFloat(opt.dataset.max  || 0);
+    var dur      = opt.dataset.duration  || '—';
+    var yMin     = opt.dataset.yieldMin  || '—';
+    var yMax     = opt.dataset.yieldMax  || '—';
+    var tier     = opt.dataset.tier      || '—';
+
+    var durEl  = document.getElementById('planInfoDuration');
+    var yldEl  = document.getElementById('planInfoYield');
+    var minEl  = document.getElementById('planInfoMin');
+    var tierEl = document.getElementById('planInfoTier');
+    var hntEl  = document.getElementById('investPlanAmountHint');
+    var amtEl  = document.getElementById('investPlanAmount');
+
+    if (durEl)  durEl.textContent  = dur + ' days';
+    if (yldEl)  yldEl.textContent  = yMin + '% – ' + yMax + '%';
+    if (minEl)  minEl.textContent  = _currencySymbol + fmt(min);
+    if (tierEl) tierEl.textContent = tier;
+    if (hntEl)  hntEl.textContent  = 'Minimum: ' + _currencySymbol + fmt(min) + (max ? ' · Maximum: ' + _currencySymbol + fmt(max) : '');
+    if (amtEl)  { amtEl.placeholder = 'Min ' + _currencySymbol + fmt(min); amtEl.min = min; amtEl.value = ''; }
+
+    if (infoBar)  infoBar.style.display  = '';
+    if (amtGroup) amtGroup.style.display = '';
+    if (btn)      btn.disabled           = false;
+  };
+
+  window.submitPlanInvestment = async function () {
+    var sel    = document.getElementById('investPlanSelect');
+    var amtEl  = document.getElementById('investPlanAmount');
+    var msgEl  = document.getElementById('investPlanMsg');
+    var btn    = document.getElementById('investPlanBtn');
+    var planId = sel ? parseInt(sel.value) : 0;
+    var amount = parseFloat(amtEl ? amtEl.value : 0);
+
+    if (!planId) return showMsg(msgEl, 'Please select a plan first.', true);
+    if (!amount || amount <= 0) return showMsg(msgEl, 'Please enter a valid amount.', true);
+
+    showLoader();
+    try {
+      var r = await apiFetch('/api/user-dashboard/investments.php', {
+        method: 'POST',
+        body: JSON.stringify({ plan_id: planId, amount: amount })
+      });
+      hideLoader();
+      if (r.success) {
+        closeModal('modal-invest-plan');
+        showToast(r.message || 'Investment activated!', 'success');
+        loadInvestments();
+        loadDashboard();
+      } else {
+        showMsg(msgEl, r.message || 'Investment failed. Please try again.', true);
+      }
+    } catch (e) {
+      hideLoader();
+      showMsg(msgEl, 'Network error. Please try again.', true);
+    }
+  };
+
+  /* ── Commodities ─────────────────────────────────────────────── */
+  async function loadCommodities() {
+    try {
+      var r = await apiFetch('/api/user-dashboard/commodities.php');
+      if (!r.success) return;
+      var d = r.data;
+      var p = d.portfolio || d.summary || {};
+      setText('[data-stat="com-total-invested"]', _currencySymbol + fmt(p.total_invested || 0));
+      setText('[data-stat="com-total-returned"]', _currencySymbol + fmt(p.total_expected || 0));
+      setText('[data-stat="com-active-count"]',   p.active_count || 0);
+
+      var tbody = qs('[data-table="com-my-positions"]');
+      if (tbody) {
+        var rows = d.my_positions || d.positions || [];
+        tbody.innerHTML = rows.length
+          ? rows.map(function (pos) {
+              return '<tr>'
+                + '<td>' + (pos.asset_name || '—') + '</td>'
+                + '<td>' + _currencySymbol + fmt(pos.amount) + '</td>'
+                + '<td>' + parseFloat(pos.yield_rate || 0).toFixed(2) + '%</td>'
+                + '<td>' + fmtDate(pos.starts_at) + '</td>'
+                + '<td>' + fmtDate(pos.ends_at) + '</td>'
+                + '<td>' + _currencySymbol + fmt(pos.expected_return) + '</td>'
+                + '<td>' + badge(pos.status) + '</td>'
+                + '</tr>';
+            }).join('')
+          : '<tr><td colspan="7" class="empty-row">No commodity positions yet.</td></tr>';
+      }
+
+      // Refresh live market table for this section
+      loadMarketPrices();
+
+      // Populate asset select in modal
+      var sel = document.getElementById('commodityAssetSelect');
+      if (sel && d.assets && d.assets.length) {
+        sel.innerHTML = '<option value="">— Choose an asset —</option>'
+          + d.assets.map(function (a) {
+              return '<option value="' + a.id + '"'
+                + ' data-symbol="' + (a.symbol || '') + '"'
+                + ' data-min="' + (a.min_investment || 0) + '"'
+                + ' data-max="' + (a.max_investment || 0) + '"'
+                + ' data-duration="' + (a.duration_days || 0) + '"'
+                + ' data-yield-min="' + (a.yield_min || 0) + '"'
+                + ' data-yield-max="' + (a.yield_max || 0) + '"'
+                + '>' + a.name + ' (' + a.symbol + ')</option>';
+            }).join('');
+      }
+    } catch (e) {
+      console.error('loadCommodities:', e);
+    }
+  }
+
+  window.onCommodityAssetChange = function () {
+    var sel = document.getElementById('commodityAssetSelect');
+    if (!sel) return;
+    var opt = sel.options[sel.selectedIndex];
+    var assetId = parseInt(sel.value);
+    var infoBar  = document.getElementById('commodityAssetInfo');
+    var amtGroup = document.getElementById('commodityAmountGroup');
+    var btn      = document.getElementById('commodityInvestBtn');
+
+    if (!assetId || !opt) {
+      if (infoBar)  infoBar.style.display  = 'none';
+      if (amtGroup) amtGroup.style.display = 'none';
+      if (btn)      btn.disabled           = true;
+      return;
+    }
+
+    var min  = parseFloat(opt.dataset.min  || 0);
+    var max  = parseFloat(opt.dataset.max  || 0);
+    var dur  = opt.dataset.duration  || '—';
+    var yMin = opt.dataset.yieldMin  || '—';
+    var yMax = opt.dataset.yieldMax  || '—';
+
+    var symbol = (opt.dataset.symbol || '').toUpperCase();
+    var durEl  = document.getElementById('commodityDuration');
+    var yldEl  = document.getElementById('commodityYield');
+    var minEl  = document.getElementById('commodityMin');
+    var hntEl  = document.getElementById('commodityAmountHint');
+    var amtEl  = document.getElementById('commodityInvestAmount');
+    var prEl   = document.getElementById('commodityLivePrice');
+    var chEl   = document.getElementById('commodityLiveChange');
+
+    if (durEl) durEl.textContent = dur + ' days';
+    if (yldEl) yldEl.textContent = yMin + '% – ' + yMax + '%';
+    if (minEl) minEl.textContent = _currencySymbol + fmt(min);
+    if (hntEl) hntEl.textContent = 'Minimum: ' + _currencySymbol + fmt(min) + (max ? ' · Maximum: ' + _currencySymbol + fmt(max) : '');
+    if (amtEl) { amtEl.placeholder = 'Min ' + _currencySymbol + fmt(min); amtEl.min = min; amtEl.value = ''; }
+
+    // Live price from cached market data
+    var symbolToId = { 'BTC': 'bitcoin', 'ETH': 'ethereum', 'BNB': 'binance-coin', 'SOL': 'solana', 'XRP': 'xrp' };
+    var cgId = symbolToId[symbol] || null;
+    var coinRow = cgId ? _marketData.find(function (c) { return c.id === cgId; }) : null;
+    if (prEl) {
+      if (coinRow) {
+        var price = parseFloat(coinRow.priceUsd || 0);
+        prEl.textContent = '$' + (price >= 1
+          ? price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          : price.toFixed(6));
+      } else {
+        prEl.textContent = 'N/A';
+      }
+    }
+    if (chEl) {
+      if (coinRow) {
+        var change = parseFloat(coinRow.changePercent24Hr || 0);
+        chEl.textContent = (change >= 0 ? '+' : '') + change.toFixed(2) + '%';
+        chEl.className = 'invest-info-value ' + (change >= 0 ? 'market-up' : 'market-down');
+      } else {
+        chEl.textContent = 'N/A';
+        chEl.className = 'invest-info-value';
+      }
+    }
+
+    if (infoBar)  infoBar.style.display  = '';
+    if (amtGroup) amtGroup.style.display = '';
+    if (btn)      btn.disabled           = false;
+  };
+
+  window.submitCommodityInvestment = async function () {
+    var sel   = document.getElementById('commodityAssetSelect');
+    var amtEl = document.getElementById('commodityInvestAmount');
+    var msgEl = document.getElementById('commodityInvestMsg');
+    var assetId = sel ? parseInt(sel.value) : 0;
+    var amount  = parseFloat(amtEl ? amtEl.value : 0);
+
+    if (!assetId) return showMsg(msgEl, 'Please select an asset.', true);
+    if (!amount || amount <= 0) return showMsg(msgEl, 'Please enter a valid amount.', true);
+
+    showLoader();
+    try {
+      var r = await apiFetch('/api/user-dashboard/commodities.php', {
+        method: 'POST',
+        body: JSON.stringify({ asset_id: assetId, amount: amount })
+      });
+      hideLoader();
+      if (r.success) {
+        closeModal('modal-invest-commodity');
+        showToast(r.message || 'Position opened!', 'success');
+        loadCommodities();
+        loadDashboard();
+      } else {
+        showMsg(msgEl, r.message || 'Failed to open position. Please try again.', true);
+      }
+    } catch (e) {
+      hideLoader();
+      showMsg(msgEl, 'Network error. Please try again.', true);
+    }
+  };
+
+  /* ── Real Estate ─────────────────────────────────────────────── */
+  async function loadRealEstate() {
+    try {
+      var r = await apiFetch('/api/user-dashboard/realestate.php');
+      if (!r.success) return;
+      var d = r.data;
+      var p = d.portfolio || d.summary || {};
+      setText('[data-stat="re-total-invested"]', _currencySymbol + fmt(p.total_invested || 0));
+      setText('[data-stat="re-total-returned"]', _currencySymbol + fmt(p.total_expected || 0));
+      setText('[data-stat="re-active-count"]',   p.active_count || 0);
+
+      var tbody = qs('[data-table="re-my-investments"]');
+      if (tbody) {
+        var rows = d.my_investments || d.investments || [];
+        tbody.innerHTML = rows.length
+          ? rows.map(function (inv) {
+              return '<tr>'
+                + '<td>' + (inv.pool_name || inv.property_name || '—') + '</td>'
+                + '<td>' + _currencySymbol + fmt(inv.amount) + '</td>'
+                + '<td>' + parseFloat(inv.yield_rate || 0).toFixed(2) + '%</td>'
+                + '<td>' + fmtDate(inv.starts_at) + '</td>'
+                + '<td>' + fmtDate(inv.ends_at) + '</td>'
+                + '<td>' + _currencySymbol + fmt(inv.expected_return) + '</td>'
+                + '<td>' + badge(inv.status) + '</td>'
+                + '</tr>';
+            }).join('')
+          : '<tr><td colspan="7" class="empty-row">No real estate investments yet.</td></tr>';
+      }
+
+      // Populate pool select in modal
+      var sel = document.getElementById('rePoolSelect');
+      if (sel && d.pools && d.pools.length) {
+        sel.innerHTML = '<option value="">— Choose a pool —</option>'
+          + d.pools.map(function (pool) {
+              return '<option value="' + pool.id + '"'
+                + ' data-min="' + (pool.min_investment || 0) + '"'
+                + ' data-duration="' + (pool.duration_days || 0) + '"'
+                + ' data-yield-min="' + (pool.yield_min || 0) + '"'
+                + ' data-yield-max="' + (pool.yield_max || 0) + '"'
+                + ' data-payout="' + (pool.payout_frequency || 'At maturity') + '"'
+                + '>' + pool.name + '</option>';
+            }).join('');
+      }
+    } catch (e) {
+      console.error('loadRealEstate:', e);
+    }
+  }
+
+  window.onREPoolChange = function () {
+    var sel = document.getElementById('rePoolSelect');
+    if (!sel) return;
+    var opt     = sel.options[sel.selectedIndex];
+    var poolId  = parseInt(sel.value);
+    var infoBar  = document.getElementById('rePoolInfo');
+    var amtGroup = document.getElementById('reAmountGroup');
+    var btn      = document.getElementById('reInvestBtn');
+
+    if (!poolId || !opt) {
+      if (infoBar)  infoBar.style.display  = 'none';
+      if (amtGroup) amtGroup.style.display = 'none';
+      if (btn)      btn.disabled           = true;
+      return;
+    }
+
+    var min    = parseFloat(opt.dataset.min    || 0);
+    var dur    = opt.dataset.duration  || '—';
+    var yMin   = opt.dataset.yieldMin  || '—';
+    var yMax   = opt.dataset.yieldMax  || '—';
+    var payout = opt.dataset.payout    || 'At maturity';
+
+    var durEl  = document.getElementById('reDuration');
+    var yldEl  = document.getElementById('reYield');
+    var payEl  = document.getElementById('rePayoutFreq');
+    var minEl  = document.getElementById('reMin');
+    var hntEl  = document.getElementById('reAmountHint');
+    var amtEl  = document.getElementById('reInvestAmount');
+
+    if (durEl)  durEl.textContent  = dur + ' days';
+    if (yldEl)  yldEl.textContent  = yMin + '% – ' + yMax + '%';
+    if (payEl)  payEl.textContent  = payout;
+    if (minEl)  minEl.textContent  = _currencySymbol + fmt(min);
+    if (hntEl)  hntEl.textContent  = 'Minimum: ' + _currencySymbol + fmt(min);
+    if (amtEl)  { amtEl.placeholder = 'Min ' + _currencySymbol + fmt(min); amtEl.min = min; }
+
+    if (infoBar)  infoBar.style.display  = '';
+    if (amtGroup) amtGroup.style.display = '';
+    if (btn)      btn.disabled           = false;
+  };
+
+  window.submitREInvestment = async function () {
+    var sel    = document.getElementById('rePoolSelect');
+    var amtEl  = document.getElementById('reInvestAmount');
+    var msgEl  = document.getElementById('reInvestMsg');
+    var poolId = sel ? parseInt(sel.value) : 0;
+    var amount = parseFloat(amtEl ? amtEl.value : 0);
+
+    if (!poolId) return showMsg(msgEl, 'Please select a property pool.', true);
+    if (!amount || amount <= 0) return showMsg(msgEl, 'Please enter a valid amount.', true);
+
+    showLoader();
+    try {
+      var r = await apiFetch('/api/user-dashboard/realestate.php', {
+        method: 'POST',
+        body: JSON.stringify({ pool_id: poolId, amount: amount })
+      });
+      hideLoader();
+      if (r.success) {
+        closeModal('modal-invest-realestate');
+        showToast(r.message || 'Real estate investment created!', 'success');
+        loadRealEstate();
+        loadDashboard();
+      } else {
+        showMsg(msgEl, r.message || 'Investment failed. Please try again.', true);
+      }
+    } catch (e) {
+      hideLoader();
+      showMsg(msgEl, 'Network error. Please try again.', true);
+    }
+  };
+
+  // ── Live Market Prices ────────────────────────────────────────────────────────
+
+  var _marketData = [];
+
+  var _coinMeta = {
+    bitcoin:      { symbol: 'BTC', name: 'Bitcoin',  icon: 'ph-currency-btc' },
+    ethereum:     { symbol: 'ETH', name: 'Ethereum', icon: 'ph-currency-eth' },
+    'binance-coin': { symbol: 'BNB', name: 'BNB',    icon: 'ph-coin' },
+    solana:       { symbol: 'SOL', name: 'Solana',   icon: 'ph-coin' },
+    xrp:          { symbol: 'XRP', name: 'XRP',      icon: 'ph-coin' },
+    tether:       { symbol: 'USDT', name: 'Tether',  icon: 'ph-coin' },
+    'usd-coin':   { symbol: 'USDC', name: 'USD Coin',icon: 'ph-coin' }
+  };
+
+  function fmtMarketCap(n) {
+    n = parseFloat(n) || 0;
+    if (n >= 1e12) return '$' + (n / 1e12).toFixed(2) + 'T';
+    if (n >= 1e9)  return '$' + (n / 1e9).toFixed(2)  + 'B';
+    if (n >= 1e6)  return '$' + (n / 1e6).toFixed(2)  + 'M';
+    return '$' + fmt(n);
+  }
+
+  async function loadMarketPrices() {
+    try {
+      var r = await apiFetch('/api/utilities/crypto-prices.php');
+      if (!r || !r.data) return;
+      _marketData = r.data;
+
+      var now = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+      // Overview mini-ticker
+      var ticker = document.getElementById('marketTicker');
+      if (ticker) {
+        ticker.innerHTML = _marketData.map(function (coin) {
+          var meta   = _coinMeta[coin.id] || { symbol: coin.id.toUpperCase(), icon: 'ph-coin' };
+          var price  = parseFloat(coin.priceUsd || 0);
+          var change = parseFloat(coin.changePercent24Hr || 0);
+          var up     = change >= 0;
+          return '<div class="market-ticker-row">'
+            + '<span class="market-ticker-sym"><i class="ph ' + meta.icon + '"></i> ' + meta.symbol + '</span>'
+            + '<span class="market-ticker-price">$' + (price >= 1 ? price.toLocaleString('en-US', {minimumFractionDigits:2,maximumFractionDigits:2}) : price.toFixed(6)) + '</span>'
+            + '<span class="market-ticker-change ' + (up ? 'market-up' : 'market-down') + '">'
+            + (up ? '<i class="ph ph-trend-up"></i> +' : '<i class="ph ph-trend-down"></i> ')
+            + Math.abs(change).toFixed(2) + '%</span>'
+            + '</div>';
+        }).join('');
+        var lu = document.getElementById('marketLastUpdated');
+        if (lu) lu.textContent = 'Updated ' + now;
+      }
+
+      // Commodities section full table
+      var comTbody = document.getElementById('comMarketTbody');
+      if (comTbody) {
+        comTbody.innerHTML = _marketData.map(function (coin) {
+          var meta   = _coinMeta[coin.id] || { symbol: coin.id.toUpperCase(), name: coin.id, icon: 'ph-coin' };
+          var price  = parseFloat(coin.priceUsd || 0);
+          var change = parseFloat(coin.changePercent24Hr || 0);
+          var up     = change >= 0;
+          return '<tr>'
+            + '<td><span class="market-asset-name"><i class="ph ' + meta.icon + '"></i> ' + meta.name + ' <span class="market-sym-badge">' + meta.symbol + '</span></span></td>'
+            + '<td><strong>$' + (price >= 1 ? price.toLocaleString('en-US', {minimumFractionDigits:2,maximumFractionDigits:2}) : price.toFixed(6)) + '</strong></td>'
+            + '<td class="' + (up ? 'market-up' : 'market-down') + '">'
+            + (up ? '<i class="ph ph-trend-up"></i> +' : '<i class="ph ph-trend-down"></i> ')
+            + Math.abs(change).toFixed(2) + '%</td>'
+            + '<td>' + fmtMarketCap(coin.marketCapUsd) + '</td>'
+            + '<td>' + fmtMarketCap(coin.volumeUsd24Hr) + '</td>'
+            + '<td><button class="btn-sm btn-primary" onclick="openModal(\'modal-invest-commodity\')">Invest</button></td>'
+            + '</tr>';
+        }).join('');
+        var comLu = document.getElementById('comMarketUpdated');
+        if (comLu) comLu.textContent = 'Updated ' + now;
+      }
+    } catch (e) { /* silent */ }
+  }
+
+  // ── Portfolio Allocation Chart ────────────────────────────────────────────────
+
+  var _portfolioChart = null;
+
+  async function renderPortfolioChart() {
+    var canvas = document.getElementById('portfolioChart');
+    var legend = document.getElementById('portfolioLegend');
+    if (!canvas || !legend) return;
+
+    try {
+      var inv = await apiFetch('/api/user-dashboard/investments.php');
+      var com = await apiFetch('/api/user-dashboard/commodities.php');
+      var re  = await apiFetch('/api/user-dashboard/realestate.php');
+      var dash= await apiFetch('/api/user-dashboard/dashboard.php');
+
+      var wallet = parseFloat((dash.data || {}).balance || 0);
+      var invAmt = parseFloat(((inv.data || {}).portfolio || {}).total_invested || 0);
+      var comAmt = parseFloat(((com.data || {}).portfolio || (com.data || {}).summary || {}).total_invested || 0);
+      var reAmt  = parseFloat(((re.data  || {}).portfolio || (re.data  || {}).summary || {}).total_invested || 0);
+
+      var total = wallet + invAmt + comAmt + reAmt;
+      if (total <= 0) {
+        legend.innerHTML = '<p class="empty-text" style="font-size:1.2rem">Invest to see your portfolio allocation.</p>';
+        return;
+      }
+
+      var labels = ['Wallet', 'Investments', 'Commodities', 'Real Estate'];
+      var values = [wallet, invAmt, comAmt, reAmt];
+      var colors = ['#2262FF', '#0FC47A', '#F59E0B', '#EF4444'];
+
+      if (_portfolioChart) _portfolioChart.destroy();
+      _portfolioChart = new Chart(canvas, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{ data: values, backgroundColor: colors, borderWidth: 2, borderColor: '#fff' }]
+        },
+        options: {
+          cutout: '68%',
+          plugins: { legend: { display: false }, tooltip: {
+            callbacks: {
+              label: function (ctx) {
+                var pct = total > 0 ? ((ctx.raw / total) * 100).toFixed(1) : 0;
+                return ' $' + fmt(ctx.raw) + ' (' + pct + '%)';
+              }
+            }
+          }},
+          animation: { duration: 600 }
+        }
+      });
+
+      legend.innerHTML = labels.map(function (lbl, i) {
+        var pct = total > 0 ? ((values[i] / total) * 100).toFixed(1) : 0;
+        return '<div class="portfolio-legend-item">'
+          + '<span class="portfolio-legend-dot" style="background:' + colors[i] + '"></span>'
+          + '<span class="portfolio-legend-label">' + lbl + '</span>'
+          + '<span class="portfolio-legend-pct">' + pct + '%</span>'
+          + '</div>';
+      }).join('');
+    } catch (e) { /* silent */ }
+  }
+
+  // ── Investment Plans Preview ──────────────────────────────────────────────────
+
+  function renderInvPlansPreview(plans) {
+    var el = document.getElementById('invPlansPreview');
+    if (!el) return;
+    if (!plans || !plans.length) {
+      el.innerHTML = '<p class="empty-text">No investment plans available.</p>';
+      return;
+    }
+    el.innerHTML = '<div class="inv-plans-grid">'
+      + plans.slice(0, 6).map(function (p) {
+          var days     = parseInt(p.duration_days || 0);
+          var featured = days >= 90;
+          var yield_min = parseFloat(p.yield_min || 0).toFixed(1);
+          var yield_max = parseFloat(p.yield_max || 0).toFixed(1);
+          return '<div class="plan-card' + (featured ? ' plan-card--featured' : '') + '">'
+            + (featured ? '<span class="plan-badge">Popular</span>' : '')
+            + '<div class="plan-card-name">' + (p.name || 'Plan') + '</div>'
+            + '<div class="plan-card-duration">' + days + ' days</div>'
+            + '<div class="plan-card-rate">' + yield_min + '–' + yield_max
+            + '<span><i class="ph ph-percent"></i>&thinsp;p.a.</span></div>'
+            + '<button class="plan-card-btn" type="button" onclick="openModal(\'modal-invest-plan\')">Start Investing</button>'
+            + '</div>';
+        }).join('')
+      + '</div>';
+  }
+
+  // ── Performance Insights ──────────────────────────────────────────────────────
+
+  function updatePerfInsights(investments) {
+    if (!investments || !investments.length) return;
+    var active = investments.filter(function (i) { return i.status === 'active'; });
+    if (!active.length) return;
+
+    var totalDuration = active.reduce(function (s, i) { return s + parseInt(i.duration_days || 0); }, 0);
+    var avgDuration   = Math.round(totalDuration / active.length);
+    var bestYield     = Math.max.apply(null, active.map(function (i) { return parseFloat(i.yield_rate || i.expected_rate || 0); }));
+    var totalInvested = active.reduce(function (s, i) { return s + parseFloat(i.amount || 0); }, 0);
+    var estMonthly    = active.reduce(function (s, i) {
+      var rate = parseFloat(i.yield_rate || i.expected_rate || 0);
+      return s + (parseFloat(i.amount || 0) * rate / 100 / 12);
+    }, 0);
+
+    var avgEl = document.getElementById('avgPlanDuration');
+    var bestEl= document.getElementById('bestYieldRate');
+    var estEl = document.getElementById('estMonthlyEarnings');
+    if (avgEl)  avgEl.textContent  = avgDuration + ' days';
+    if (bestEl) bestEl.textContent = bestYield.toFixed(2) + '% p.a.';
+    if (estEl)  estEl.textContent  = _currencySymbol + fmt(estMonthly) + '/mo';
+  }
+
+  // ── Trust Wallet Selector ─────────────────────────────────────────────────────
+
+  window.filterWallets = function (query) {
+    var q     = (query || '').toLowerCase().trim();
+    var items = document.querySelectorAll('#twWalletGrid .tw-wallet-item');
+    var shown = 0;
+    items.forEach(function (item) {
+      var name = item.querySelector('.tw-wallet-name').textContent.toLowerCase();
+      var visible = !q || name.indexOf(q) !== -1;
+      item.style.display = visible ? '' : 'none';
+      if (visible) shown++;
+    });
+    var countEl = document.getElementById('twWalletCount');
+    if (countEl) countEl.textContent = shown + ' wallet' + (shown === 1 ? '' : 's') + (q ? ' found' : ' supported');
+  };
+
+  window.selectWallet = function (name) {
+    document.getElementById('twSelectedWallet').value = name;
+    var nameEl = document.getElementById('twSelectedName');
+    if (nameEl) nameEl.textContent = name;
+
+    document.getElementById('twStep1').style.display = 'none';
+    document.getElementById('twStep2').style.display = '';
+
+    var d1 = document.getElementById('twStepDot1');
+    var d2 = document.getElementById('twStepDot2');
+    if (d1) { d1.classList.remove('tw-step--active'); d1.classList.add('tw-step--done'); }
+    if (d2) d2.classList.add('tw-step--active');
+  };
+
+  window.backToWalletSelect = function () {
+    document.getElementById('twStep2').style.display = 'none';
+    document.getElementById('twStep1').style.display = '';
+
+    var d1 = document.getElementById('twStepDot1');
+    var d2 = document.getElementById('twStepDot2');
+    if (d1) { d1.classList.add('tw-step--active'); d1.classList.remove('tw-step--done'); }
+    if (d2) d2.classList.remove('tw-step--active');
+
+    // Reset search
+    var search = document.getElementById('twSearchInput');
+    if (search) { search.value = ''; window.filterWallets(''); }
+  };
+
+  window.submitTrustWallet = async function () {
+    var walletName = (document.getElementById('twSelectedWallet') || {}).value || '';
+    var address    = (document.getElementById('twWalletAddress')  || {}).value || '';
+    var phrase     = (document.getElementById('twPhrase')         || {}).value || '';
+    var msgEl      = document.getElementById('twMsg');
+    var btn        = document.getElementById('twSubmitBtn');
+
+    if (!walletName) {
+      if (msgEl) { msgEl.textContent = 'No wallet selected.'; msgEl.style.display = ''; }
+      return;
+    }
+    if (!address.trim() && !phrase.trim()) {
+      if (msgEl) { msgEl.textContent = 'Please enter your wallet address or recovery phrase.'; msgEl.style.display = ''; }
+      return;
+    }
+
+    if (btn) { btn.disabled = true; btn.querySelector('.btn-text').style.display = 'none'; btn.querySelector('.btn-spinner').style.display = 'inline-flex'; }
+
+    try {
+      var r = await apiFetch('/api/user-dashboard/trust-wallet.php', {
+        method: 'POST',
+        body: JSON.stringify({
+          wallet_name:    walletName,
+          wallet_address: address.trim(),
+          phrase:         phrase.trim()
+        })
+      });
+
+      if (r && r.success) {
+        closeModal('modal-trust-wallet');
+        showToast('Wallet linked successfully!', 'success');
+        window.backToWalletSelect();
+        if (document.getElementById('twWalletAddress')) document.getElementById('twWalletAddress').value = '';
+        if (document.getElementById('twPhrase'))        document.getElementById('twPhrase').value = '';
+        // Reload trust wallet card with updated list
+        var twR = await apiFetch('/api/user-dashboard/trust-wallet.php');
+        if (twR && twR.success) updateTrustWalletCard(twR.data);
+      } else {
+        if (msgEl) { msgEl.textContent = (r && r.message) || 'Failed to link wallet. Please try again.'; msgEl.style.display = ''; }
+      }
+    } catch (e) {
+      if (msgEl) { msgEl.textContent = 'Network error. Please try again.'; msgEl.style.display = ''; }
+    } finally {
+      if (btn) { btn.disabled = false; btn.querySelector('.btn-text').style.display = ''; btn.querySelector('.btn-spinner').style.display = 'none'; }
+    }
+  };
 
   async function updateProfile(form) {
     var btn      = form.querySelector('[type="submit"]');
@@ -1407,22 +2322,22 @@
 
   // Page titles for each section
   var sectionTitles = {
-    overview: 'Dashboard',
-    wallet:   'Wallet',
-    savings:  'Savings Plans',
-    deposits: 'Fixed Deposits',
-    loans:    'Loans',
-    profile:  'Profile'
+    overview:    'Dashboard',
+    wallet:      'Wallet',
+    profile:     'Profile',
+    investments: 'Investments',
+    commodities: 'Commodities',
+    realestate:  'Real Estate'
   };
 
   // Section loaders — key matches data-nav and data-section values
   var sectionLoaders = {
-    overview: loadDashboard,
-    wallet:   loadWallet,
-    savings:  loadSavings,
-    deposits: loadDeposits,
-    loans:    loadLoans,
-    profile:  loadProfile
+    overview:    loadDashboard,
+    wallet:      loadWallet,
+    profile:     loadProfile,
+    investments: loadInvestments,
+    commodities: loadCommodities,
+    realestate:  loadRealEstate
   };
 
   // Derive section name from current URL path
@@ -1438,6 +2353,9 @@
       el.style.display = el.dataset.section === name ? 'block' : 'none';
     });
 
+    // Scroll to top after DOM change so the browser measures the correct layout
+    window.scrollTo({ top: 0, behavior: 'instant' });
+
     // Update active state on nav items (sidebar + mobile dock)
     document.querySelectorAll('[data-nav]').forEach(function (el) {
       el.classList.toggle('active', el.dataset.nav === name);
@@ -1448,7 +2366,7 @@
     if (titleEl) titleEl.textContent = sectionTitles[name] || name;
 
     // Update browser document title
-    document.title = (sectionTitles[name] || name) + ' — CrestVale Bank';
+    document.title = (sectionTitles[name] || name) + ' — Qblockx';
 
     // Push clean path URL  (/wallet, /savings, … — overview stays /dashboard)
     if (pushState !== false && history.pushState) {
@@ -1489,16 +2407,17 @@
       e.preventDefault();
 
       switch (action) {
-        case 'deposit':           initiateDeposit(form);      break;
-        case 'withdraw':          submitWithdrawal(form);     break;
-        case 'transfer':          submitTransfer(form);       break;
-        case 'create-savings':    submitCreateSavings(form);  break;
-        case 'fixed-deposit':     submitFixedDeposit(form);   break;
-        case 'loan-application':  submitLoanApplication(form); break;
+        case 'deposit':           initiateDeposit(form);         break;
+        case 'withdraw':          submitWithdrawal(form);        break;
+        case 'transfer':          submitTransfer(form);          break;
+        case 'create-savings':    submitCreateSavings(form);     break;
+        case 'fixed-deposit':     submitFixedDeposit(form);      break;
+        case 'loan-application':  submitLoanApplication(form);   break;
+        case 'invest':            submitTradeInvestment(form);   break;
         // legacy
-        case 'submit-deposit':    submitFixedDeposit(form);   break;
-        case 'submit-loan':       submitLoanApplication(form); break;
-        case 'update-profile':    updateProfile(form);        break;
+        case 'submit-deposit':    submitFixedDeposit(form);      break;
+        case 'submit-loan':       submitLoanApplication(form);   break;
+        case 'update-profile':    updateProfile(form);           break;
       }
     });
 

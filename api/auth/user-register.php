@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * API: User registration — creates account + sends email verification code
  */
 ob_start();

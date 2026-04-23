@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Page: Privacy Policy
  */
 $pageTitle       = 'Privacy Policy';

@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Include: head.php — shared <head> + opening <body>
  * Set $pageTitle before requiring this file.
  * Set $pageDescription, $pageKeywords to override defaults.

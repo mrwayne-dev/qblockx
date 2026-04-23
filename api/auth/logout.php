@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Created by: Wayne
  */
 
@@ -11,6 +11,6 @@ session_destroy();
 if ($role === 'admin') {
     header('Location: /admin/login');
 } else {
-    header('Location: /login');
+    header('Location: /login?loggedout=1');
 }
 exit;

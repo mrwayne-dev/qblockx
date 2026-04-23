@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * API: Admin Registration — invite-code gated, creates role=admin user
  */
 ob_start();

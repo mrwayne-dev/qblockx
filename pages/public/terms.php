@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Page: Terms of Service
  */
 $pageTitle       = 'Terms of Service';

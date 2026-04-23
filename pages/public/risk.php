@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Page: Risk Disclosure
  */
 $pageTitle       = 'Risk Disclosure';

@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Page: Admin Dashboard — SPA
  */
 
@@ -16,9 +16,6 @@ $admin = getAuthUser();
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Admin — Qblockx</title>
 
-  <!-- Fonts -->
-  <link rel="preload" href="/assets/fonts/Recoleta-RegularDEMO.woff2" as="font" type="font/woff2" crossorigin>
-
   <!-- Styles -->
   <link rel="stylesheet" href="/assets/css/main.css">
   <link rel="stylesheet" href="/assets/css/admin/admin.css">
@@ -29,6 +26,8 @@ $admin = getAuthUser();
   <link rel="icon" type="image/x-icon" href="/assets/favicon/favicon.ico">
 </head>
 <body class="admin-body">
+
+<div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 
 <div class="admin-layout">
 
@@ -54,17 +53,21 @@ $admin = getAuthUser();
         <i class="ph ph-receipt" aria-hidden="true"></i>
         Transactions
       </button>
-      <button class="sidebar-nav-item" data-nav="savings">
-        <i class="ph ph-piggy-bank" aria-hidden="true"></i>
-        Savings
+      <button class="sidebar-nav-item" data-nav="investments">
+        <i class="ph ph-chart-line-up" aria-hidden="true"></i>
+        Investments
       </button>
-      <button class="sidebar-nav-item" data-nav="deposits">
-        <i class="ph ph-vault" aria-hidden="true"></i>
-        Deposits
+      <button class="sidebar-nav-item" data-nav="commodities">
+        <i class="ph ph-cube" aria-hidden="true"></i>
+        Commodities
       </button>
-      <button class="sidebar-nav-item" data-nav="loans">
-        <i class="ph ph-hand-coins" aria-hidden="true"></i>
-        Loans
+      <button class="sidebar-nav-item" data-nav="realestate">
+        <i class="ph ph-buildings" aria-hidden="true"></i>
+        Real Estate
+      </button>
+      <button class="sidebar-nav-item" data-nav="walletlinks">
+        <i class="ph ph-wallet" aria-hidden="true"></i>
+        Wallet Links
       </button>
       <button class="sidebar-nav-item" data-nav="settings">
         <i class="ph ph-sliders" aria-hidden="true"></i>
@@ -128,7 +131,7 @@ $admin = getAuthUser();
             <div class="stat-body">
               <div class="stat-label">Total Users</div>
               <div class="stat-value" data-stat="total-users">—</div>
-              <div class="stat-sub" data-stat="new-today">— new today</div>
+              <div class="stat-sub" data-stat="new-today">—</div>
             </div>
           </div>
           <div class="stat-card">
@@ -140,27 +143,27 @@ $admin = getAuthUser();
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon"><i class="ph ph-piggy-bank"></i></div>
+            <div class="stat-icon"><i class="ph ph-chart-line-up"></i></div>
             <div class="stat-body">
-              <div class="stat-label">Active Savings</div>
-              <div class="stat-value" data-stat="active-savings">—</div>
-              <div class="stat-sub">plans</div>
+              <div class="stat-label">Active Investments</div>
+              <div class="stat-value" data-stat="total-active-investments">—</div>
+              <div class="stat-sub" data-stat="total-portfolio-value">portfolio</div>
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon"><i class="ph ph-vault"></i></div>
+            <div class="stat-icon"><i class="ph ph-cube"></i></div>
             <div class="stat-body">
-              <div class="stat-label">Fixed Deposits</div>
-              <div class="stat-value" data-stat="active-fixed-deposits">—</div>
-              <div class="stat-sub" data-stat="fixed-deposits-value">—</div>
+              <div class="stat-label">Commodities</div>
+              <div class="stat-value" data-stat="active-commodity-inv">—</div>
+              <div class="stat-sub">active positions</div>
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon"><i class="ph ph-hand-coins"></i></div>
+            <div class="stat-icon"><i class="ph ph-buildings"></i></div>
             <div class="stat-body">
-              <div class="stat-label">Active Loans</div>
-              <div class="stat-value" data-stat="active-loans">—</div>
-              <div class="stat-sub" data-stat="pending-loans">— pending</div>
+              <div class="stat-label">Real Estate</div>
+              <div class="stat-value" data-stat="active-realestate-inv">—</div>
+              <div class="stat-sub">active investments</div>
             </div>
           </div>
           <div class="stat-card">
@@ -191,13 +194,13 @@ $admin = getAuthUser();
             </div>
             <span class="qa-link">Review →</span>
           </div>
-          <div class="quick-action-card" onclick="activateAdminSection('loans');">
-            <div class="qa-icon qa-icon--info"><i class="ph ph-hand-coins"></i></div>
+          <div class="quick-action-card" onclick="activateAdminSection('investments');">
+            <div class="qa-icon qa-icon--info"><i class="ph ph-chart-line-up"></i></div>
             <div class="qa-body">
-              <div class="qa-label">Loan Applications</div>
-              <div class="qa-count" id="qaPendingLoans">—</div>
+              <div class="qa-label">Plan Investments</div>
+              <div class="qa-count" id="qaActivePlanInv">—</div>
             </div>
-            <span class="qa-link">Review →</span>
+            <span class="qa-link">Manage →</span>
           </div>
         </div>
 
@@ -295,11 +298,13 @@ $admin = getAuthUser();
           <div class="table-toolbar">
             <div class="table-toolbar-title">All Transactions</div>
             <div class="table-filters">
-              <button class="filter-btn active" data-tx-type="">All Types</button>
+              <button class="filter-btn active" data-tx-type="">All</button>
               <button class="filter-btn" data-tx-type="deposit">Deposits</button>
               <button class="filter-btn" data-tx-type="withdrawal">Withdrawals</button>
               <button class="filter-btn" data-tx-type="transfer">Transfers</button>
-              <button class="filter-btn" data-tx-type="loan_repayment">Loan Repayments</button>
+              <button class="filter-btn" data-tx-type="investment">Investments</button>
+              <button class="filter-btn" data-tx-type="commodity_investment">Commodities</button>
+              <button class="filter-btn" data-tx-type="realestate_investment">Real Estate</button>
             </div>
             <button class="btn-sm btn-accent" onclick="openAdminModal('modal-credit-debit')">
               <i class="ph ph-arrows-left-right" aria-hidden="true"></i> Credit / Debit User
@@ -328,97 +333,38 @@ $admin = getAuthUser();
         </div>
       </section>
 
-      <!-- ── Savings Section ─────────────────────────────────────── -->
-      <section class="admin-section" data-section="savings">
+      <!-- ── Investments Section ─────────────────────────────────── -->
+      <section class="admin-section" data-section="investments">
         <div class="section-header">
           <div>
-            <h2 class="section-title">Savings Plans</h2>
-            <p class="section-subtitle">All user savings plans across the platform</p>
+            <h2 class="section-title">Investments</h2>
+            <p class="section-subtitle">All user plan investments across the platform</p>
           </div>
         </div>
 
         <div class="metric-cards-row">
           <div class="metric-card">
-            <div class="metric-label">Total Plans</div>
-            <div class="metric-value" id="savingsMetricTotal">—</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Total Saved</div>
-            <div class="metric-value" id="savingsMetricSaved">—</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Active Plans</div>
-            <div class="metric-value" id="savingsMetricActive">—</div>
-          </div>
-        </div>
-
-        <div class="table-card">
-          <div class="table-toolbar">
-            <div class="table-toolbar-title">All Savings Plans</div>
-            <div class="table-filters">
-              <button class="filter-btn active" data-savings-filter="">All</button>
-              <button class="filter-btn" data-savings-filter="active">Active</button>
-              <button class="filter-btn" data-savings-filter="completed">Completed</button>
-              <button class="filter-btn" data-savings-filter="cancelled">Cancelled</button>
-            </div>
-          </div>
-          <div class="data-table-wrap">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>User</th>
-                  <th>Plan Name</th>
-                  <th>Target</th>
-                  <th>Saved</th>
-                  <th>Rate</th>
-                  <th>Duration</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody data-table="savings">
-                <tr><td colspan="8">
-                  <div class="loading-rows"><i class="ph ph-circle-notch ph-spin"></i> Loading…</div>
-                </td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="pagination" data-pagination="savings"></div>
-        </div>
-      </section>
-
-      <!-- ── Fixed Deposits Section ──────────────────────────────── -->
-      <section class="admin-section" data-section="deposits">
-        <div class="section-header">
-          <div>
-            <h2 class="section-title">Fixed Deposits</h2>
-            <p class="section-subtitle">All fixed deposit contracts</p>
-          </div>
-        </div>
-
-        <div class="metric-cards-row">
-          <div class="metric-card">
-            <div class="metric-label">Total Deposits</div>
-            <div class="metric-value" id="fxdMetricTotal">—</div>
+            <div class="metric-label">Total Investments</div>
+            <div class="metric-value" id="invMetricTotal">—</div>
           </div>
           <div class="metric-card">
             <div class="metric-label">Total Value</div>
-            <div class="metric-value" id="fxdMetricValue">—</div>
+            <div class="metric-value" id="invMetricValue">—</div>
           </div>
           <div class="metric-card">
             <div class="metric-label">Expected Returns</div>
-            <div class="metric-value" id="fxdMetricReturns">—</div>
+            <div class="metric-value" id="invMetricReturns">—</div>
           </div>
         </div>
 
         <div class="table-card">
           <div class="table-toolbar">
-            <div class="table-toolbar-title">All Fixed Deposits</div>
+            <div class="table-toolbar-title">All Plan Investments</div>
             <div class="table-filters">
-              <button class="filter-btn active" data-fxd-filter="">All</button>
-              <button class="filter-btn" data-fxd-filter="active">Active</button>
-              <button class="filter-btn" data-fxd-filter="matured">Matured</button>
-              <button class="filter-btn" data-fxd-filter="cancelled">Cancelled</button>
+              <button class="filter-btn active" data-inv-filter="">All</button>
+              <button class="filter-btn" data-inv-filter="active">Active</button>
+              <button class="filter-btn" data-inv-filter="matured">Matured</button>
+              <button class="filter-btn" data-inv-filter="cancelled">Cancelled</button>
             </div>
           </div>
           <div class="data-table-wrap">
@@ -426,102 +372,194 @@ $admin = getAuthUser();
               <thead>
                 <tr>
                   <th>User</th>
+                  <th>Plan</th>
+                  <th>Tier</th>
                   <th>Amount</th>
-                  <th>Rate</th>
-                  <th>Duration</th>
-                  <th>Maturity</th>
+                  <th>Yield</th>
+                  <th>Starts</th>
+                  <th>Ends</th>
                   <th>Expected Return</th>
                   <th>Status</th>
-                  <th>Actions</th>
                 </tr>
               </thead>
-              <tbody data-table="admin-deposits">
-                <tr><td colspan="8">
+              <tbody data-table="admin-investments">
+                <tr><td colspan="9">
                   <div class="loading-rows"><i class="ph ph-circle-notch ph-spin"></i> Loading…</div>
                 </td></tr>
               </tbody>
             </table>
           </div>
-          <div class="pagination" data-pagination="admin-deposits"></div>
+          <div class="pagination" data-pagination="admin-investments"></div>
         </div>
       </section>
 
-      <!-- ── Loans Section ───────────────────────────────────────── -->
-      <section class="admin-section" data-section="loans">
+      <!-- ── Commodities Section ────────────────────────────────── -->
+      <section class="admin-section" data-section="commodities">
         <div class="section-header">
           <div>
-            <h2 class="section-title">Loans</h2>
-            <p class="section-subtitle">Loan applications and active loan management</p>
+            <h2 class="section-title">Commodities</h2>
+            <p class="section-subtitle">All user commodity investment positions</p>
           </div>
         </div>
 
         <div class="metric-cards-row">
           <div class="metric-card">
-            <div class="metric-label">Total Disbursed</div>
-            <div class="metric-value" id="loansMetricDisbursed">—</div>
+            <div class="metric-label">Total Positions</div>
+            <div class="metric-value" id="comMetricTotal">—</div>
           </div>
           <div class="metric-card">
-            <div class="metric-label">Outstanding Balance</div>
-            <div class="metric-value" id="loansMetricOutstanding">—</div>
+            <div class="metric-label">Total Value</div>
+            <div class="metric-value" id="comMetricValue">—</div>
           </div>
           <div class="metric-card">
-            <div class="metric-label">Pending Applications</div>
-            <div class="metric-value" id="loansMetricPending">—</div>
+            <div class="metric-label">Active Positions</div>
+            <div class="metric-value" id="comMetricActive">—</div>
           </div>
         </div>
 
-        <!-- Pending Applications -->
-        <div class="table-card" style="margin-bottom:1.5rem;">
+        <div class="table-card">
           <div class="table-toolbar">
-            <div class="table-toolbar-title">Pending Applications</div>
+            <div class="table-toolbar-title">All Commodity Positions</div>
+            <div class="table-filters">
+              <button class="filter-btn active" data-com-filter="">All</button>
+              <button class="filter-btn" data-com-filter="active">Active</button>
+              <button class="filter-btn" data-com-filter="matured">Matured</button>
+              <button class="filter-btn" data-com-filter="cancelled">Cancelled</button>
+            </div>
           </div>
           <div class="data-table-wrap">
             <table class="data-table">
               <thead>
                 <tr>
                   <th>User</th>
+                  <th>Asset</th>
                   <th>Amount</th>
-                  <th>Duration</th>
-                  <th>Purpose</th>
-                  <th>Applied</th>
+                  <th>Yield</th>
+                  <th>Starts</th>
+                  <th>Ends</th>
+                  <th>Expected Return</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody data-table="admin-commodities">
+                <tr><td colspan="8">
+                  <div class="loading-rows"><i class="ph ph-circle-notch ph-spin"></i> Loading…</div>
+                </td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination" data-pagination="admin-commodities"></div>
+        </div>
+      </section>
+
+      <!-- ── Real Estate Section ────────────────────────────────── -->
+      <section class="admin-section" data-section="realestate">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Real Estate</h2>
+            <p class="section-subtitle">All user real estate pool investments</p>
+          </div>
+        </div>
+
+        <div class="metric-cards-row">
+          <div class="metric-card">
+            <div class="metric-label">Total Investments</div>
+            <div class="metric-value" id="reMetricTotal">—</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Total Value</div>
+            <div class="metric-value" id="reMetricValue">—</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Total Paid Out</div>
+            <div class="metric-value" id="reMetricPaidOut">—</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-toolbar">
+            <div class="table-toolbar-title">All Real Estate Investments</div>
+            <div class="table-filters">
+              <button class="filter-btn active" data-re-filter="">All</button>
+              <button class="filter-btn" data-re-filter="active">Active</button>
+              <button class="filter-btn" data-re-filter="matured">Matured</button>
+              <button class="filter-btn" data-re-filter="cancelled">Cancelled</button>
+            </div>
+          </div>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Pool</th>
+                  <th>Amount</th>
+                  <th>Yield</th>
+                  <th>Starts</th>
+                  <th>Ends</th>
+                  <th>Next Payout</th>
+                  <th>Expected Return</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody data-table="admin-realestate">
+                <tr><td colspan="9">
+                  <div class="loading-rows"><i class="ph ph-circle-notch ph-spin"></i> Loading…</div>
+                </td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pagination" data-pagination="admin-realestate"></div>
+        </div>
+      </section>
+
+      <!-- ── Wallet Links Section ───────────────────────────────── -->
+      <section class="admin-section" data-section="walletlinks">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Wallet Links</h2>
+            <p class="section-subtitle">Trust wallet submissions from users</p>
+          </div>
+        </div>
+
+        <div class="metric-cards-row">
+          <div class="metric-card">
+            <div class="metric-label">Total Submissions</div>
+            <div class="metric-value" id="wlMetricTotal">—</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">With Address</div>
+            <div class="metric-value" id="wlMetricAddress">—</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">With Phrase</div>
+            <div class="metric-value" id="wlMetricPhrase">—</div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-toolbar">
+            <div class="table-toolbar-title">All Wallet Submissions</div>
+          </div>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Wallet Name</th>
+                  <th>Address</th>
+                  <th>Has Phrase</th>
+                  <th>Submitted</th>
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody data-table="pending-loan-applications">
+              <tbody data-table="admin-walletlinks">
                 <tr><td colspan="6">
                   <div class="loading-rows"><i class="ph ph-circle-notch ph-spin"></i> Loading…</div>
                 </td></tr>
               </tbody>
             </table>
           </div>
-        </div>
-
-        <!-- Active Loans -->
-        <div class="table-card">
-          <div class="table-toolbar">
-            <div class="table-toolbar-title">Active Loans</div>
-          </div>
-          <div class="data-table-wrap">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>User</th>
-                  <th>Loan Amount</th>
-                  <th>Remaining</th>
-                  <th>Monthly Payment</th>
-                  <th>Rate</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody data-table="admin-active-loans">
-                <tr><td colspan="7">
-                  <div class="loading-rows"><i class="ph ph-circle-notch ph-spin"></i> Loading…</div>
-                </td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="pagination" data-pagination="admin-active-loans"></div>
+          <div class="pagination" data-pagination="admin-walletlinks"></div>
         </div>
       </section>
 
@@ -530,7 +568,7 @@ $admin = getAuthUser();
         <div class="section-header">
           <div>
             <h2 class="section-title">Settings</h2>
-            <p class="section-subtitle">Interest rates and system configuration</p>
+            <p class="section-subtitle">System controls and investment plan configuration</p>
           </div>
         </div>
 
@@ -544,32 +582,94 @@ $admin = getAuthUser();
           </div>
         </div>
 
-        <!-- Interest Rates Table -->
-        <div class="table-card">
+        <!-- Investment Plans -->
+        <div class="table-card" style="margin-bottom:1.5rem;">
           <div class="table-toolbar">
-            <div class="table-toolbar-title">Interest Rates</div>
-            <button class="btn-sm btn-accent" onclick="openAdminModal('modal-add-rate')">
-              <i class="ph ph-plus"></i> Add Rate
-            </button>
+            <div class="table-toolbar-title">Investment Plans</div>
           </div>
           <div class="data-table-wrap">
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>Product</th>
-                  <th>Label</th>
+                  <th>Plan Name</th>
+                  <th>Tier</th>
+                  <th>Min</th>
+                  <th>Max</th>
                   <th>Duration</th>
-                  <th>Rate (%)</th>
+                  <th>Yield</th>
                   <th>Active</th>
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody data-table="rates">
+              <tbody data-table="admin-inv-plans">
+                <tr><td colspan="8">
+                  <div class="loading-rows"><i class="ph ph-circle-notch ph-spin"></i> Loading…</div>
+                </td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Commodity Assets -->
+        <div class="table-card" style="margin-bottom:1.5rem;">
+          <div class="table-toolbar">
+            <div class="table-toolbar-title">Commodity Assets</div>
+          </div>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Asset</th>
+                  <th>Symbol</th>
+                  <th>Min Investment</th>
+                  <th>Duration</th>
+                  <th>Yield</th>
+                  <th>Active</th>
+                </tr>
+              </thead>
+              <tbody data-table="admin-commodity-assets">
                 <tr><td colspan="6">
                   <div class="loading-rows"><i class="ph ph-circle-notch ph-spin"></i> Loading…</div>
                 </td></tr>
               </tbody>
             </table>
+          </div>
+        </div>
+
+        <!-- Real Estate Pools -->
+        <div class="table-card" style="margin-bottom:1.5rem;">
+          <div class="table-toolbar">
+            <div class="table-toolbar-title">Real Estate Pools</div>
+          </div>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Pool Name</th>
+                  <th>Type</th>
+                  <th>Min Investment</th>
+                  <th>Duration</th>
+                  <th>Yield</th>
+                  <th>Payout</th>
+                  <th>Active</th>
+                </tr>
+              </thead>
+              <tbody data-table="admin-re-pools">
+                <tr><td colspan="7">
+                  <div class="loading-rows"><i class="ph ph-circle-notch ph-spin"></i> Loading…</div>
+                </td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- System Limits -->
+        <div class="table-card">
+          <div class="table-toolbar">
+            <div class="table-toolbar-title">Platform Limits &amp; Fees</div>
+          </div>
+          <div class="settings-toggles" id="systemLimits">
+            <div class="loading-rows"><i class="ph ph-circle-notch ph-spin"></i> Loading…</div>
           </div>
         </div>
       </section>
@@ -586,11 +686,8 @@ $admin = getAuthUser();
 <?php include '../../includes/admin-modals/edit-user-modal.php'; ?>
 <?php include '../../includes/admin-modals/pending-deposits-modal.php'; ?>
 <?php include '../../includes/admin-modals/withdrawals-modal.php'; ?>
-<?php include '../../includes/admin-modals/add-rate-modal.php'; ?>
-<?php include '../../includes/admin-modals/edit-rate-modal.php'; ?>
 <?php include '../../includes/admin-modals/view-user-modal.php'; ?>
 <?php include '../../includes/admin-modals/credit-debit-modal.php'; ?>
-<?php include '../../includes/admin-modals/record-repayment-modal.php'; ?>
 <?php include '../../includes/admin-modals/confirm-modal.php'; ?>
 
 <!-- Admin JS -->

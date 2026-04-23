@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Modal: Credit / Debit User Wallet
  *
  * Admin enters user email, amount, type (credit|debit), notes

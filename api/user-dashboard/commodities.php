@@ -40,9 +40,10 @@ try {
 
         $summaryStmt = $db->prepare(
             "SELECT
-               COALESCE(SUM(CASE WHEN status = 'active' THEN amount ELSE 0 END), 0)         AS total_invested,
-               COALESCE(SUM(CASE WHEN status = 'matured' THEN actual_return ELSE 0 END), 0) AS total_returned,
-               COUNT(CASE WHEN status = 'active' THEN 1 END)                                AS active_count
+               COALESCE(SUM(CASE WHEN status = 'active' THEN amount ELSE 0 END), 0)                  AS total_invested,
+               COALESCE(SUM(CASE WHEN status = 'active' THEN expected_return ELSE 0 END), 0)          AS total_expected,
+               COALESCE(SUM(CASE WHEN status = 'matured' THEN actual_return ELSE 0 END), 0)           AS total_returned,
+               COUNT(CASE WHEN status = 'active' THEN 1 END)                                          AS active_count
              FROM commodity_investments
              WHERE user_id = :uid"
         );
@@ -52,10 +53,11 @@ try {
         echo json_encode([
             'success' => true,
             'data'    => [
-                'assets'      => $assets,
+                'assets'       => $assets,
                 'my_positions' => $myPositions,
-                'portfolio'   => [
+                'portfolio'    => [
                     'total_invested' => number_format((float) $summary['total_invested'], 2, '.', ''),
+                    'total_expected' => number_format((float) $summary['total_expected'], 2, '.', ''),
                     'total_returned' => number_format((float) $summary['total_returned'], 2, '.', ''),
                     'active_count'   => (int) $summary['active_count'],
                 ],
@@ -108,7 +110,8 @@ try {
 
         $starts_at       = date('Y-m-d H:i:s');
         $ends_at         = date('Y-m-d H:i:s', strtotime('+' . (int) $asset['duration_days'] . ' days'));
-        $expected_return = round($amount + ($amount * (float) $asset['yield_max'] / 100), 2);
+        $yield_rate      = round((float) $asset['yield_max'], 2);
+        $expected_return = round($amount + ($amount * $yield_rate / 100), 2);
 
         $db->prepare(
             "UPDATE wallets SET balance = balance - :amount, updated_at = NOW() WHERE user_id = :uid"
@@ -116,13 +119,14 @@ try {
 
         $db->prepare(
             "INSERT INTO commodity_investments
-               (user_id, asset_id, asset_name, amount, starts_at, ends_at, expected_return)
-             VALUES (:uid, :aid, :aname, :amount, :starts, :ends, :expected)"
+               (user_id, asset_id, asset_name, amount, yield_rate, starts_at, ends_at, expected_return)
+             VALUES (:uid, :aid, :aname, :amount, :yield, :starts, :ends, :expected)"
         )->execute([
             'uid'      => $user['id'],
             'aid'      => $asset['id'],
             'aname'    => $asset['name'],
             'amount'   => $amount,
+            'yield'    => $yield_rate,
             'starts'   => $starts_at,
             'ends'     => $ends_at,
             'expected' => $expected_return,
@@ -138,6 +142,24 @@ try {
         ]);
 
         $db->commit();
+
+        // Send investment confirmation email (non-blocking)
+        try {
+            require_once '../../api/utilities/email_templates.php';
+            $uStmt = $db->prepare("SELECT full_name, email FROM users WHERE id = :uid");
+            $uStmt->execute(['uid' => $user['id']]);
+            $u = $uStmt->fetch();
+            if ($u) {
+                Mailer::sendInvestmentStarted(
+                    $u['email'], $u['full_name'],
+                    $asset['name'], $amount,
+                    (float) $asset['yield_min'], (float) $asset['yield_max'],
+                    (int) $asset['duration_days']
+                );
+            }
+        } catch (Exception $emailErr) {
+            error_log('Commodity investment email error: ' . $emailErr->getMessage());
+        }
 
         echo json_encode([
             'success' => true,

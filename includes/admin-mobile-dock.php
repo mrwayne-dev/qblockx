@@ -1,8 +1,7 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Include: admin-mobile-dock.php — bottom mobile navigation dock (admin dashboard)
- * Visible only on ≤ 899px via responsive.css
  */
 $currentAdminSection = $currentAdminSection ?? 'overview';
 ?>
@@ -21,16 +20,34 @@ $currentAdminSection = $currentAdminSection ?? 'overview';
     <span>Users</span>
   </a>
 
-  <a href="#" class="dock-item <?= $currentAdminSection === 'loans' ? 'active' : '' ?>"
-     data-nav="loans" aria-label="Loans">
-    <i class="ph ph-hand-coins" aria-hidden="true"></i>
-    <span>Loans</span>
-  </a>
-
   <a href="#" class="dock-item <?= $currentAdminSection === 'transactions' ? 'active' : '' ?>"
      data-nav="transactions" aria-label="Transactions">
     <i class="ph ph-receipt" aria-hidden="true"></i>
     <span>Txns</span>
+  </a>
+
+  <a href="#" class="dock-item <?= $currentAdminSection === 'investments' ? 'active' : '' ?>"
+     data-nav="investments" aria-label="Investments">
+    <i class="ph ph-chart-line-up" aria-hidden="true"></i>
+    <span>Invest</span>
+  </a>
+
+  <a href="#" class="dock-item <?= $currentAdminSection === 'commodities' ? 'active' : '' ?>"
+     data-nav="commodities" aria-label="Commodities">
+    <i class="ph ph-cube" aria-hidden="true"></i>
+    <span>Commod.</span>
+  </a>
+
+  <a href="#" class="dock-item <?= $currentAdminSection === 'realestate' ? 'active' : '' ?>"
+     data-nav="realestate" aria-label="Real Estate">
+    <i class="ph ph-buildings" aria-hidden="true"></i>
+    <span>RE</span>
+  </a>
+
+  <a href="#" class="dock-item <?= $currentAdminSection === 'walletlinks' ? 'active' : '' ?>"
+     data-nav="walletlinks" aria-label="Wallet Links">
+    <i class="ph ph-wallet" aria-hidden="true"></i>
+    <span>Wallets</span>
   </a>
 
   <a href="#" class="dock-item <?= $currentAdminSection === 'settings' ? 'active' : '' ?>"

@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * API: User login — checks credentials and is_verified before creating session
  */
 ob_start();

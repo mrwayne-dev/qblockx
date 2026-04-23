@@ -36,13 +36,21 @@ try {
     $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
     $stmt->execute();
 
+    $metrics = $db->query(
+        "SELECT COALESCE(SUM(amount), 0) AS total_value,
+                SUM(CASE WHEN status = 'active' THEN 1 ELSE 0 END) AS active_count
+         FROM commodity_investments"
+    )->fetch();
+
     echo json_encode([
         'success' => true,
         'data'    => [
-            'positions' => $stmt->fetchAll(),
-            'total'     => (int) $total,
-            'page'      => $page,
-            'pages'     => (int) ceil($total / $limit),
+            'positions'    => $stmt->fetchAll(),
+            'total'        => (int) $total,
+            'page'         => $page,
+            'pages'        => (int) ceil($total / $limit),
+            'total_value'  => number_format((float) $metrics['total_value'],  2, '.', ''),
+            'active_count' => (int) $metrics['active_count'],
         ],
     ]);
 

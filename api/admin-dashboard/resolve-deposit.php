@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Admin: Resolve Deposit — manually complete or fail a pending deposit
  */
 

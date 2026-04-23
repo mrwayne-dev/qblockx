@@ -1,6 +1,6 @@
 <?php
 /**
- * Project: crestvalebank
+ * Project: qblockx
  * Modal: Edit Interest Rate
  *
  * Opened by openEditRateModal(id, label, duration, rate, isActive)

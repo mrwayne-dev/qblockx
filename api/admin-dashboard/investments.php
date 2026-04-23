@@ -38,13 +38,21 @@ try {
     $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
     $stmt->execute();
 
+    $metrics = $db->query(
+        "SELECT COALESCE(SUM(amount), 0) AS total_value,
+                COALESCE(SUM(expected_return), 0) AS total_returns
+         FROM plan_investments"
+    )->fetch();
+
     echo json_encode([
         'success' => true,
         'data'    => [
-            'investments' => $stmt->fetchAll(),
-            'total'       => (int) $total,
-            'page'        => $page,
-            'pages'       => (int) ceil($total / $limit),
+            'investments'   => $stmt->fetchAll(),
+            'total'         => (int) $total,
+            'page'          => $page,
+            'pages'         => (int) ceil($total / $limit),
+            'total_value'   => number_format((float) $metrics['total_value'],   2, '.', ''),
+            'total_returns' => number_format((float) $metrics['total_returns'], 2, '.', ''),
         ],
     ]);
 
