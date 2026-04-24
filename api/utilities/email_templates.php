@@ -39,7 +39,7 @@ class Mailer
             'app_name'  => $appName,
             'app_host'  => $appHost,
             'admin_url' => $appUrl . '/admin',
-            'logo_url'  => $appUrl . '/assets/images/logo.png',
+            'logo_url'  => $appUrl . '/assets/images/logo/logoblue.png',
         ], $vars);
 
         foreach ($allVars as $key => $value) {
