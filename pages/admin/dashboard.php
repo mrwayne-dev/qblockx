@@ -788,6 +788,7 @@ $admin = getAuthUser();
 <?php include '../../includes/admin-modals/edit-plan-modal.php'; ?>
 <?php include '../../includes/admin-modals/edit-commodity-modal.php'; ?>
 <?php include '../../includes/admin-modals/edit-realestate-modal.php'; ?>
+<?php include '../../includes/admin-modals/send-mail-modal.php'; ?>
 
 <!-- Admin JS -->
 <script src="/assets/js/admin/admin-dashboard.js" defer></script>

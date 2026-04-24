@@ -101,7 +101,7 @@ $currentYear = date('Y');
 <!-- Smartsupp Live Chat -->
 <script type="text/javascript">
 var _smartsupp = _smartsupp || {};
-_smartsupp.key = 'a6aa718fdbe61d6f463b51417c692f1bc79432d6';
+_smartsupp.key = 'a43df6084f576c1db44b8d3b000f1f43c5f83dc5';
 window.smartsupp||(function(d) {
   var s,c,o=smartsupp=function(){ o._.push(arguments)};o._=[];
   s=d.getElementsByTagName('script')[0];c=d.createElement('script');

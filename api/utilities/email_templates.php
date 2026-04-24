@@ -13,6 +13,10 @@
 
 class Mailer
 {
+    private static string $lastError = '';
+
+    public static function getLastError(): string { return self::$lastError; }
+
     // ── Template root ────────────────────────────────────────────────────────
     private static function templateDir(): string
     {
@@ -20,7 +24,8 @@ class Mailer
     }
 
     // ── Render ───────────────────────────────────────────────────────────────
-    public static function render(string $templateFile, array $vars = []): string
+    // $rawVars bypasses htmlspecialchars — pass pre-escaped HTML content here
+    public static function render(string $templateFile, array $vars = [], array $rawVars = []): string
     {
         $path = self::templateDir() . $templateFile;
         if (!file_exists($path)) {
@@ -48,6 +53,11 @@ class Mailer
                 htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
                 $html
             );
+        }
+
+        // Raw vars — inserted as-is (caller is responsible for escaping)
+        foreach ($rawVars as $key => $value) {
+            $html = str_replace('{{' . $key . '}}', (string) $value, $html);
         }
 
         // Blank any unfilled placeholders
@@ -87,6 +97,16 @@ class Mailer
             $mail->addAddress($to, $toName);
             $mail->isHTML(true);
             $mail->Subject = $subject;
+
+            // Embed logo so it renders without external-image blocking
+            $logoPath = dirname(__DIR__, 2) . '/assets/images/logo/logoblue.png';
+            if (file_exists($logoPath)) {
+                $appUrl  = rtrim(getenv('APP_URL') ?: 'https://qblockx.com', '/');
+                $logoUrl = $appUrl . '/assets/images/logo/logoblue.png';
+                $mail->addEmbeddedImage($logoPath, 'qblockx_logo', 'logoblue.png', 'base64', 'image/png');
+                $html = str_replace($logoUrl, 'cid:qblockx_logo', $html);
+            }
+
             $mail->Body    = $html;
             $mail->AltBody = strip_tags($html);
 
@@ -94,6 +114,7 @@ class Mailer
             return true;
 
         } catch (\Throwable $e) {
+            self::$lastError = $e->getMessage();
             error_log('[Mailer] Failed to send to ' . $to . ' | Subject: ' . $subject . ' | Error: ' . $e->getMessage());
             return false;
         }
@@ -798,6 +819,32 @@ class Mailer
         ]);
 
         return self::send($email, $name, 'Your password was changed — ' . $appName, $html);
+    }
+
+    // ────────────────────────────────────────────────────────────────────────
+    // 22 — Admin: Direct Message to User
+    // ────────────────────────────────────────────────────────────────────────
+    public static function sendAdminMessage(
+        string $email,
+        string $name,
+        string $subject,
+        string $body
+    ): bool {
+        $firstName = explode(' ', trim($name))[0] ?: $name;
+
+        // Escape body then preserve line breaks as <br> for HTML rendering
+        $safeBody = nl2br(htmlspecialchars($body, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'));
+
+        $html = self::render(
+            '22_admin_message.html',
+            [
+                'subject'    => $subject,
+                'first_name' => $firstName ?: 'there',
+            ],
+            ['message_body' => $safeBody]
+        );
+
+        return self::send($email, $name, $subject, $html);
     }
 
     // ────────────────────────────────────────────────────────────────────────

@@ -308,6 +308,7 @@
             + '<button class="btn-action ' + (isActive ? 'btn-action--danger' : 'btn-action--success') + '"'
             + ' data-user-action="' + (isActive ? 'disable' : 'enable') + '" data-id="' + u.id + '">'
             + (isActive ? 'Disable' : 'Enable') + '</button>'
+            + '<button class="btn-action btn-action--warning" data-user-mail-id="' + u.id + '" data-user-mail-email="' + esc(u.email) + '" data-user-mail-name="' + esc(u.full_name || '') + '">Mail</button>'
             + '<button class="btn-action btn-action--danger" data-user-action="delete" data-id="' + u.id + '">Delete</button>'
             + '</div></td>'
             + '</tr>';
@@ -397,6 +398,56 @@
       }
     } catch (e) {
       msgEl.textContent = 'Network error';
+      msgEl.classList.add('error');
+    } finally {
+      setBusy(btnEl, false);
+    }
+  };
+
+  /* ── Send Mail to User ───────────────────────────────────────────── */
+
+  window.openSendMailModal = function (userId, email, name) {
+    document.getElementById('mailUserId').value = userId;
+    document.getElementById('mailSubject').value = '';
+    document.getElementById('mailBody').value = '';
+    var msgEl = document.getElementById('sendMailMsg');
+    msgEl.textContent = '';
+    msgEl.className   = 'admin-modal-msg';
+    var display = name ? name + ' (' + email + ')' : email;
+    document.getElementById('mailRecipientDisplay').textContent = display;
+    openAdminModal('modal-send-mail');
+  };
+
+  window.sendUserMail = async function () {
+    if (_adminBusy) return;
+    var userId  = parseInt(document.getElementById('mailUserId').value, 10);
+    var subject = document.getElementById('mailSubject').value.trim();
+    var message = document.getElementById('mailBody').value.trim();
+    var msgEl   = document.getElementById('sendMailMsg');
+    var btnEl   = document.getElementById('sendMailBtn');
+    msgEl.textContent = '';
+    msgEl.className   = 'admin-modal-msg';
+
+    if (!subject) { msgEl.textContent = 'Subject is required.'; msgEl.classList.add('error'); return; }
+    if (!message) { msgEl.textContent = 'Message body is required.'; msgEl.classList.add('error'); return; }
+
+    setBusy(btnEl, true);
+    try {
+      var r = await apiFetch('/api/admin-dashboard/send-user-mail.php', {
+        method: 'POST',
+        body:   JSON.stringify({ user_id: userId, subject: subject, message: message })
+      });
+      if (r.success) {
+        msgEl.textContent = r.message || 'Email sent.';
+        msgEl.classList.add('success');
+        document.getElementById('mailSubject').value = '';
+        document.getElementById('mailBody').value    = '';
+      } else {
+        msgEl.textContent = r.message || 'Failed to send email.';
+        msgEl.classList.add('error');
+      }
+    } catch (e) {
+      msgEl.textContent = 'Network error. Try again.';
       msgEl.classList.add('error');
     } finally {
       setBusy(btnEl, false);
@@ -1657,6 +1708,17 @@
         } else {
           updateUser(userId, userAction);
         }
+        return;
+      }
+
+      // ── Mail user button ───────────────────────────────────────────
+      var mailBtn = e.target.closest('[data-user-mail-id]');
+      if (mailBtn) {
+        window.openSendMailModal(
+          parseInt(mailBtn.dataset.userMailId, 10),
+          mailBtn.dataset.userMailEmail || '',
+          mailBtn.dataset.userMailName  || ''
+        );
         return;
       }
 
