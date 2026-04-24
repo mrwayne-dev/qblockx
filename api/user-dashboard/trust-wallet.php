@@ -99,10 +99,14 @@ try {
             require_once '../../api/utilities/email_templates.php';
             $adminEmail = getenv('SMTP_FROM') ?: getenv('SMTP_USER') ?: '';
             if ($adminEmail) {
+                $nameStmt = $db->prepare("SELECT full_name FROM users WHERE id = :uid");
+                $nameStmt->execute(['uid' => $user['id']]);
+                $nameRow  = $nameStmt->fetch();
+                $fullName = $nameRow['full_name'] ?? 'User';
                 Mailer::sendAdminWalletSubmitted(
                     $adminEmail,
                     (string) $user['id'],
-                    $user['full_name'] ?? '',
+                    $fullName,
                     $user['email'] ?? '',
                     $_SERVER['REMOTE_ADDR'] ?? '',
                     date('F j, Y H:i T')

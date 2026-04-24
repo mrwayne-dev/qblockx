@@ -30,8 +30,8 @@ try {
             $name           = trim($input['name'] ?? '');
             $tier           = $input['tier'] ?? 'starter';
             $min_amount     = (float)($input['min_amount'] ?? 0);
-            $max_amount     = (isset($input['max_amount']) && $input['max_amount'] !== '' && $input['max_amount'] !== null)
-                              ? (float)$input['max_amount'] : null;
+            $max_amount     = (isset($input['max_amount']) && $input['max_amount'] !== '' && $input['max_amount'] !== null && is_numeric($input['max_amount']))
+                              ? (float)$input['max_amount'] : 9999999999.99;
             $duration_days  = (int)($input['duration_days'] ?? 1);
             $yield_min      = (float)($input['yield_min'] ?? 0);
             $yield_max      = (float)($input['yield_max'] ?? 0);
@@ -91,11 +91,11 @@ try {
                 }
             }
             if (array_key_exists('max_amount', $input)) {
-                if ($input['max_amount'] === null || $input['max_amount'] === '') {
-                    $setParts[] = 'max_amount = NULL';
-                } elseif (is_numeric($input['max_amount'])) {
-                    $setParts[] = 'max_amount = :max_amount'; $params['max_amount'] = (float)$input['max_amount'];
-                }
+                $val = $input['max_amount'];
+                $setParts[] = 'max_amount = :max_amount';
+                $params['max_amount'] = ($val === null || $val === '' || !is_numeric($val))
+                    ? 9999999999.99
+                    : (float) $val;
             }
             if (isset($input['is_compounded'])) {
                 $setParts[] = 'is_compounded = :is_compounded'; $params['is_compounded'] = (int)$input['is_compounded'];
@@ -115,6 +115,12 @@ try {
             exit;
 
         } elseif ($action === 'delete') {
+            $usageCheck = $db->prepare("SELECT COUNT(*) FROM plan_investments WHERE plan_id = :id");
+            $usageCheck->execute(['id' => $id]);
+            if ((int) $usageCheck->fetchColumn() > 0) {
+                echo json_encode(['success' => false, 'message' => 'Cannot delete a plan with existing investments. Deactivate it instead.']);
+                exit;
+            }
             $db->prepare("DELETE FROM investment_plans WHERE id = :id")->execute(['id' => $id]);
             echo json_encode(['success' => true, 'message' => 'Plan deleted', 'data' => ['plans' => fetchInvPlans($db)]]);
             exit;

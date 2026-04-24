@@ -3,6 +3,7 @@
  * Project: qblockx
  * Created by: Wayne
  */
+ob_start();
 
 require_once '../../config/database.php';
 require_once '../../api/utilities/auth-check.php';
@@ -61,9 +62,21 @@ try {
         $sql = 'UPDATE users SET ' . implode(', ', $updates) . ' WHERE id = :uid';
         $db->prepare($sql)->execute($params);
 
-        echo json_encode(['success' => true, 'message' => 'Profile updated']);
+        $resp = json_encode(['success' => true, 'message' => 'Profile updated']);
+        ob_end_clean();
+        header('Content-Type: application/json');
+        header('Content-Encoding: identity');
+        header('Content-Length: ' . strlen($resp));
+        header('Connection: close');
+        echo $resp;
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+        } else {
+            ignore_user_abort(true);
+            flush();
+        }
 
-        // Send password changed security notification (non-fatal)
+        // Send password changed security notification (non-blocking)
         if (!empty($new_pass)) {
             try {
                 $infoStmt = $db->prepare("SELECT email, full_name FROM users WHERE id = :uid LIMIT 1");

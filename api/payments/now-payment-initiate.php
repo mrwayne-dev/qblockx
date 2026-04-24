@@ -32,6 +32,15 @@ if (!in_array($currency, $allowed, true)) {
     $currency = 'usdttrc20';
 }
 
+$currencyMap = [
+    'btc'       => ['BTC',  'Bitcoin'],
+    'eth'       => ['ETH',  'Ethereum'],
+    'usdttrc20' => ['USDT', 'TRC20'],
+    'usdterc20' => ['USDT', 'ERC20'],
+    'bnbbsc'    => ['BNB',  'BSC'],
+];
+[$currencyLabel, $networkLabel] = $currencyMap[$currency] ?? [strtoupper($currency), strtoupper($currency)];
+
 if ($amount <= 0) {
     echo json_encode(['success' => false, 'message' => 'Invalid amount']);
     exit;
@@ -101,15 +110,36 @@ try {
     // Store the pending transaction (invoice_id stored in payment_id column)
     $db->prepare(
         "INSERT INTO transactions (user_id, type, amount, currency, status, payment_id, notes)
-         VALUES (:user_id, 'deposit', :amount, 'USD', 'pending', :payment_id, :notes)"
+         VALUES (:user_id, 'deposit', :amount, :currency, 'pending', :payment_id, :notes)"
     )->execute([
         'user_id'    => $user['id'],
         'amount'     => $amount,
+        'currency'   => $currency,
         'payment_id' => (string) $nowData['id'],
         'notes'      => $order_id,
     ]);
 
-    // Send deposit pending email (non-fatal)
+    $resp = json_encode([
+        'success' => true,
+        'data'    => [
+            'invoice_id'  => $nowData['id'],
+            'invoice_url' => $nowData['invoice_url'],
+            'order_id'    => $order_id,
+        ]
+    ]);
+    header('Content-Type: application/json');
+    header('Content-Encoding: identity');
+    header('Content-Length: ' . strlen($resp));
+    header('Connection: close');
+    echo $resp;
+    if (function_exists('fastcgi_finish_request')) {
+        fastcgi_finish_request();
+    } else {
+        ignore_user_abort(true);
+        flush();
+    }
+
+    // Send deposit pending email (non-blocking)
     try {
         $nameStmt = $db->prepare("SELECT full_name FROM users WHERE id = :uid");
         $nameStmt->execute(['uid' => $user['id']]);
@@ -120,8 +150,8 @@ try {
             $user['email'],
             $fullName,
             $amount,
-            strtoupper($currency),
-            strtoupper($currency),
+            $currencyLabel,
+            $networkLabel,
             '',
             '',
             date('d M Y, H:i'),
@@ -130,15 +160,6 @@ try {
     } catch (Exception $mailErr) {
         error_log('now-payment-initiate: mail error for user ' . $user['id'] . ': ' . $mailErr->getMessage());
     }
-
-    echo json_encode([
-        'success' => true,
-        'data'    => [
-            'invoice_id'  => $nowData['id'],
-            'invoice_url' => $nowData['invoice_url'],
-            'order_id'    => $order_id,
-        ]
-    ]);
 } catch (PDOException $e) {
     error_log('NOWPayments DB error: ' . $e->getMessage());
     http_response_code(500);

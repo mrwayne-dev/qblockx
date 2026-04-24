@@ -69,6 +69,7 @@ try {
     header('Content-Length: ' . strlen($resp));
     header('Connection: close');
     echo $resp;
+    session_write_close();
     if (function_exists('fastcgi_finish_request')) {
         fastcgi_finish_request();
     } else {

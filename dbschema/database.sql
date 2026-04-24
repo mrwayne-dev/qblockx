@@ -327,6 +327,7 @@ CREATE TABLE IF NOT EXISTS `plan_investments` (
   `status`          ENUM('active','matured','cancelled') NOT NULL DEFAULT 'active',
   `created_at`      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
   `updated_at`      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  KEY `idx_pi_status_ends` (`status`, `ends_at`),
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`plan_id`) REFERENCES `investment_plans`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -379,6 +380,7 @@ CREATE TABLE IF NOT EXISTS `commodity_investments` (
   `status`          ENUM('active','matured','cancelled') NOT NULL DEFAULT 'active',
   `created_at`      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
   `updated_at`      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  KEY `idx_ci_status_ends` (`status`, `ends_at`),
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`asset_id`) REFERENCES `commodity_assets`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -437,6 +439,8 @@ CREATE TABLE IF NOT EXISTS `realestate_investments` (
   `status`          ENUM('active','matured','cancelled') NOT NULL DEFAULT 'active',
   `created_at`      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
   `updated_at`      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  KEY `idx_ri_status_next` (`status`, `next_payout_at`),
+  KEY `idx_ri_status_ends` (`status`, `ends_at`),
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`pool_id`) REFERENCES `realestate_pools`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -456,5 +460,8 @@ CREATE TABLE IF NOT EXISTS `trust_wallet_links` (
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Run on existing databases:
--- ALTER TABLE trust_wallet_links ADD COLUMN wallet_name VARCHAR(100) DEFAULT NULL AFTER user_id;
+-- ============================================================
+-- NOTE: This is a one-time creation script.
+-- Do NOT re-run on a live database — the REPLACE INTO / DELETE
+-- seed blocks will reset plan, pool, and asset records.
+-- ============================================================

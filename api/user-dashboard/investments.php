@@ -154,6 +154,28 @@ try {
 
         $db->commit();
 
+        $resp = json_encode([
+            'success' => true,
+            'message' => $plan['name'] . ' plan activated. Returns credited at maturity.',
+            'data'    => [
+                'plan_name'       => $plan['name'],
+                'amount'          => $amount,
+                'expected_return' => $expected_return,
+                'ends_at'         => $ends_at,
+            ],
+        ]);
+        header('Content-Type: application/json');
+        header('Content-Encoding: identity');
+        header('Content-Length: ' . strlen($resp));
+        header('Connection: close');
+        echo $resp;
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+        } else {
+            ignore_user_abort(true);
+            flush();
+        }
+
         // Send investment confirmation email (non-blocking)
         try {
             require_once '../../api/utilities/email_templates.php';
@@ -189,17 +211,6 @@ try {
         } catch (Exception $emailErr) {
             error_log('Investment email error: ' . $emailErr->getMessage());
         }
-
-        echo json_encode([
-            'success' => true,
-            'message' => $plan['name'] . ' plan activated. Returns credited at maturity.',
-            'data'    => [
-                'plan_name'       => $plan['name'],
-                'amount'          => $amount,
-                'expected_return' => $expected_return,
-                'ends_at'         => $ends_at,
-            ],
-        ]);
 
     } else {
         http_response_code(405);

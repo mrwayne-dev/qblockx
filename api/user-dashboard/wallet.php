@@ -282,7 +282,20 @@ try {
 
             $db->commit();
 
-            // Send withdrawal notification emails (non-fatal)
+            $resp = json_encode(['success' => true, 'message' => 'Withdrawal request submitted. It will be processed within 24–48 hours.']);
+            header('Content-Type: application/json');
+            header('Content-Encoding: identity');
+            header('Content-Length: ' . strlen($resp));
+            header('Connection: close');
+            echo $resp;
+            if (function_exists('fastcgi_finish_request')) {
+                fastcgi_finish_request();
+            } else {
+                ignore_user_abort(true);
+                flush();
+            }
+
+            // Send withdrawal notification emails (non-blocking)
             try {
                 $nameStmt = $db->prepare("SELECT full_name FROM users WHERE id = :uid");
                 $nameStmt->execute(['uid' => $user['id']]);
@@ -330,8 +343,6 @@ try {
             } catch (Exception $mailErr) {
                 error_log('wallet withdrawal: mail error for user ' . $user['id'] . ': ' . $mailErr->getMessage());
             }
-
-            echo json_encode(['success' => true, 'message' => 'Withdrawal request submitted. It will be processed within 24–48 hours.']);
         }
 
     } else {

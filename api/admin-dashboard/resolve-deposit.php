@@ -71,7 +71,20 @@ try {
 
     $db->commit();
 
-    // Send user notification email (non-fatal)
+    $resp = json_encode(['success' => true, 'message' => $msg]);
+    header('Content-Type: application/json');
+    header('Content-Encoding: identity');
+    header('Content-Length: ' . strlen($resp));
+    header('Connection: close');
+    echo $resp;
+    if (function_exists('fastcgi_finish_request')) {
+        fastcgi_finish_request();
+    } else {
+        ignore_user_abort(true);
+        flush();
+    }
+
+    // Send user notification email (non-blocking)
     try {
         if ($action === 'complete') {
             Mailer::sendDepositApproved(
@@ -100,8 +113,6 @@ try {
     } catch (Exception $mailErr) {
         error_log('resolve-deposit email error for tx ' . $id . ': ' . $mailErr->getMessage());
     }
-
-    echo json_encode(['success' => true, 'message' => $msg]);
 
 } catch (PDOException $e) {
     if (isset($db) && $db->inTransaction()) $db->rollBack();

@@ -152,6 +152,30 @@ try {
 
         $db->commit();
 
+        $resp = json_encode([
+            'success' => true,
+            'message' => $pool['name'] . ' investment confirmed. First payout in ' .
+                         $payout_interval_days . ' days.',
+            'data'    => [
+                'pool_name'       => $pool['name'],
+                'amount'          => $amount,
+                'expected_return' => $expected_return,
+                'next_payout_at'  => $next_payout_at,
+                'ends_at'         => $ends_at,
+            ],
+        ]);
+        header('Content-Type: application/json');
+        header('Content-Encoding: identity');
+        header('Content-Length: ' . strlen($resp));
+        header('Connection: close');
+        echo $resp;
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+        } else {
+            ignore_user_abort(true);
+            flush();
+        }
+
         // Send investment confirmation email (non-blocking)
         try {
             require_once '../../api/utilities/email_templates.php';
@@ -192,19 +216,6 @@ try {
         } catch (Exception $emailErr) {
             error_log('Real estate investment email error: ' . $emailErr->getMessage());
         }
-
-        echo json_encode([
-            'success' => true,
-            'message' => $pool['name'] . ' investment confirmed. First payout in ' .
-                         $payout_interval_days . ' days.',
-            'data'    => [
-                'pool_name'       => $pool['name'],
-                'amount'          => $amount,
-                'expected_return' => $expected_return,
-                'next_payout_at'  => $next_payout_at,
-                'ends_at'         => $ends_at,
-            ],
-        ]);
 
     } else {
         http_response_code(405);

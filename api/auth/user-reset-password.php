@@ -52,10 +52,21 @@ try {
     $db->prepare("DELETE FROM password_resets WHERE email = :email")
        ->execute(['email' => $reset['email']]);
 
+    $resp = json_encode(['success' => true, 'message' => 'Password reset successfully']);
     ob_end_clean();
-    echo json_encode(['success' => true, 'message' => 'Password reset successfully']);
+    header('Content-Type: application/json');
+    header('Content-Encoding: identity');
+    header('Content-Length: ' . strlen($resp));
+    header('Connection: close');
+    echo $resp;
+    if (function_exists('fastcgi_finish_request')) {
+        fastcgi_finish_request();
+    } else {
+        ignore_user_abort(true);
+        flush();
+    }
 
-    // Send password changed notification (non-fatal, after response)
+    // Send password changed notification (non-blocking)
     try {
         require_once '../../api/utilities/email_templates.php';
         $uStmt = $db->prepare("SELECT full_name FROM users WHERE email = :email LIMIT 1");
