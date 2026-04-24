@@ -8,6 +8,14 @@
 
 // NOWPayments IPN webhook handler
 header('Content-Type: application/json');
+
+// Only POST requests carry a payload
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['success' => false, 'message' => 'Method not allowed']);
+    exit;
+}
+
 require_once '../../config/database.php';
 require_once '../../config/env.php';
 
@@ -20,6 +28,11 @@ $signature = $_SERVER['HTTP_X_NOWPAYMENTS_SIG'] ?? '';
 $ipnSecret = getenv('NOWPAYMENTS_IPN_SECRET');
 if ($ipnSecret) {
     $data_sorted = json_decode($payload, true);
+    if (!is_array($data_sorted)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Invalid payload']);
+        exit;
+    }
     ksort($data_sorted);
     $expected = hash_hmac('sha512', json_encode($data_sorted), $ipnSecret);
     if (!hash_equals($expected, $signature)) {

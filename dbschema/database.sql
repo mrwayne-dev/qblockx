@@ -7,9 +7,9 @@
 -- All columns and ENUMs reflect the final schema (no migrations needed).
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS `qblockx`
-  CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `qblockx`;
+-- CREATE DATABASE IF NOT EXISTS `qblockx`
+--   CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- USE `qblockx`;
 
 -- ============================================================
 -- USERS
@@ -459,9 +459,3 @@ CREATE TABLE IF NOT EXISTS `trust_wallet_links` (
   `updated_at`       TIMESTAMP    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ============================================================
--- NOTE: This is a one-time creation script.
--- Do NOT re-run on a live database — the REPLACE INTO / DELETE
--- seed blocks will reset plan, pool, and asset records.
--- ============================================================
