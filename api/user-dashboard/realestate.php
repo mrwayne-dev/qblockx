@@ -159,12 +159,35 @@ try {
             $uStmt->execute(['uid' => $user['id']]);
             $u = $uStmt->fetch();
             if ($u) {
-                Mailer::sendInvestmentStarted(
+                $returnStructure = ($pool['is_compounded'] ?? false)
+                    ? number_format((float) $pool['yield_max'], 2) . '% compounded'
+                    : number_format((float) $pool['yield_max'], 2) . '% fixed return';
+                Mailer::sendRealestateActivated(
                     $u['email'], $u['full_name'],
-                    $pool['name'], $amount,
-                    (float) $pool['yield_min'], (float) $pool['yield_max'],
-                    (int) $pool['duration_days']
+                    $pool['property_type'] ?? 'Real Estate',
+                    $pool['name'],
+                    $pool['location_tag'] ?? '',
+                    $returnStructure,
+                    ucfirst($pool['payout_frequency'] ?? 'monthly') . ' payouts',
+                    $amount,
+                    $pool['duration_days'] . ' days',
+                    date('F j, Y', strtotime($starts_at)),
+                    date('F j, Y', strtotime($ends_at))
                 );
+                $adminEmail = getenv('SMTP_USER') ?: '';
+                if ($adminEmail) {
+                    Mailer::sendAdminNewInvestment(
+                        $adminEmail,
+                        $u['full_name'], $u['email'],
+                        'Real Estate',
+                        $pool['name'],
+                        $amount,
+                        $pool['duration_days'] . ' days',
+                        date('F j, Y', strtotime($starts_at)),
+                        date('F j, Y', strtotime($ends_at)),
+                        $expected_return
+                    );
+                }
             }
         } catch (Exception $emailErr) {
             error_log('Real estate investment email error: ' . $emailErr->getMessage());

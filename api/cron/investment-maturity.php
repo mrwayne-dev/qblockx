@@ -8,7 +8,14 @@
  * Recommended cron: 0 0 * * * php /path/to/api/cron/investment-maturity.php
  */
 
-require_once '../../config/database.php';
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit('Access denied');
+}
+
+define('APP_ROOT', dirname(__DIR__, 2));
+require_once APP_ROOT . '/config/database.php';
+require_once APP_ROOT . '/api/utilities/email_templates.php';
 
 $processed = 0;
 $failed    = 0;
@@ -19,9 +26,12 @@ try {
 
     $stmt = $db->prepare(
         "SELECT pi.id, pi.user_id, pi.plan_id, pi.plan_name, pi.amount,
-                ip.yield_min, ip.yield_max
+                pi.starts_at, pi.ends_at,
+                ip.yield_min, ip.yield_max, ip.commission_pct,
+                u.email, u.full_name
          FROM plan_investments pi
          JOIN investment_plans ip ON ip.id = pi.plan_id
+         JOIN users u ON u.id = pi.user_id
          WHERE pi.status = 'active' AND pi.ends_at <= NOW()"
     );
     $stmt->execute();
@@ -56,6 +66,24 @@ try {
 
             $db->commit();
             $processed++;
+
+            // Send profit credited email (non-fatal)
+            try {
+                Mailer::sendProfitCredited(
+                    $inv['email'],
+                    $inv['full_name'],
+                    $inv['plan_name'],
+                    'Investment Plan',
+                    (float) $inv['amount'],
+                    round($actual_return - (float) $inv['amount'], 2),
+                    (float) $inv['commission_pct'],
+                    $actual_return,
+                    $inv['starts_at'],
+                    $inv['ends_at']
+                );
+            } catch (Exception $mailErr) {
+                error_log('investment-maturity cron: mail error for user ' . $inv['user_id'] . ': ' . $mailErr->getMessage());
+            }
 
         } catch (Exception $e) {
             if ($db->inTransaction()) $db->rollBack();

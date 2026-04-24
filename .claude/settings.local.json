@@ -73,7 +73,12 @@
       "Bash(mysql -u root -e \"SHOW TABLES FROM qblockx;\")",
       "Bash(mysql -u root -proot qblockx -e \"SHOW TABLES;\")",
       "Bash(mysql -u root \"-p#mrwayne10ISKING\" qblockx -e \"SHOW TABLES;\")",
-      "Bash(mysql *)"
+      "Bash(mysql *)",
+      "Bash(grep -n '$plan\\\\['\\\\''' /home/mrwayne/Documents/wayne/web_dev/qblockx/api/user-dashboard/investments.php)",
+      "Bash(grep -n '$asset\\\\['\\\\''\\\\|entry_price\\\\|current_price\\\\|sector\\\\|symbol' /home/mrwayne/Documents/wayne/web_dev/qblockx/api/user-dashboard/commodities.php)",
+      "Bash(grep -n '$pool\\\\['\\\\''' /home/mrwayne/Documents/wayne/web_dev/qblockx/api/user-dashboard/realestate.php)",
+      "Bash(timeout 5 nc -z mail.spacemail.com 465)",
+      "Bash(apache2ctl -M)"
     ]
   }
 }

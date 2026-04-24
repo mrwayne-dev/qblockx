@@ -71,17 +71,42 @@ try {
 
     $db->commit();
 
-    // ── Send verification code via email ────────────────────────────────────
-    $emailSent = Mailer::sendVerification($email, $full_name, $code);
-
-    ob_end_clean();
-    echo json_encode([
+    // ── Respond immediately — email sends happen after response is flushed ──
+    $resp = json_encode([
         'success'    => true,
-        'email_sent' => $emailSent,
-        'message'    => $emailSent
-            ? 'Account created! Check your email for your verification code.'
-            : 'Account created! Verification email could not be sent — use the resend option on the next screen.',
+        'email_sent' => true,
+        'message'    => 'Account created! Check your email for your verification code.',
     ]);
+    ob_end_clean();
+    header('Content-Type: application/json');
+    header('Content-Encoding: identity');
+    header('Content-Length: ' . strlen($resp));
+    header('Connection: close');
+    echo $resp;
+    if (function_exists('fastcgi_finish_request')) {
+        fastcgi_finish_request();
+    } else {
+        ignore_user_abort(true);
+        flush();
+    }
+
+    // ── Non-blocking email sends ─────────────────────────────────────────────
+    Mailer::sendWelcome($email, $full_name);
+    Mailer::sendVerification($email, $full_name, $code);
+
+    $adminEmail = getenv('SMTP_FROM') ?: getenv('SMTP_USER') ?: '';
+    if ($adminEmail) {
+        Mailer::sendAdminNewUser(
+            $adminEmail,
+            (string) $new_user_id,
+            $full_name,
+            $email,
+            date('F j, Y H:i T'),
+            '',
+            $_SERVER['REMOTE_ADDR'] ?? '',
+            'No'
+        );
+    }
 
 } catch (\Throwable $e) {
     if ($db !== null && $db->inTransaction()) {

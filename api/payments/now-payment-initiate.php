@@ -11,6 +11,7 @@
 
 require_once '../../config/database.php';
 require_once '../../api/utilities/auth-check.php';
+require_once '../../api/utilities/email_templates.php';
 header('Content-Type: application/json');
 
 requireAuth();
@@ -107,6 +108,28 @@ try {
         'payment_id' => (string) $nowData['id'],
         'notes'      => $order_id,
     ]);
+
+    // Send deposit pending email (non-fatal)
+    try {
+        $nameStmt = $db->prepare("SELECT full_name FROM users WHERE id = :uid");
+        $nameStmt->execute(['uid' => $user['id']]);
+        $nameRow  = $nameStmt->fetch();
+        $fullName = $nameRow['full_name'] ?? 'User';
+
+        Mailer::sendDepositPending(
+            $user['email'],
+            $fullName,
+            $amount,
+            strtoupper($currency),
+            strtoupper($currency),
+            '',
+            '',
+            date('d M Y, H:i'),
+            (string) $nowData['id']
+        );
+    } catch (Exception $mailErr) {
+        error_log('now-payment-initiate: mail error for user ' . $user['id'] . ': ' . $mailErr->getMessage());
+    }
 
     echo json_encode([
         'success' => true,

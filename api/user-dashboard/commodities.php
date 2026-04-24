@@ -150,12 +150,30 @@ try {
             $uStmt->execute(['uid' => $user['id']]);
             $u = $uStmt->fetch();
             if ($u) {
-                Mailer::sendInvestmentStarted(
+                Mailer::sendCommodityActivated(
                     $u['email'], $u['full_name'],
-                    $asset['name'], $amount,
-                    (float) $asset['yield_min'], (float) $asset['yield_max'],
-                    (int) $asset['duration_days']
+                    $asset['name'],
+                    '$' . number_format($amount / (int) $asset['duration_days'], 4) . ' avg',
+                    number_format((float) $asset['yield_max'], 2) . '% over ' . $asset['duration_days'] . ' days',
+                    $amount,
+                    $asset['duration_days'] . ' days',
+                    date('F j, Y', strtotime($starts_at)),
+                    date('F j, Y', strtotime($ends_at))
                 );
+                $adminEmail = getenv('SMTP_USER') ?: '';
+                if ($adminEmail) {
+                    Mailer::sendAdminNewInvestment(
+                        $adminEmail,
+                        $u['full_name'], $u['email'],
+                        'Commodity',
+                        $asset['name'],
+                        $amount,
+                        $asset['duration_days'] . ' days',
+                        date('F j, Y', strtotime($starts_at)),
+                        date('F j, Y', strtotime($ends_at)),
+                        $expected_return
+                    );
+                }
             }
         } catch (Exception $emailErr) {
             error_log('Commodity investment email error: ' . $emailErr->getMessage());

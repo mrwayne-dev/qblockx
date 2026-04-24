@@ -153,7 +153,7 @@
 
       if (result.success) {
         showMsg('Signed in. Redirecting…', false);
-        window.location.href = '/pages/admin/dashboard.php';
+        window.location.href = '/admin/dashboard';
       } else {
         showMsg(result.message || 'Invalid credentials.', true);
         setLoading(false);

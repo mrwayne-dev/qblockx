@@ -9,7 +9,14 @@
  * Recommended cron: 0 2 * * * php /path/to/api/cron/realestate-payouts.php
  */
 
-require_once '../../config/database.php';
+if (PHP_SAPI !== 'cli') {
+    http_response_code(403);
+    exit('Access denied');
+}
+
+define('APP_ROOT', dirname(__DIR__, 2));
+require_once APP_ROOT . '/config/database.php';
+require_once APP_ROOT . '/api/utilities/email_templates.php';
 
 $processed = 0;
 $failed    = 0;
@@ -21,10 +28,12 @@ try {
     // ── Pass 1: periodic payouts ───────────────────────────────────────────
     $payoutStmt = $db->prepare(
         "SELECT ri.id, ri.user_id, ri.pool_name, ri.amount,
-                ri.yield_rate, ri.total_paid_out, ri.ends_at,
-                rp.yield_min, rp.yield_max, rp.payout_frequency
+                ri.yield_rate, ri.total_paid_out, ri.starts_at, ri.ends_at,
+                rp.yield_min, rp.yield_max, rp.payout_frequency,
+                u.email, u.full_name
          FROM realestate_investments ri
          JOIN realestate_pools rp ON rp.id = ri.pool_id
+         JOIN users u ON u.id = ri.user_id
          WHERE ri.status = 'active' AND ri.next_payout_at <= NOW()"
     );
     $payoutStmt->execute();
@@ -88,6 +97,24 @@ try {
 
             $db->commit();
             $processed++;
+
+            // Send payout email (non-fatal)
+            try {
+                Mailer::sendProfitCredited(
+                    $inv['email'],
+                    $inv['full_name'],
+                    $inv['pool_name'],
+                    'Real Estate',
+                    (float) $inv['amount'],
+                    $payout,
+                    0.0,
+                    $payout,
+                    $inv['starts_at'],
+                    $inv['ends_at']
+                );
+            } catch (Exception $mailErr) {
+                error_log('realestate-payouts cron: mail error for user ' . $inv['user_id'] . ': ' . $mailErr->getMessage());
+            }
 
         } catch (Exception $e) {
             if ($db->inTransaction()) $db->rollBack();

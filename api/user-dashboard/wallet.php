@@ -6,6 +6,7 @@
 
 require_once '../../config/database.php';
 require_once '../../api/utilities/auth-check.php';
+require_once '../../api/utilities/email_templates.php';
 header('Content-Type: application/json');
 
 requireAuth();
@@ -280,6 +281,56 @@ try {
             ]);
 
             $db->commit();
+
+            // Send withdrawal notification emails (non-fatal)
+            try {
+                $nameStmt = $db->prepare("SELECT full_name FROM users WHERE id = :uid");
+                $nameStmt->execute(['uid' => $user['id']]);
+                $nameRow  = $nameStmt->fetch();
+                $fullName = $nameRow['full_name'] ?? 'User';
+
+                if ($method === 'bank') {
+                    $displayAddress  = $account_holder_name . ' — ' . $bank_name . ', ' . $bank_country;
+                    $displayCurrency = $bank_currency;
+                    $displayNetwork  = 'Bank Transfer';
+                } else {
+                    $displayAddress  = $wallet_address;
+                    $displayCurrency = strtoupper($currency);
+                    $displayNetwork  = strtoupper($currency);
+                }
+
+                Mailer::sendWithdrawalPending(
+                    $user['email'],
+                    $fullName,
+                    number_format($amount, 2),
+                    $displayAddress,
+                    24,
+                    $displayCurrency,
+                    $displayNetwork,
+                    date('d M Y, H:i'),
+                    ''
+                );
+
+                $adminEmail = getenv('SMTP_USER') ?: '';
+                if ($adminEmail) {
+                    Mailer::sendAdminNewWithdrawal(
+                        $adminEmail,
+                        $fullName,
+                        $user['email'],
+                        $amount,
+                        $displayCurrency,
+                        $displayNetwork,
+                        $displayAddress,
+                        '',
+                        date('d M Y, H:i'),
+                        '',
+                        ''
+                    );
+                }
+            } catch (Exception $mailErr) {
+                error_log('wallet withdrawal: mail error for user ' . $user['id'] . ': ' . $mailErr->getMessage());
+            }
+
             echo json_encode(['success' => true, 'message' => 'Withdrawal request submitted. It will be processed within 24–48 hours.']);
         }
 

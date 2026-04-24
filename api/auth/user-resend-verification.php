@@ -54,16 +54,21 @@ try {
         "INSERT INTO email_verifications (user_id, token, expires_at) VALUES (:uid, :token, :expires_at)"
     )->execute(['uid' => $uid, 'token' => $code, 'expires_at' => $expires_at]);
 
-    $emailSent = Mailer::sendVerification($email, $user['full_name'] ?? '', $code);
-
-    if (!$emailSent) {
-        ob_end_clean();
-        echo json_encode(['success' => false, 'message' => 'Failed to send email. Please try again.']);
-        exit;
+    $resp = json_encode(['success' => true, 'message' => 'A new verification code has been sent to your email.']);
+    ob_end_clean();
+    header('Content-Type: application/json');
+    header('Content-Encoding: identity');
+    header('Content-Length: ' . strlen($resp));
+    header('Connection: close');
+    echo $resp;
+    if (function_exists('fastcgi_finish_request')) {
+        fastcgi_finish_request();
+    } else {
+        ignore_user_abort(true);
+        flush();
     }
 
-    ob_end_clean();
-    echo json_encode(['success' => true, 'message' => 'A new verification code has been sent to your email.']);
+    Mailer::sendVerification($email, $user['full_name'] ?? '', $code);
 
 } catch (\Throwable $e) {
     ob_end_clean();

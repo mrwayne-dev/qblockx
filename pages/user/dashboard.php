@@ -134,6 +134,7 @@ require_once '../../includes/head.php';
         <div class="table-card portfolio-chart-card">
           <div class="table-card-header">
             <h3><i class="ph ph-chart-donut"></i> Portfolio</h3>
+            <span class="portfolio-total-value" id="portfolioTotalValue"></span>
           </div>
           <div class="portfolio-chart-wrap">
             <canvas id="portfolioChart" width="180" height="180"></canvas>
@@ -235,10 +236,8 @@ require_once '../../includes/head.php';
               <span class="wallet-info-value"><span class="js-currency-code">USD</span></span>
             </div>
             <div class="wallet-info-item">
-              <span class="wallet-info-label">Wallet Status</span>
-              <span class="wallet-info-value wallet-status-active">
-                <i class="ph ph-check-circle"></i> Active
-              </span>
+              <span class="wallet-info-label">Account Status</span>
+              <span class="wallet-info-value" data-profile="active">—</span>
             </div>
           </div>
         </div>
@@ -339,7 +338,8 @@ require_once '../../includes/head.php';
             <span class="badge badge-muted">
               Member since: <span data-profile="member-since">—</span>
             </span>
-            <span class="badge badge-success" data-profile="verified">—</span>
+            <span class="badge badge-muted" data-profile="verified">—</span>
+            <span class="badge badge-muted" data-profile="active">—</span>
           </div>
         </div>
       </div>

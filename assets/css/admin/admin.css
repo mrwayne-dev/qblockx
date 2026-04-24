@@ -595,6 +595,31 @@ body.admin-body .badge-cancelled {
   color: #374151;
 }
 
+body.admin-body .badge-success {
+  background: rgba(16, 185, 129, 0.12);
+  color: #065F46;
+}
+
+body.admin-body .badge-muted {
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+}
+
+body.admin-body .badge-danger {
+  background: rgba(239, 68, 68, 0.1);
+  color: #991B1B;
+}
+
+body.admin-body .badge-starter {
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--color-accent);
+}
+
+body.admin-body .badge-elite {
+  background: rgba(139, 92, 246, 0.1);
+  color: #5B21B6;
+}
+
 /* ── Action Buttons ─────────────────────────────────── */
 body.admin-body .btn-actions {
   display: flex;

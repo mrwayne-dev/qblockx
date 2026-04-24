@@ -45,14 +45,23 @@ try {
     $db->prepare("INSERT INTO password_resets (email, token, expires_at) VALUES (:email, :token, :expires_at)")
        ->execute(['email' => $email, 'token' => $token, 'expires_at' => $expires_at]);
 
-    // Admin reset link points to the admin reset page
-    $resetLink = getenv('APP_URL') . '/pages/admin/reset-password.php?token=' . $token;
+    $resetLink = (getenv('APP_URL') ?: '') . '/admin/reset-password?token=' . $token;
 
-    // Send email via central Mailer (failure is silent — token is still saved)
-    Mailer::sendPasswordReset($email, $user['full_name'] ?? 'Admin', $resetLink);
-
+    $resp = json_encode(['success' => true, 'message' => 'If this email exists, a reset link has been sent']);
     ob_end_clean();
-    echo json_encode(['success' => true, 'message' => 'If this email exists, a reset link has been sent']);
+    header('Content-Type: application/json');
+    header('Content-Encoding: identity');
+    header('Content-Length: ' . strlen($resp));
+    header('Connection: close');
+    echo $resp;
+    if (function_exists('fastcgi_finish_request')) {
+        fastcgi_finish_request();
+    } else {
+        ignore_user_abort(true);
+        flush();
+    }
+
+    Mailer::sendPasswordReset($email, $user['full_name'] ?? 'Admin', $resetLink);
 
 } catch (\Throwable $e) {
     ob_end_clean();

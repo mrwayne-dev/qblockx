@@ -1069,7 +1069,27 @@
       setVal('[name="full_name"]', d.full_name);
       setText('[data-profile="email"]',        d.email);
       setText('[data-profile="member-since"]', fmtDate(d.created_at));
-      setText('[data-profile="verified"]',     d.is_verified ? 'Verified' : 'Unverified');
+
+      var isVerified = !!parseInt(d.is_verified, 10);
+      var isActive   = !!parseInt(d.is_active,   10);
+
+      // Verified badge — text + class
+      document.querySelectorAll('[data-profile="verified"]').forEach(function (el) {
+        el.textContent = isVerified ? 'Email Verified' : 'Unverified';
+        el.className   = el.className.replace(/\bbadge-\w+/g, isVerified ? 'badge-success' : 'badge-warning');
+      });
+
+      // Active status badge / value
+      document.querySelectorAll('[data-profile="active"]').forEach(function (el) {
+        if (el.className.includes('badge')) {
+          el.textContent = isActive ? 'Active' : 'Suspended';
+          el.className   = el.className.replace(/\bbadge-\w+/g, isActive ? 'badge-success' : 'badge-error');
+        } else {
+          el.innerHTML = isActive
+            ? '<i class="ph ph-check-circle" style="color:var(--color-success)"></i> Active'
+            : '<i class="ph ph-x-circle" style="color:var(--color-error)"></i> Suspended';
+        }
+      });
 
       var emailEl = qs('[name="email"]');
       if (emailEl) { emailEl.value = d.email || ''; emailEl.readOnly = true; }
@@ -1590,20 +1610,30 @@
 
       var total = wallet + invAmt + comAmt + reAmt;
       if (total <= 0) {
-        legend.innerHTML = '<p class="empty-text" style="font-size:1.2rem">Invest to see your portfolio allocation.</p>';
+        legend.innerHTML = '<p class="empty-text portfolio-empty-text">Invest to see your portfolio allocation.</p>';
         return;
       }
 
-      var labels = ['Wallet', 'Investments', 'Commodities', 'Real Estate'];
-      var values = [wallet, invAmt, comAmt, reAmt];
-      var colors = ['#2262FF', '#0FC47A', '#F59E0B', '#EF4444'];
+      var allLabels = ['Wallet', 'Investments', 'Commodities', 'Real Estate'];
+      var allValues = [wallet, invAmt, comAmt, reAmt];
+      var allColors = ['#2262FF', '#0FC47A', '#F59E0B', '#EF4444'];
+
+      // Filter out zero segments so the chart isn't polluted with empty slices
+      var labels = [], values = [], colors = [];
+      allLabels.forEach(function (lbl, i) {
+        if (allValues[i] > 0) { labels.push(lbl); values.push(allValues[i]); colors.push(allColors[i]); }
+      });
+
+      // Show total value in card header
+      var totalEl = document.getElementById('portfolioTotalValue');
+      if (totalEl) totalEl.textContent = _currencySymbol + fmt(total);
 
       if (_portfolioChart) _portfolioChart.destroy();
       _portfolioChart = new Chart(canvas, {
         type: 'doughnut',
         data: {
           labels: labels,
-          datasets: [{ data: values, backgroundColor: colors, borderWidth: 2, borderColor: '#fff' }]
+          datasets: [{ data: values, backgroundColor: colors, borderWidth: 2, borderColor: 'rgba(255,255,255,0.08)' }]
         },
         options: {
           cutout: '68%',
@@ -1611,7 +1641,7 @@
             callbacks: {
               label: function (ctx) {
                 var pct = total > 0 ? ((ctx.raw / total) * 100).toFixed(1) : 0;
-                return ' $' + fmt(ctx.raw) + ' (' + pct + '%)';
+                return ' ' + _currencySymbol + fmt(ctx.raw) + ' (' + pct + '%)';
               }
             }
           }},
@@ -1624,6 +1654,7 @@
         return '<div class="portfolio-legend-item">'
           + '<span class="portfolio-legend-dot" style="background:' + colors[i] + '"></span>'
           + '<span class="portfolio-legend-label">' + lbl + '</span>'
+          + '<span class="portfolio-legend-amount">' + _currencySymbol + fmt(values[i]) + '</span>'
           + '<span class="portfolio-legend-pct">' + pct + '%</span>'
           + '</div>';
       }).join('');

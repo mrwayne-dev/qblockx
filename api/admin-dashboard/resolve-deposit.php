@@ -6,6 +6,7 @@
 
 require_once '../../config/database.php';
 require_once '../../api/utilities/auth-check.php';
+require_once '../../api/utilities/email_templates.php';
 header('Content-Type: application/json');
 
 requireAdmin();
@@ -29,7 +30,10 @@ try {
     $db = Database::getInstance()->getConnection();
 
     $stmt = $db->prepare(
-        "SELECT * FROM transactions WHERE id = :id AND type = 'deposit' AND status = 'pending' LIMIT 1"
+        "SELECT t.*, u.email AS user_email, u.full_name AS user_name
+         FROM transactions t
+         JOIN users u ON u.id = t.user_id
+         WHERE t.id = :id AND t.type = 'deposit' AND t.status = 'pending' LIMIT 1"
     );
     $stmt->execute(['id' => $id]);
     $tx = $stmt->fetch();
@@ -66,6 +70,37 @@ try {
     }
 
     $db->commit();
+
+    // Send user notification email (non-fatal)
+    try {
+        if ($action === 'complete') {
+            Mailer::sendDepositApproved(
+                $tx['user_email'],
+                $tx['user_name'],
+                (float) $tx['amount'],
+                $tx['currency'] ?: 'USD',
+                '',
+                $tx['payment_id'] ?? '',
+                date('d M Y, H:i T'),
+                '',
+                (string) $tx['id']
+            );
+        } else {
+            Mailer::sendDepositRejected(
+                $tx['user_email'],
+                $tx['user_name'],
+                (float) $tx['amount'],
+                $tx['currency'] ?: 'USD',
+                $tx['payment_id'] ?? '',
+                date('d M Y, H:i T'),
+                'Manual review — deposit could not be verified',
+                (string) $tx['id']
+            );
+        }
+    } catch (Exception $mailErr) {
+        error_log('resolve-deposit email error for tx ' . $id . ': ' . $mailErr->getMessage());
+    }
+
     echo json_encode(['success' => true, 'message' => $msg]);
 
 } catch (PDOException $e) {

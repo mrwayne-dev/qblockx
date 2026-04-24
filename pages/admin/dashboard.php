@@ -338,7 +338,40 @@ $admin = getAuthUser();
         <div class="section-header">
           <div>
             <h2 class="section-title">Investments</h2>
-            <p class="section-subtitle">All user plan investments across the platform</p>
+            <p class="section-subtitle">Manage investment plans and user positions</p>
+          </div>
+        </div>
+
+        <!-- Investment Plans Management -->
+        <div class="table-card" style="margin-bottom:1.5rem;">
+          <div class="table-toolbar">
+            <div class="table-toolbar-title">Investment Plans</div>
+            <button class="btn-sm btn-accent" onclick="openInvPlanModal(null)">
+              <i class="ph ph-plus" aria-hidden="true"></i> Add Plan
+            </button>
+          </div>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Plan Name</th>
+                  <th>Tier</th>
+                  <th>Min</th>
+                  <th>Max</th>
+                  <th>Days</th>
+                  <th>Yield Range</th>
+                  <th>Commission</th>
+                  <th>Compounded</th>
+                  <th>Active</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody data-table="mgmt-inv-plans">
+                <tr><td colspan="10">
+                  <div class="loading-rows"><i class="ph ph-circle-notch ph-spin"></i> Loading…</div>
+                </td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -398,7 +431,38 @@ $admin = getAuthUser();
         <div class="section-header">
           <div>
             <h2 class="section-title">Commodities</h2>
-            <p class="section-subtitle">All user commodity investment positions</p>
+            <p class="section-subtitle">Manage commodity assets and user positions</p>
+          </div>
+        </div>
+
+        <!-- Commodity Assets Management -->
+        <div class="table-card" style="margin-bottom:1.5rem;">
+          <div class="table-toolbar">
+            <div class="table-toolbar-title">Commodity Assets</div>
+            <button class="btn-sm btn-accent" onclick="openComAssetModal(null)">
+              <i class="ph ph-plus" aria-hidden="true"></i> Add Asset
+            </button>
+          </div>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Asset Name</th>
+                  <th>Symbol</th>
+                  <th>TradingView</th>
+                  <th>Min Investment</th>
+                  <th>Duration</th>
+                  <th>Yield Range</th>
+                  <th>Active</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody data-table="mgmt-com-assets">
+                <tr><td colspan="8">
+                  <div class="loading-rows"><i class="ph ph-circle-notch ph-spin"></i> Loading…</div>
+                </td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -457,7 +521,39 @@ $admin = getAuthUser();
         <div class="section-header">
           <div>
             <h2 class="section-title">Real Estate</h2>
-            <p class="section-subtitle">All user real estate pool investments</p>
+            <p class="section-subtitle">Manage real estate pools and user investments</p>
+          </div>
+        </div>
+
+        <!-- Real Estate Pools Management -->
+        <div class="table-card" style="margin-bottom:1.5rem;">
+          <div class="table-toolbar">
+            <div class="table-toolbar-title">Real Estate Pools</div>
+            <button class="btn-sm btn-accent" onclick="openRePoolModal(null)">
+              <i class="ph ph-plus" aria-hidden="true"></i> Add Pool
+            </button>
+          </div>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Pool Name</th>
+                  <th>Type</th>
+                  <th>Min Investment</th>
+                  <th>Duration</th>
+                  <th>Yield Range</th>
+                  <th>Payout</th>
+                  <th>Compounded</th>
+                  <th>Active</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody data-table="mgmt-re-pools">
+                <tr><td colspan="9">
+                  <div class="loading-rows"><i class="ph ph-circle-notch ph-spin"></i> Loading…</div>
+                </td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -689,6 +785,9 @@ $admin = getAuthUser();
 <?php include '../../includes/admin-modals/view-user-modal.php'; ?>
 <?php include '../../includes/admin-modals/credit-debit-modal.php'; ?>
 <?php include '../../includes/admin-modals/confirm-modal.php'; ?>
+<?php include '../../includes/admin-modals/edit-plan-modal.php'; ?>
+<?php include '../../includes/admin-modals/edit-commodity-modal.php'; ?>
+<?php include '../../includes/admin-modals/edit-realestate-modal.php'; ?>
 
 <!-- Admin JS -->
 <script src="/assets/js/admin/admin-dashboard.js" defer></script>

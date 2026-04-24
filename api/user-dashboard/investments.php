@@ -161,12 +161,30 @@ try {
             $uStmt->execute(['uid' => $user['id']]);
             $u = $uStmt->fetch();
             if ($u) {
-                Mailer::sendInvestmentStarted(
+                Mailer::sendPlanActivated(
                     $u['email'], $u['full_name'],
-                    $plan['name'], $amount,
-                    (float) $plan['yield_min'], (float) $plan['yield_max'],
-                    (int) $plan['duration_days']
+                    $plan['name'],
+                    $plan['tier'] ?? 'Standard',
+                    $amount,
+                    $plan['duration_days'] . ' days',
+                    date('F j, Y', strtotime($starts_at)),
+                    date('F j, Y', strtotime($ends_at)),
+                    $expected_return
                 );
+                $adminEmail = getenv('SMTP_USER') ?: '';
+                if ($adminEmail) {
+                    Mailer::sendAdminNewInvestment(
+                        $adminEmail,
+                        $u['full_name'], $u['email'],
+                        'Investment Plan',
+                        $plan['name'],
+                        $amount,
+                        $plan['duration_days'] . ' days',
+                        date('F j, Y', strtotime($starts_at)),
+                        date('F j, Y', strtotime($ends_at)),
+                        $expected_return
+                    );
+                }
             }
         } catch (Exception $emailErr) {
             error_log('Investment email error: ' . $emailErr->getMessage());

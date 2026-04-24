@@ -6,6 +6,7 @@
 
 require_once '../../config/database.php';
 require_once '../../api/utilities/auth-check.php';
+require_once '../../api/utilities/email_templates.php';
 header('Content-Type: application/json');
 
 requireAuth();
@@ -15,7 +16,7 @@ try {
     $db = Database::getInstance()->getConnection();
 
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-        $stmt = $db->prepare("SELECT id, email, full_name, is_verified, role, created_at FROM users WHERE id = :uid");
+        $stmt = $db->prepare("SELECT id, email, full_name, is_verified, is_active, role, created_at FROM users WHERE id = :uid");
         $stmt->execute(['uid' => $user['id']]);
         $profile = $stmt->fetch();
 
@@ -61,6 +62,25 @@ try {
         $db->prepare($sql)->execute($params);
 
         echo json_encode(['success' => true, 'message' => 'Profile updated']);
+
+        // Send password changed security notification (non-fatal)
+        if (!empty($new_pass)) {
+            try {
+                $infoStmt = $db->prepare("SELECT email, full_name FROM users WHERE id = :uid LIMIT 1");
+                $infoStmt->execute(['uid' => $user['id']]);
+                $info = $infoStmt->fetch();
+                if ($info) {
+                    Mailer::sendPasswordChanged(
+                        $info['email'],
+                        $info['full_name'],
+                        date('d M Y, H:i T'),
+                        $info['email']
+                    );
+                }
+            } catch (Exception $mailErr) {
+                error_log('profile password-change email error: ' . $mailErr->getMessage());
+            }
+        }
 
     } else {
         http_response_code(405);

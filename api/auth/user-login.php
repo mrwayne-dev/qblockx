@@ -62,11 +62,21 @@ try {
     $_SESSION['email']   = $user['email'];
     $_SESSION['role']    = $user['role'];
 
+    $resp = json_encode(['success' => true, 'message' => 'Login successful']);
     ob_end_clean();
-    echo json_encode(['success' => true, 'message' => 'Login successful']);
+    header('Content-Type: application/json');
+    header('Content-Encoding: identity');
+    header('Content-Length: ' . strlen($resp));
+    header('Connection: close');
+    echo $resp;
+    if (function_exists('fastcgi_finish_request')) {
+        fastcgi_finish_request();
+    } else {
+        ignore_user_abort(true);
+        flush();
+    }
 
-    // Send sign-in notification (non-blocking — runs after response is sent)
-    if (function_exists('fastcgi_finish_request')) fastcgi_finish_request();
+    // Send sign-in notification (non-blocking)
     require_once '../../api/utilities/email_templates.php';
     $loginTime = date('D, d M Y \a\t H:i T');
     $firstName = explode(' ', trim($user['full_name'] ?? ''))[0] ?: 'there';

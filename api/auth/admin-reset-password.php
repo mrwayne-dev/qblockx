@@ -50,6 +50,22 @@ try {
        ->execute(['email' => $reset['email']]);
 
     echo json_encode(['success' => true, 'message' => 'Password reset successfully']);
+
+    // Send password changed notification (non-fatal, after response)
+    try {
+        require_once '../../api/utilities/email_templates.php';
+        $uStmt = $db->prepare("SELECT full_name FROM users WHERE email = :email LIMIT 1");
+        $uStmt->execute(['email' => $reset['email']]);
+        $uRow = $uStmt->fetch();
+        Mailer::sendPasswordChanged(
+            $reset['email'],
+            $uRow['full_name'] ?? 'Admin',
+            date('d M Y, H:i T'),
+            $reset['email']
+        );
+    } catch (\Throwable $mailErr) {
+        error_log('admin-reset-password email error: ' . $mailErr->getMessage());
+    }
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Server error']);

@@ -126,9 +126,12 @@
     font-size: 1.25rem;
   }
 
-  /* Buttons wrap */
+  /* Action buttons — keep in a row, scroll if needed */
   body.admin-body .btn-actions {
-    flex-wrap: wrap;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 0.25rem;
   }
 
   /* Table toolbar: stack on small screens */

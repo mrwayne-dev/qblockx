@@ -35,10 +35,20 @@ try {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['email']   = $user['email'];
         $_SESSION['role']    = $user['role'];
-        echo json_encode(['success' => true, 'message' => 'Login successful']);
+        $resp = json_encode(['success' => true, 'message' => 'Login successful']);
+        header('Content-Type: application/json');
+        header('Content-Encoding: identity');
+        header('Content-Length: ' . strlen($resp));
+        header('Connection: close');
+        echo $resp;
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+        } else {
+            ignore_user_abort(true);
+            flush();
+        }
 
         // Send admin sign-in security alert (non-blocking)
-        if (function_exists('fastcgi_finish_request')) fastcgi_finish_request();
         require_once '../../api/utilities/email_templates.php';
         $loginTime = date('D, d M Y \a\t H:i T');
         $firstName = explode(' ', trim($user['full_name'] ?? ''))[0] ?: 'Admin';

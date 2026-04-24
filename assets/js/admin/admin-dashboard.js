@@ -1195,6 +1195,334 @@
     }
   }
 
+  /* ── Investment Plans Management ─────────────────────────────────── */
+
+  var invPlansLoaded = false;
+
+  async function loadInvPlansTable() {
+    var tbody = qs('[data-table="mgmt-inv-plans"]');
+    if (!tbody) return;
+    try {
+      var r = await apiFetch('/api/admin-dashboard/investment-plans.php');
+      if (!r.success) return;
+      renderInvPlansTable(r.data.plans || []);
+      invPlansLoaded = true;
+    } catch (e) { console.error('loadInvPlansTable:', e); }
+  }
+
+  function renderInvPlansTable(plans) {
+    var tbody = qs('[data-table="mgmt-inv-plans"]');
+    if (!tbody) return;
+    if (!plans.length) { showEmpty(tbody, 10, 'No investment plans configured'); return; }
+    tbody.innerHTML = plans.map(function (p) {
+      var planJson = esc(JSON.stringify(p).replace(/'/g, '&apos;'));
+      return '<tr>'
+        + '<td><strong>' + esc(p.name) + '</strong></td>'
+        + '<td><span class="badge badge-' + esc(p.tier) + '">' + esc(p.tier) + '</span></td>'
+        + '<td>$' + fmt(p.min_amount) + '</td>'
+        + '<td>' + (p.max_amount ? '$' + fmt(p.max_amount) : '<span class="cell-muted">Unlimited</span>') + '</td>'
+        + '<td>' + (p.duration_days || '—') + 'd</td>'
+        + '<td>' + parseFloat(p.yield_min || 0).toFixed(1) + '–' + parseFloat(p.yield_max || 0).toFixed(1) + '%</td>'
+        + '<td>' + parseFloat(p.commission_pct || 0).toFixed(1) + '%</td>'
+        + '<td>' + (p.is_compounded ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-muted">No</span>') + '</td>'
+        + '<td>' + (p.is_active ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-muted">Inactive</span>') + '</td>'
+        + '<td><div class="btn-actions">'
+        + '<button class="btn-action btn-action--primary" data-invplan-edit=\'' + planJson + '\'>Edit</button>'
+        + '<button class="btn-action ' + (p.is_active ? 'btn-action--warning' : 'btn-action--success') + '" data-invplan-toggle="' + p.id + '">'
+        + (p.is_active ? 'Deactivate' : 'Activate') + '</button>'
+        + '<button class="btn-action btn-action--danger" data-invplan-delete="' + p.id + '">Delete</button>'
+        + '</div></td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  window.openInvPlanModal = function (plan) {
+    var isEdit = (plan && plan.id);
+    document.getElementById('editPlanModalTitleText').textContent = isEdit ? 'Edit Investment Plan' : 'Add Investment Plan';
+    document.getElementById('editPlanId').value          = isEdit ? plan.id          : '';
+    document.getElementById('editPlanName').value        = isEdit ? (plan.name || '') : '';
+    document.getElementById('editPlanTier').value        = isEdit ? (plan.tier || 'starter') : 'starter';
+    document.getElementById('editPlanMin').value         = isEdit ? (plan.min_amount || '') : '';
+    document.getElementById('editPlanMax').value         = isEdit ? (plan.max_amount || '') : '';
+    document.getElementById('editPlanDays').value        = isEdit ? (plan.duration_days || '') : '';
+    document.getElementById('editPlanYieldMin').value    = isEdit ? (plan.yield_min || '') : '';
+    document.getElementById('editPlanYieldMax').value    = isEdit ? (plan.yield_max || '') : '';
+    document.getElementById('editPlanCommission').value  = isEdit ? (plan.commission_pct || '15') : '15';
+    document.getElementById('editPlanCompounded').checked = isEdit ? (plan.is_compounded == 1) : false;
+    document.getElementById('editPlanSortOrder').value   = isEdit ? (plan.sort_order || '0') : '0';
+    var msgEl = document.getElementById('editPlanMsg');
+    msgEl.style.display = 'none'; msgEl.textContent = '';
+    openAdminModal('modal-edit-plan');
+  };
+
+  window.saveInvPlan = async function () {
+    if (_adminBusy) return;
+    var id      = document.getElementById('editPlanId').value;
+    var msgEl   = document.getElementById('editPlanMsg');
+    var btnEl   = document.getElementById('editPlanSaveBtn');
+    var name    = document.getElementById('editPlanName').value.trim();
+    var min     = document.getElementById('editPlanMin').value;
+    var days    = document.getElementById('editPlanDays').value;
+
+    msgEl.style.display = 'none'; msgEl.textContent = '';
+
+    if (!name || !min || !days) {
+      msgEl.textContent = 'Plan name, min amount, and duration are required.';
+      msgEl.style.display = ''; msgEl.className = 'admin-modal-msg error'; return;
+    }
+
+    var payload = {
+      action:         id ? 'update' : 'create',
+      name:           name,
+      tier:           document.getElementById('editPlanTier').value,
+      min_amount:     parseFloat(min),
+      max_amount:     document.getElementById('editPlanMax').value !== '' ? parseFloat(document.getElementById('editPlanMax').value) : null,
+      duration_days:  parseInt(days, 10),
+      yield_min:      parseFloat(document.getElementById('editPlanYieldMin').value || 0),
+      yield_max:      parseFloat(document.getElementById('editPlanYieldMax').value || 0),
+      commission_pct: parseFloat(document.getElementById('editPlanCommission').value || 15),
+      is_compounded:  document.getElementById('editPlanCompounded').checked ? 1 : 0,
+      sort_order:     parseInt(document.getElementById('editPlanSortOrder').value || 0, 10)
+    };
+    if (id) payload.id = parseInt(id, 10);
+
+    setBusy(btnEl, true);
+    try {
+      var r = await apiFetch('/api/admin-dashboard/investment-plans.php', {
+        method: 'POST', body: JSON.stringify(payload)
+      });
+      if (r.success) {
+        showToast(r.message || 'Plan saved');
+        closeAdminModal('modal-edit-plan');
+        renderInvPlansTable(r.data.plans || []);
+        settingsLoaded = false;
+      } else {
+        msgEl.textContent = r.message || 'Save failed';
+        msgEl.style.display = ''; msgEl.className = 'admin-modal-msg error';
+      }
+    } catch (e) {
+      msgEl.textContent = 'Network error'; msgEl.style.display = ''; msgEl.className = 'admin-modal-msg error';
+    } finally { setBusy(btnEl, false); }
+  };
+
+  /* ── Commodity Assets Management ─────────────────────────────────── */
+
+  var comAssetsLoaded = false;
+
+  async function loadComAssetsTable() {
+    var tbody = qs('[data-table="mgmt-com-assets"]');
+    if (!tbody) return;
+    try {
+      var r = await apiFetch('/api/admin-dashboard/commodity-assets.php');
+      if (!r.success) return;
+      renderComAssetsTable(r.data.assets || []);
+      comAssetsLoaded = true;
+    } catch (e) { console.error('loadComAssetsTable:', e); }
+  }
+
+  function renderComAssetsTable(assets) {
+    var tbody = qs('[data-table="mgmt-com-assets"]');
+    if (!tbody) return;
+    if (!assets.length) { showEmpty(tbody, 8, 'No commodity assets configured'); return; }
+    tbody.innerHTML = assets.map(function (a) {
+      var assetJson = esc(JSON.stringify(a).replace(/'/g, '&apos;'));
+      return '<tr>'
+        + '<td><strong>' + esc(a.name) + '</strong></td>'
+        + '<td><span class="badge badge-muted">' + esc(a.symbol) + '</span></td>'
+        + '<td class="cell-muted" style="font-family:monospace;font-size:.8rem;">' + esc(a.tradingview_sym || '—') + '</td>'
+        + '<td>$' + fmt(a.min_investment) + '</td>'
+        + '<td>' + (a.duration_days || '—') + 'd</td>'
+        + '<td>' + parseFloat(a.yield_min || 0).toFixed(1) + '–' + parseFloat(a.yield_max || 0).toFixed(1) + '%</td>'
+        + '<td>' + (a.is_active ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-muted">Inactive</span>') + '</td>'
+        + '<td><div class="btn-actions">'
+        + '<button class="btn-action btn-action--primary" data-comasset-edit=\'' + assetJson + '\'>Edit</button>'
+        + '<button class="btn-action ' + (a.is_active ? 'btn-action--warning' : 'btn-action--success') + '" data-comasset-toggle="' + a.id + '">'
+        + (a.is_active ? 'Deactivate' : 'Activate') + '</button>'
+        + '<button class="btn-action btn-action--danger" data-comasset-delete="' + a.id + '">Delete</button>'
+        + '</div></td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  window.openComAssetModal = function (asset) {
+    var isEdit = (asset && asset.id);
+    document.getElementById('editComModalTitleText').textContent = isEdit ? 'Edit Commodity Asset' : 'Add Commodity Asset';
+    document.getElementById('editComId').value       = isEdit ? asset.id : '';
+    document.getElementById('editComName').value     = isEdit ? (asset.name || '') : '';
+    document.getElementById('editComSymbol').value   = isEdit ? (asset.symbol || '') : '';
+    document.getElementById('editComTVSym').value    = isEdit ? (asset.tradingview_sym || '') : '';
+    document.getElementById('editComMinInv').value   = isEdit ? (asset.min_investment || '') : '';
+    document.getElementById('editComDays').value     = isEdit ? (asset.duration_days || '') : '';
+    document.getElementById('editComYieldMin').value = isEdit ? (asset.yield_min || '') : '';
+    document.getElementById('editComYieldMax').value = isEdit ? (asset.yield_max || '') : '';
+    document.getElementById('editComSortOrder').value = isEdit ? (asset.sort_order || '0') : '0';
+    var msgEl = document.getElementById('editComMsg');
+    msgEl.style.display = 'none'; msgEl.textContent = '';
+    openAdminModal('modal-edit-commodity');
+  };
+
+  window.saveComAsset = async function () {
+    if (_adminBusy) return;
+    var id    = document.getElementById('editComId').value;
+    var msgEl = document.getElementById('editComMsg');
+    var btnEl = document.getElementById('editComSaveBtn');
+    var name  = document.getElementById('editComName').value.trim();
+    var sym   = document.getElementById('editComSymbol').value.trim();
+    var min   = document.getElementById('editComMinInv').value;
+
+    msgEl.style.display = 'none'; msgEl.textContent = '';
+
+    if (!name || !sym || !min) {
+      msgEl.textContent = 'Name, symbol, and min investment are required.';
+      msgEl.style.display = ''; msgEl.className = 'admin-modal-msg error'; return;
+    }
+
+    var payload = {
+      action:          id ? 'update' : 'create',
+      name:            name,
+      symbol:          sym.toUpperCase(),
+      tradingview_sym: document.getElementById('editComTVSym').value.trim(),
+      min_investment:  parseFloat(min),
+      duration_days:   parseInt(document.getElementById('editComDays').value || 30, 10),
+      yield_min:       parseFloat(document.getElementById('editComYieldMin').value || 0),
+      yield_max:       parseFloat(document.getElementById('editComYieldMax').value || 0),
+      sort_order:      parseInt(document.getElementById('editComSortOrder').value || 0, 10)
+    };
+    if (id) payload.id = parseInt(id, 10);
+
+    setBusy(btnEl, true);
+    try {
+      var r = await apiFetch('/api/admin-dashboard/commodity-assets.php', {
+        method: 'POST', body: JSON.stringify(payload)
+      });
+      if (r.success) {
+        showToast(r.message || 'Asset saved');
+        closeAdminModal('modal-edit-commodity');
+        renderComAssetsTable(r.data.assets || []);
+        settingsLoaded = false;
+      } else {
+        msgEl.textContent = r.message || 'Save failed';
+        msgEl.style.display = ''; msgEl.className = 'admin-modal-msg error';
+      }
+    } catch (e) {
+      msgEl.textContent = 'Network error'; msgEl.style.display = ''; msgEl.className = 'admin-modal-msg error';
+    } finally { setBusy(btnEl, false); }
+  };
+
+  /* ── Real Estate Pools Management ────────────────────────────────── */
+
+  var rePoolsLoaded = false;
+
+  async function loadRePoolsTable() {
+    var tbody = qs('[data-table="mgmt-re-pools"]');
+    if (!tbody) return;
+    try {
+      var r = await apiFetch('/api/admin-dashboard/realestate-pools.php');
+      if (!r.success) return;
+      renderRePoolsTable(r.data.pools || []);
+      rePoolsLoaded = true;
+    } catch (e) { console.error('loadRePoolsTable:', e); }
+  }
+
+  function renderRePoolsTable(pools) {
+    var tbody = qs('[data-table="mgmt-re-pools"]');
+    if (!tbody) return;
+    if (!pools.length) { showEmpty(tbody, 9, 'No real estate pools configured'); return; }
+    tbody.innerHTML = pools.map(function (p) {
+      var poolJson = esc(JSON.stringify(p).replace(/'/g, '&apos;'));
+      return '<tr>'
+        + '<td><strong>' + esc(p.name) + '</strong></td>'
+        + '<td>' + esc(p.property_type || '—') + '</td>'
+        + '<td>$' + fmt(p.min_investment) + '</td>'
+        + '<td>' + (p.duration_days || '—') + 'd</td>'
+        + '<td>' + parseFloat(p.yield_min || 0).toFixed(1) + '–' + parseFloat(p.yield_max || 0).toFixed(1) + '%</td>'
+        + '<td class="cell-muted">' + esc(p.payout_frequency || '—') + '</td>'
+        + '<td>' + (p.is_compounded ? '<span class="badge badge-success">Yes</span>' : '<span class="badge badge-muted">No</span>') + '</td>'
+        + '<td>' + (p.is_active ? '<span class="badge badge-success">Active</span>' : '<span class="badge badge-muted">Inactive</span>') + '</td>'
+        + '<td><div class="btn-actions">'
+        + '<button class="btn-action btn-action--primary" data-repool-edit=\'' + poolJson + '\'>Edit</button>'
+        + '<button class="btn-action ' + (p.is_active ? 'btn-action--warning' : 'btn-action--success') + '" data-repool-toggle="' + p.id + '">'
+        + (p.is_active ? 'Deactivate' : 'Activate') + '</button>'
+        + '<button class="btn-action btn-action--danger" data-repool-delete="' + p.id + '">Delete</button>'
+        + '</div></td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  window.openRePoolModal = function (pool) {
+    var isEdit = (pool && pool.id);
+    document.getElementById('editReModalTitleText').textContent = isEdit ? 'Edit Real Estate Pool' : 'Add Real Estate Pool';
+    document.getElementById('editReId').value            = isEdit ? pool.id : '';
+    document.getElementById('editReName').value          = isEdit ? (pool.name || '') : '';
+    document.getElementById('editRePropertyType').value  = isEdit ? (pool.property_type || '') : '';
+    document.getElementById('editReMinInv').value        = isEdit ? (pool.min_investment || '') : '';
+    document.getElementById('editReDays').value          = isEdit ? (pool.duration_days || '') : '';
+    document.getElementById('editReYieldMin').value      = isEdit ? (pool.yield_min || '') : '';
+    document.getElementById('editReYieldMax').value      = isEdit ? (pool.yield_max || '') : '';
+    document.getElementById('editRePayoutFreq').value    = isEdit ? (pool.payout_frequency || 'monthly') : 'monthly';
+    document.getElementById('editReOccupancy').value     = isEdit ? (pool.occupancy_pct || '') : '';
+    document.getElementById('editReLocationTag').value   = isEdit ? (pool.location_tag || '') : '';
+    document.getElementById('editReImageUrl').value      = isEdit ? (pool.image_url || '') : '';
+    document.getElementById('editReCompounded').checked  = isEdit ? (pool.is_compounded == 1) : false;
+    document.getElementById('editReSortOrder').value     = isEdit ? (pool.sort_order || '0') : '0';
+    var msgEl = document.getElementById('editReMsg');
+    msgEl.style.display = 'none'; msgEl.textContent = '';
+    openAdminModal('modal-edit-realestate');
+  };
+
+  window.saveRePool = async function () {
+    if (_adminBusy) return;
+    var id      = document.getElementById('editReId').value;
+    var msgEl   = document.getElementById('editReMsg');
+    var btnEl   = document.getElementById('editReSaveBtn');
+    var name    = document.getElementById('editReName').value.trim();
+    var ptype   = document.getElementById('editRePropertyType').value.trim();
+    var min     = document.getElementById('editReMinInv').value;
+
+    msgEl.style.display = 'none'; msgEl.textContent = '';
+
+    if (!name || !ptype || !min) {
+      msgEl.textContent = 'Name, property type, and min investment are required.';
+      msgEl.style.display = ''; msgEl.className = 'admin-modal-msg error'; return;
+    }
+
+    var occ     = document.getElementById('editReOccupancy').value;
+    var payload = {
+      action:           id ? 'update' : 'create',
+      name:             name,
+      property_type:    ptype,
+      min_investment:   parseFloat(min),
+      duration_days:    parseInt(document.getElementById('editReDays').value || 90, 10),
+      yield_min:        parseFloat(document.getElementById('editReYieldMin').value || 0),
+      yield_max:        parseFloat(document.getElementById('editReYieldMax').value || 0),
+      payout_frequency: document.getElementById('editRePayoutFreq').value,
+      is_compounded:    document.getElementById('editReCompounded').checked ? 1 : 0,
+      location_tag:     document.getElementById('editReLocationTag').value.trim() || null,
+      image_url:        document.getElementById('editReImageUrl').value.trim() || null,
+      occupancy_pct:    occ !== '' ? parseFloat(occ) : null,
+      sort_order:       parseInt(document.getElementById('editReSortOrder').value || 0, 10)
+    };
+    if (id) payload.id = parseInt(id, 10);
+
+    setBusy(btnEl, true);
+    try {
+      var r = await apiFetch('/api/admin-dashboard/realestate-pools.php', {
+        method: 'POST', body: JSON.stringify(payload)
+      });
+      if (r.success) {
+        showToast(r.message || 'Pool saved');
+        closeAdminModal('modal-edit-realestate');
+        renderRePoolsTable(r.data.pools || []);
+        settingsLoaded = false;
+      } else {
+        msgEl.textContent = r.message || 'Save failed';
+        msgEl.style.display = ''; msgEl.className = 'admin-modal-msg error';
+      }
+    } catch (e) {
+      msgEl.textContent = 'Network error'; msgEl.style.display = ''; msgEl.className = 'admin-modal-msg error';
+    } finally { setBusy(btnEl, false); }
+  };
+
   /* ── Section Navigation ───────────────────────────────────────────── */
 
   var currentSection = 'overview';
@@ -1214,9 +1542,18 @@
     overview:     function () { loadOverview(); },
     users:        function () { if (!usersLoaded)    loadUsers(1); },
     transactions: function () { if (!txLoaded)       loadTransactions(1); },
-    investments:  function () { if (!invAdminLoaded) loadAdminInvestments(1); },
-    commodities:  function () { if (!comAdminLoaded) loadAdminCommodities(1); },
-    realestate:   function () { if (!reAdminLoaded)  loadAdminRealEstate(1); },
+    investments:  function () {
+      if (!invAdminLoaded) loadAdminInvestments(1);
+      if (!invPlansLoaded) loadInvPlansTable();
+    },
+    commodities:  function () {
+      if (!comAdminLoaded) loadAdminCommodities(1);
+      if (!comAssetsLoaded) loadComAssetsTable();
+    },
+    realestate:   function () {
+      if (!reAdminLoaded)  loadAdminRealEstate(1);
+      if (!rePoolsLoaded)  loadRePoolsTable();
+    },
     walletlinks:  function () { if (!wlAdminLoaded)  loadAdminWalletLinks(1); },
     settings:     function () { loadSettings(); }
   };
@@ -1360,6 +1697,16 @@
         return;
       }
 
+      // ── Investment plan edit ───────────────────────────────────────
+      var invPlanEditBtn = e.target.closest('[data-invplan-edit]');
+      if (invPlanEditBtn) {
+        try {
+          var planData = JSON.parse(invPlanEditBtn.dataset.invplanEdit.replace(/&apos;/g, "'"));
+          window.openInvPlanModal(planData);
+        } catch (err) { console.error('parse plan data', err); }
+        return;
+      }
+
       // ── Investment plan toggle ─────────────────────────────────────
       var invPlanToggle = e.target.closest('[data-invplan-toggle]');
       if (invPlanToggle) {
@@ -1369,10 +1716,114 @@
             method: 'POST',
             body: JSON.stringify({ action: 'toggle', id: planId })
           }).then(function (r) {
-            showToast(r.success ? 'Plan updated' : (r.message || 'Failed'), !r.success);
-            if (r.success) { settingsLoaded = false; loadSettings(); }
+            showToast(r.success ? 'Plan toggled' : (r.message || 'Failed'), !r.success);
+            if (r.success) {
+              renderInvPlansTable(r.data.plans || []);
+              settingsLoaded = false;
+              if (currentSection === 'settings') loadSettings();
+            }
           });
         }, 'Toggle Plan');
+        return;
+      }
+
+      // ── Investment plan delete ─────────────────────────────────────
+      var invPlanDeleteBtn = e.target.closest('[data-invplan-delete]');
+      if (invPlanDeleteBtn) {
+        var delPlanId = parseInt(invPlanDeleteBtn.dataset.invplanDelete, 10);
+        adminConfirm('Permanently delete this investment plan? Users with active investments in this plan will not be affected, but no new investments can be made.', function () {
+          apiFetch('/api/admin-dashboard/investment-plans.php', {
+            method: 'POST',
+            body: JSON.stringify({ action: 'delete', id: delPlanId })
+          }).then(function (r) {
+            showToast(r.success ? 'Plan deleted' : (r.message || 'Failed'), !r.success);
+            if (r.success) { renderInvPlansTable(r.data.plans || []); settingsLoaded = false; }
+          });
+        }, 'Delete Plan');
+        return;
+      }
+
+      // ── Commodity asset edit ───────────────────────────────────────
+      var comAssetEditBtn = e.target.closest('[data-comasset-edit]');
+      if (comAssetEditBtn) {
+        try {
+          var assetData = JSON.parse(comAssetEditBtn.dataset.comassetEdit.replace(/&apos;/g, "'"));
+          window.openComAssetModal(assetData);
+        } catch (err) { console.error('parse asset data', err); }
+        return;
+      }
+
+      // ── Commodity asset toggle ─────────────────────────────────────
+      var comAssetToggle = e.target.closest('[data-comasset-toggle]');
+      if (comAssetToggle) {
+        var assetId = parseInt(comAssetToggle.dataset.comassetToggle, 10);
+        adminConfirm('Toggle this commodity asset\'s active status?', function () {
+          apiFetch('/api/admin-dashboard/commodity-assets.php', {
+            method: 'POST',
+            body: JSON.stringify({ action: 'toggle', id: assetId })
+          }).then(function (r) {
+            showToast(r.success ? 'Asset toggled' : (r.message || 'Failed'), !r.success);
+            if (r.success) { renderComAssetsTable(r.data.assets || []); settingsLoaded = false; }
+          });
+        }, 'Toggle Asset');
+        return;
+      }
+
+      // ── Commodity asset delete ─────────────────────────────────────
+      var comAssetDeleteBtn = e.target.closest('[data-comasset-delete]');
+      if (comAssetDeleteBtn) {
+        var delAssetId = parseInt(comAssetDeleteBtn.dataset.comassetDelete, 10);
+        adminConfirm('Permanently delete this commodity asset?', function () {
+          apiFetch('/api/admin-dashboard/commodity-assets.php', {
+            method: 'POST',
+            body: JSON.stringify({ action: 'delete', id: delAssetId })
+          }).then(function (r) {
+            showToast(r.success ? 'Asset deleted' : (r.message || 'Failed'), !r.success);
+            if (r.success) { renderComAssetsTable(r.data.assets || []); settingsLoaded = false; }
+          });
+        }, 'Delete Asset');
+        return;
+      }
+
+      // ── Real estate pool edit ──────────────────────────────────────
+      var rePoolEditBtn = e.target.closest('[data-repool-edit]');
+      if (rePoolEditBtn) {
+        try {
+          var poolData = JSON.parse(rePoolEditBtn.dataset.repoolEdit.replace(/&apos;/g, "'"));
+          window.openRePoolModal(poolData);
+        } catch (err) { console.error('parse pool data', err); }
+        return;
+      }
+
+      // ── Real estate pool toggle ────────────────────────────────────
+      var rePoolToggle = e.target.closest('[data-repool-toggle]');
+      if (rePoolToggle) {
+        var poolId = parseInt(rePoolToggle.dataset.repoolToggle, 10);
+        adminConfirm('Toggle this real estate pool\'s active status?', function () {
+          apiFetch('/api/admin-dashboard/realestate-pools.php', {
+            method: 'POST',
+            body: JSON.stringify({ action: 'toggle', id: poolId })
+          }).then(function (r) {
+            showToast(r.success ? 'Pool toggled' : (r.message || 'Failed'), !r.success);
+            if (r.success) { renderRePoolsTable(r.data.pools || []); settingsLoaded = false; }
+          });
+        }, 'Toggle Pool');
+        return;
+      }
+
+      // ── Real estate pool delete ────────────────────────────────────
+      var rePoolDeleteBtn = e.target.closest('[data-repool-delete]');
+      if (rePoolDeleteBtn) {
+        var delPoolId = parseInt(rePoolDeleteBtn.dataset.repoolDelete, 10);
+        adminConfirm('Permanently delete this real estate pool?', function () {
+          apiFetch('/api/admin-dashboard/realestate-pools.php', {
+            method: 'POST',
+            body: JSON.stringify({ action: 'delete', id: delPoolId })
+          }).then(function (r) {
+            showToast(r.success ? 'Pool deleted' : (r.message || 'Failed'), !r.success);
+            if (r.success) { renderRePoolsTable(r.data.pools || []); settingsLoaded = false; }
+          });
+        }, 'Delete Pool');
         return;
       }
 
